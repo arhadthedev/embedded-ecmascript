@@ -1,0 +1,13 @@
+[package]
+name = "embedded-ecmascript"
+version = "0.1.0"
+authors = ["Oleg Iarygin <oleg@arhadthedev.net>"]
+edition = "2021"
+description = "Library to embed ECMAScript into desktop and automotive programs"
+repository = "https://github.com/arhadthedev/embedded-ecmascript"
+license = "MIT"
+# From <https://crates.io/keywords>:
+keywords = ["parser", "ecmascript", "javascript", "compiler"]
+categories = ["compilers", "parser-implementations"]
+
+[dependencies]
