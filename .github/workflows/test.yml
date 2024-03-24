@@ -20,7 +20,14 @@ jobs:
       with:
         submodules: true
     - name: Lint with Clippy
-      run: cargo clippy --all-targets --all-features
+      # Enable all rules from <https://rust-lang.github.io/rust-clippy/master/index.html>
+      # not enabled by default. We use `-W` because `RUSTFLAGS=-Dwarnings` turns
+      # warnings into errors anyway.
+      run: cargo clippy --all-targets --all-features -- \
+        -W clippy::pedantic \
+        -W clippy::restriction \
+        -W clippy::nursery \
+        -W clippy::cargo
   unit:
     name: Library
     runs-on: ubuntu-latest
