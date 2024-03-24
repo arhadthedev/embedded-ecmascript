@@ -23,7 +23,11 @@ jobs:
       # Enable all rules from <https://rust-lang.github.io/rust-clippy/master/index.html>
       # not enabled by default. We use `-W` because `RUSTFLAGS=-Dwarnings` turns
       # warnings into errors anyway.
-      run: cargo clippy --all-targets --all-features -- \
+      run: >
+        cargo clippy
+        --all-targets
+        --all-features 
+        --
         -W clippy::pedantic \
         -W clippy::restriction \
         -W clippy::nursery \
