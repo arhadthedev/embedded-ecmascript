@@ -1,6 +1,6 @@
 use rstest::rstest;
 use std::fs::read_to_string;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 fn check_if_readable(path: PathBuf) {
     read_to_string(path).unwrap();
