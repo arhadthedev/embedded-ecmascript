@@ -28,9 +28,9 @@ jobs:
         --all-targets
         --all-features 
         --
-        -W clippy::pedantic \
-        -W clippy::restriction \
-        -W clippy::nursery \
+        -W clippy::pedantic
+        -W clippy::restriction
+        -W clippy::nursery
         -W clippy::cargo
   unit:
     name: Library
