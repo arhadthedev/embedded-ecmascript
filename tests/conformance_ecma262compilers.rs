@@ -6,7 +6,7 @@ fn check_if_readable(path: PathBuf) {
     read_to_string(path).unwrap();
 }
 
-fn get_explicit_variant(default_variant: PathBuf) -> PathBuf {
+fn get_explicit_variant(default_variant: &PathBuf) -> PathBuf {
     let mut new_variant = default_variant.canonicalize().unwrap();
     new_variant.pop();
     new_variant.pop();
@@ -20,8 +20,8 @@ fn script_pass(
     #[files("tests/_data/test262-parser-tests/pass/*.js")]
     path: PathBuf,
 ) {
-    check_if_readable(path.clone());
-    check_if_readable(get_explicit_variant(path));
+    check_if_readable(get_explicit_variant(&path));
+    check_if_readable(path);
 }
 
 #[rstest]
