@@ -52,4 +52,4 @@ jobs:
       with:
         submodules: true
     - name: Build and run tests
-      run: cargo test --verbose
+      run: cargo test
