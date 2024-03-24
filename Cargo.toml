@@ -11,3 +11,4 @@ keywords = ["parser", "ecmascript", "javascript", "compiler"]
 categories = ["compilers", "parser-implementations"]
 
 [dependencies]
+rstest = "0.18.2"
