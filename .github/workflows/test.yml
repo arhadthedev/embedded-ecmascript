@@ -22,11 +22,17 @@ jobs:
     - name: Lint with Clippy
       # Enable all non-default rules from
       # <https://rust-lang.github.io/rust-clippy/master/index.html> except
-      # `clippy::restriction`. This group consists of inpractical requirements
-      # like empty `else` after `else if`, prohibition of Unicode characters,
-      # annotation of each and every `enum` and `struct` as `#[non_exhaustive]`,
-      # and a ban on `mod.rs` file name. Also, its `implicit_return` rule
-      # outright conflicts with `needless_return` from `clippy::style`. 
+      # `clippy::restriction`. From the documentation:
+      #
+      # > Restriction lints sometimes are in contrast with other lints or even
+      # > go against idiomatic rust. These lints should only be enabled on
+      # > a lint-by-lint basis and with careful consideration.
+      #
+      # For example, it requires empty `else` after `else if`, prohibits
+      # non-latin Unicode characters, requires to annotate every `enum` and
+      # `struct` as `#[non_exhaustive]`, and bans `mod.rs` file name. Also, its
+      # `implicit_return` rule outright conflicts with `needless_return` from
+      # `clippy::style`. 
       #
       # We use `-W` because `RUSTFLAGS=-Dwarnings` turns warnings into errors
       # anyway.
