@@ -20,16 +20,22 @@ jobs:
       with:
         submodules: true
     - name: Lint with Clippy
-      # Enable all rules from <https://rust-lang.github.io/rust-clippy/master/index.html>
-      # not enabled by default. We use `-W` because `RUSTFLAGS=-Dwarnings` turns
-      # warnings into errors anyway.
+      # Enable all non-default rules from
+      # <https://rust-lang.github.io/rust-clippy/master/index.html> except
+      # `clippy::restriction`. This group consists of inpractical requirements
+      # like empty `else` after `else if`, prohibition of Unicode characters,
+      # annotation of each and every `enum` and `struct` as `#[non_exhaustive]`,
+      # and a ban on `mod.rs` file name. Also, its `implicit_return` rule
+      # outright conflicts with `needless_return` from `clippy::style`. 
+      #
+      # We use `-W` because `RUSTFLAGS=-Dwarnings` turns warnings into errors
+      # anyway.
       run: >
         cargo clippy
         --all-targets
         --all-features 
         --
         -W clippy::pedantic
-        -W clippy::restriction
         -W clippy::nursery
         -W clippy::cargo
   unit:
