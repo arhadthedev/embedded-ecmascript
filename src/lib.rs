@@ -1,5 +1,6 @@
 //! Embed ECMAScript into desktop and automotive programs.
 
-pub fn hello() -> bool {
+#[must_use]
+pub const fn hello() -> bool {
     true
 }
