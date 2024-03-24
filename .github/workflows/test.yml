@@ -9,8 +9,16 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
+  RUSTFLAGS: "-Dwarnings"
 
 jobs:
+  linter:
+    name: Linter
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build and run tests
+      run: cargo clippy --all-targets --all-features
   unit:
     name: Library
     runs-on: ubuntu-latest
