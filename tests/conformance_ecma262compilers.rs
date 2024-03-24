@@ -3,7 +3,7 @@ use std::fs::read_to_string;
 use std::path::PathBuf;
 
 fn check_if_readable(path: PathBuf) {
-    read_to_string(&path).unwrap();
+    read_to_string(path).unwrap();
 }
 
 fn get_explicit_variant(default_variant: PathBuf) -> PathBuf {
@@ -12,7 +12,7 @@ fn get_explicit_variant(default_variant: PathBuf) -> PathBuf {
     new_variant.pop();
     new_variant.push("pass-explicit");
     new_variant.push(default_variant.file_name().unwrap());
-    return new_variant;
+    new_variant
 }
 
 #[rstest]
