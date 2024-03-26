@@ -12,6 +12,13 @@ fn specimen() -> SourceCodeError {
 }
 
 #[rstest]
+fn sourcecoderror_display_trait(specimen: SourceCodeError)
+{
+    let message = format!("{}", specimen);
+    assert_eq!(message, "error in characters #1-#100: Some error");
+}
+
+#[rstest]
 fn sourcecoderror_error_trait(specimen: SourceCodeError)
 {
     assert!(specimen.source().is_none());
@@ -27,13 +34,6 @@ fn sourcecoderror_error_trait(specimen: SourceCodeError)
     // }
     // ```
     let _: Box<dyn std::error::Error> = Box::new(specimen);
-}
-
-#[rstest]
-fn sourcecoderror_display_trait(specimen: SourceCodeError)
-{
-    let message = format!("{}", specimen);
-    assert_eq!(message, "error in characters #1-#100: Some error");
 }
 
 #[rstest]
