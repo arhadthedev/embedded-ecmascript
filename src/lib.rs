@@ -5,11 +5,6 @@ use std::error::Error;
 use std::fmt::{Debug, Display, Formatter, Result};
 use std::ops::Range;
 
-#[must_use]
-pub const fn hello() -> bool {
-    true
-}
-
 /// An error message that can be attributed to a certain piece of source code.
 #[derive(Debug, Eq, PartialEq)]
 pub struct SourceCodeError {
