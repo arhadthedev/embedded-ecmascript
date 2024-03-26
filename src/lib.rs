@@ -1,6 +1,6 @@
 //! Embed ECMAScript into desktop and automotive programs.
 
-use std::cmp::PartialEq;
+use std::cmp::{Eq, PartialEq};
 use std::error::Error;
 use std::fmt::{Debug, Display, Formatter, Result};
 use std::ops::Range;
@@ -11,7 +11,7 @@ pub const fn hello() -> bool {
 }
 
 /// An error message that can be attributed to a certain piece of source code.
-#[derive(Debug, PartialEq)]
+#[derive(Debug, Eq, PartialEq)]
 pub struct SourceCodeError {
     /// A non-inclusive, zero-based range of source code UTF-8 characters.
     ///

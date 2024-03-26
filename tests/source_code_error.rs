@@ -35,3 +35,24 @@ fn sourcecoderror_display_trait(specimen: SourceCodeError)
     let message = format!("{}", specimen);
     assert_eq!(message, "error in characters #1-#100: Some error");
 }
+
+#[rstest]
+fn sourcecoderror_eq_trait(specimen: SourceCodeError) {
+    let same = SourceCodeError {
+        location: Range{start: 0, end: 100},
+        message: "Some error".to_owned()
+    };
+    let different_range = SourceCodeError {
+        location: Range{start: 1, end: 100},
+        message: "Some error".to_owned()
+    };
+    let different_message = SourceCodeError {
+        location: Range{start: 0, end: 100},
+        message: "Another error".to_owned()
+    };
+
+    assert_eq!(specimen, specimen);
+    assert_eq!(specimen, same);
+    assert_ne!(specimen, different_range);
+    assert_ne!(specimen, different_message);
+}
