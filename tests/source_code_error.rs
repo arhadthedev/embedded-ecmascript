@@ -14,7 +14,7 @@ fn specimen() -> SourceCodeError {
 #[rstest]
 fn sourcecoderror_display_trait(specimen: SourceCodeError)
 {
-    let message = format!("{}", specimen);
+    let message = format!("{specimen}");
     assert_eq!(message, "error in characters #1-#100: Some error");
 }
 
