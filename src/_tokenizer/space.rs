@@ -51,6 +51,20 @@
 //! > prior permission. Title to copyright in this work will at all times remain
 //! > with copyright holders.
 
+/// Tries to match start of a string against `<ZWNJ>` entry of Table 34:
+/// Format-Control Code Point Usage:
+///
+/// > Code Point   Name                    Abbreviation   Usage
+/// > U+200C       ZERO WIDTH NON-JOINER   <ZWNJ>         IdentifierPart
+///
+/// Returns a tuple of an object created from the matched part and an unparsed
+/// tail after the matched part.
+///
+/// Implements <https://262.ecma-international.org/14.0/#sec-unicode-format-control-characters>.
+pub fn match_zwnj<'a>(text: &'a str) -> Option<((), &'a str)> {
+    text.strip_prefix("\u{200C}").map(|tail| ((), tail))
+}
+
 #[cfg(test)]
 mod tests {
     use rstest::rstest;
@@ -117,18 +131,4 @@ mod tests {
             Some(((), format!("{sep}{tok}").as_ref()))
         );
     }
-}
-
-/// Tries to match start of a string against `<ZWNJ>` entry of Table 34:
-/// Format-Control Code Point Usage:
-///
-/// > Code Point   Name                    Abbreviation   Usage
-/// > U+200C       ZERO WIDTH NON-JOINER   <ZWNJ>         IdentifierPart
-///
-/// Returns a tuple of an object created from the matched part and an unparsed
-/// tail after the matched part.
-///
-/// Implements <https://262.ecma-international.org/14.0/#sec-unicode-format-control-characters>.
-pub fn match_zwnj<'a>(text: &'a str) -> Option<((), &'a str)> {
-    text.strip_prefix("\u{200C}").map(|tail| ((), tail))
 }
