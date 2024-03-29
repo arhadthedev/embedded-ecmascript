@@ -82,7 +82,7 @@ mod tests {
 
         fn from_str(text: &str) -> Result<Self, Self::Err> {
             match text {
-                "\u{200C}" => Ok(TerminalCase{
+                "\u{200C}" => Ok(Self {
                     token: text.to_string(),
                     parser: Box::new(crate::_tokenizer::space::match_zwnj)}
                 ),
