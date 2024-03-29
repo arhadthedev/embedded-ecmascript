@@ -1,5 +1,7 @@
 //! Embed ECMAScript into desktop and automotive programs.
 
+mod _tokenizer;
+
 use std::cmp::{Eq, PartialEq};
 use std::error::Error;
 use std::fmt::{Debug, Display, Formatter, Result};
