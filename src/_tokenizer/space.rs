@@ -62,7 +62,7 @@
 ///
 /// Implements <https://262.ecma-international.org/14.0/#sec-unicode-format-control-characters>.
 pub fn match_zwnj(text: &str) -> Option<((), &str)> {
-    text.strip_prefix("\u{200C}").map(|tail| ((), tail))
+    text.strip_prefix('\u{200C}').map(|tail| ((), tail))
 }
 
 #[cfg(test)]
