@@ -71,9 +71,11 @@ mod tests {
     use rstest::rstest;
     use std::str::FromStr;
 
+    type Parser = Fn(&str) -> Option<((), &str)>;
+
     struct TerminalCase {
         token: String,
-        parser: Box<dyn Fn(&str) -> Option<((), &str)>>
+        parser: Box<dyn Parser>
     }
 
     struct CaseParameterError;
