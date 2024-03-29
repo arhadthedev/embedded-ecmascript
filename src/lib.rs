@@ -1,5 +1,7 @@
 //! Embed ECMAScript into desktop and automotive programs.
 
+mod _tokenizer;
+
 use std::cmp::{Eq, PartialEq};
 use std::error::Error;
 use std::fmt::{Debug, Display, Formatter, Result};
@@ -33,4 +35,8 @@ impl Display for SourceCodeError {
             &self.message
         )
     }
+}
+
+pub fn dummy() {
+    _tokenizer::space::match_zwnj("");
 }
