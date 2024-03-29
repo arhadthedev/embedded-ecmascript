@@ -54,9 +54,9 @@
 /// Tries to match start of a string against `<ZWNJ>` entry of Table 34:
 /// Format-Control Code Point Usage:
 ///
-/// > | Code Point | Name                  | Abbreviation | Usage          |
-/// > |------------|-----------------------|--------------|----------------|
-/// > | U+200C     | ZERO WIDTH NON-JOINER | <ZWNJ>       | IdentifierPart |
+/// > | Code Point | Name                  | Abbreviation |
+/// > |------------|-----------------------|--------------|
+/// > | U+200C     | ZERO WIDTH NON-JOINER | <ZWNJ>       |
 ///
 /// Returns a tuple of an object created from the matched part and an unparsed
 /// tail after the matched part.
