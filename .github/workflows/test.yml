@@ -44,6 +44,7 @@ jobs:
         -W clippy::pedantic
         -W clippy::nursery
         -W clippy::cargo
+        -A clippy::large_stack_frames
   unit:
     name: Library
     runs-on: ubuntu-latest
