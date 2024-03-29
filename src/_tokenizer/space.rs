@@ -61,7 +61,7 @@
 /// tail after the matched part.
 ///
 /// Implements <https://262.ecma-international.org/14.0/#sec-unicode-format-control-characters>.
-pub fn match_zwnj<'a>(text: &'a str) -> Option<((), &'a str)> {
+pub fn match_zwnj(text: &str) -> Option<((), &str)> {
     text.strip_prefix("\u{200C}").map(|tail| ((), tail))
 }
 
