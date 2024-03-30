@@ -54,9 +54,9 @@
 /// Try to match start of a string against `<ZWNJ>` entry of Table 34:
 /// Format-Control Code Point Usage:
 ///
-/// > | Code Point | Name                  | Abbreviation |
-/// > |------------|-----------------------|--------------|
-/// > | U+200C     | ZERO WIDTH NON-JOINER | <ZWNJ>       |
+/// > | Code Point | Name                      | Abbreviation |
+/// > |------------|---------------------------|--------------|
+/// > | U+200C     | ZERO WIDTH NON-JOINER     | <ZWNJ>       |
 ///
 /// Returns a tuple of an object created from the matched part and an unparsed
 /// tail after the matched part.
@@ -69,9 +69,9 @@ pub fn match_zwnj(text: &str) -> Option<((), &str)> {
 /// Try to match start of a string against `<ZWJ>` entry of Table 34:
 /// Format-Control Code Point Usage:
 ///
-/// > | Code Point | Name                  | Abbreviation |
-/// > |------------|-----------------------|--------------|
-/// > | U+200D     | ZERO WIDTH JOINER     | <ZWJ>        |
+/// > | Code Point | Name                      | Abbreviation |
+/// > |------------|---------------------------|--------------|
+/// > | U+200D     | ZERO WIDTH JOINER         | <ZWJ>        |
 ///
 /// Returns a tuple of an object created from the matched part and an unparsed
 /// tail after the matched part.
@@ -79,6 +79,21 @@ pub fn match_zwnj(text: &str) -> Option<((), &str)> {
 /// Implements <https://262.ecma-international.org/14.0/#sec-unicode-format-control-characters>.
 pub fn match_zwj(text: &str) -> Option<((), &str)> {
     text.strip_prefix('\u{200D}').map(|tail| ((), tail))
+}
+
+/// Try to match start of a string against `<ZWJ>` entry of Table 34:
+/// Format-Control Code Point Usage:
+///
+/// > | Code Point | Name                      | Abbreviation |
+/// > |------------|---------------------------|--------------|
+/// > | U+FEFF     | ZERO WIDTH NO-BREAK SPACE | <ZWNBSP>     |
+///
+/// Returns a tuple of an object created from the matched part and an unparsed
+/// tail after the matched part.
+///
+/// Implements <https://262.ecma-international.org/14.0/#sec-unicode-format-control-characters>.
+pub fn match_zwnbsp(text: &str) -> Option<((), &str)> {
+    text.strip_prefix('\u{FEFF}').map(|tail| ((), tail))
 }
 
 #[cfg(test)]
@@ -107,6 +122,7 @@ mod tests {
             let tested_parser: ParserCallable = match text {
                 "\u{200C}" => Box::new(crate::_tokenizer::space::match_zwnj),
                 "\u{200D}" => Box::new(crate::_tokenizer::space::match_zwj),
+                "\u{FEFF}" => Box::new(crate::_tokenizer::space::match_zwnbsp),
                 _ => Box::new(|_| Option::None)
             };
             Ok(Self {
@@ -118,7 +134,7 @@ mod tests {
 
     #[rstest]
     fn match_space(
-        #[values("\u{200C}", "\u{200D}")]
+        #[values("\u{200C}", "\u{200D}", "\u{FEFF}")]
         case: TerminalCase,
         #[values("foo", " ")]
         separator: &str
