@@ -88,6 +88,11 @@ mod tests {
 
     type ParserCallable = Box<dyn Fn(&str) -> Option<((), &str)>>;
 
+    /// A test case for a parser, creatable from a literal the parser
+    /// is documented to process.
+    ///
+    /// The creation is performed in [`TerminalCase.from_str`] and invoked
+    /// by the `#[values("\u{...}, ...)]` macro provided by rstest.
     struct TerminalCase {
         token: String,
         parser: ParserCallable
@@ -99,14 +104,14 @@ mod tests {
         type Err = CaseParameterError;
 
         fn from_str(text: &str) -> Result<Self, Self::Err> {
-            let associated_parser: ParserCallable = match text {
+            let tested_parser: ParserCallable = match text {
                 "\u{200C}" => Box::new(crate::_tokenizer::space::match_zwnj),
                 "\u{200D}" => Box::new(crate::_tokenizer::space::match_zwj),
                 _ => Box::new(|_| Option::None)
             };
             Ok(Self {
                 token: text.to_string(),
-                parser: associated_parser
+                parser: tested_parser
             })
         }
     }
