@@ -51,7 +51,7 @@
 //! > prior permission. Title to copyright in this work will at all times remain
 //! > with copyright holders.
 
-/// Tries to match start of a string against `<ZWNJ>` entry of Table 34:
+/// Try to match start of a string against `<ZWNJ>` entry of Table 34:
 /// Format-Control Code Point Usage:
 ///
 /// > | Code Point | Name                  | Abbreviation |
@@ -88,6 +88,11 @@ mod tests {
 
     type ParserCallable = Box<dyn Fn(&str) -> Option<((), &str)>>;
 
+    /// A test case for a parser, creatable from a literal the parser
+    /// is documented to process.
+    ///
+    /// The creation is performed in [`TerminalCase.from_str`] and invoked
+    /// by the `#[values("\u{...}, ...)]` macro provided by rstest.
     struct TerminalCase {
         token: String,
         parser: ParserCallable
@@ -99,17 +104,15 @@ mod tests {
         type Err = CaseParameterError;
 
         fn from_str(text: &str) -> Result<Self, Self::Err> {
-            match text {
-                "\u{200C}" => Ok(Self {
-                    token: text.to_string(),
-                    parser: Box::new(crate::_tokenizer::space::match_zwnj)}
-                ),
-                "\u{200D}" => Ok(Self {
-                    token: text.to_string(),
-                    parser: Box::new(crate::_tokenizer::space::match_zwj)}
-                ),
-                _ => Err(Self::Err{})
-            }
+            let tested_parser: ParserCallable = match text {
+                "\u{200C}" => Box::new(crate::_tokenizer::space::match_zwnj),
+                "\u{200D}" => Box::new(crate::_tokenizer::space::match_zwj),
+                _ => Box::new(|_| Option::None)
+            };
+            Ok(Self {
+                token: text.to_string(),
+                parser: tested_parser
+            })
         }
     }
 
