@@ -51,7 +51,7 @@
 //! > prior permission. Title to copyright in this work will at all times remain
 //! > with copyright holders.
 
-/// Tries to match start of a string against `<ZWNJ>` entry of Table 34:
+/// Try to match start of a string against `<ZWNJ>` entry of Table 34:
 /// Format-Control Code Point Usage:
 ///
 /// > | Code Point | Name                  | Abbreviation |
