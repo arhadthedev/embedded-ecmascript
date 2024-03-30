@@ -99,17 +99,15 @@ mod tests {
         type Err = CaseParameterError;
 
         fn from_str(text: &str) -> Result<Self, Self::Err> {
-            match text {
-                "\u{200C}" => Ok(Self {
-                    token: text.to_string(),
-                    parser: Box::new(crate::_tokenizer::space::match_zwnj)}
-                ),
-                "\u{200D}" => Ok(Self {
-                    token: text.to_string(),
-                    parser: Box::new(crate::_tokenizer::space::match_zwj)}
-                ),
-                _ => Err(Self::Err{})
-            }
+            let associated_parser: ParserCallable = match text {
+                "\u{200C}" => Box::new(crate::_tokenizer::space::match_zwnj),
+                "\u{200D}" => Box::new(crate::_tokenizer::space::match_zwj),
+                _ => Box::new(|_| Option::None)
+            };
+            Ok(Self {
+                token: text.to_string(),
+                parser: associated_parser
+            })
         }
     }
 
