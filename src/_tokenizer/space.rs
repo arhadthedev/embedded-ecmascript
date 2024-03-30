@@ -81,7 +81,7 @@ pub fn match_zwj(text: &str) -> Option<((), &str)> {
     text.strip_prefix('\u{200D}').map(|tail| ((), tail))
 }
 
-/// Try to match start of a string against `<ZWJ>` entry of Table 34:
+/// Try to match start of a string against `<ZWNBSP>` entry of Table 34:
 /// Format-Control Code Point Usage:
 ///
 /// > | Code Point | Name                      | Abbreviation |
@@ -94,6 +94,20 @@ pub fn match_zwj(text: &str) -> Option<((), &str)> {
 /// Implements <https://262.ecma-international.org/14.0/#sec-unicode-format-control-characters>.
 pub fn match_zwnbsp(text: &str) -> Option<((), &str)> {
     text.strip_prefix('\u{FEFF}').map(|tail| ((), tail))
+}
+/// Try to match start of a string against `<TAB>` entry of Table 35:
+/// White Space Code Points:
+///
+/// > | Code Point | Name                      | Abbreviation |
+/// > |------------|---------------------------|--------------|
+/// > | U+0009     | CHARACTER TABULATION      | <TAB>        |
+///
+/// Returns a tuple of an object created from the matched part and an unparsed
+/// tail after the matched part.
+///
+/// Implements <https://262.ecma-international.org/14.0/#sec-white-space>.
+pub fn match_tab(text: &str) -> Option<((), &str)> {
+    text.strip_prefix('\u{0009}').map(|tail| ((), tail))
 }
 
 #[cfg(test)]
@@ -123,6 +137,7 @@ mod tests {
                 "\u{200C}" => Box::new(crate::_tokenizer::space::match_zwnj),
                 "\u{200D}" => Box::new(crate::_tokenizer::space::match_zwj),
                 "\u{FEFF}" => Box::new(crate::_tokenizer::space::match_zwnbsp),
+                "\u{0009}" => Box::new(crate::_tokenizer::space::match_tab),
                 _ => Box::new(|_| Option::None)
             };
             Ok(Self {
@@ -134,7 +149,7 @@ mod tests {
 
     #[rstest]
     fn match_space(
-        #[values("\u{200C}", "\u{200D}", "\u{FEFF}")]
+        #[values("\u{200C}", "\u{200D}", "\u{FEFF}", "\t")]
         case: TerminalCase,
         #[values("foo", " ")]
         separator: &str
