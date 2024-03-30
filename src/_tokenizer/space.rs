@@ -125,6 +125,21 @@ pub fn match_vt(text: &str) -> Option<((), &str)> {
     text.strip_prefix('\u{000B}').map(|tail| ((), tail))
 }
 
+/// Try to match start of a string against `<FF>` entry of Table 35:
+/// White Space Code Points:
+///
+/// > | Code Point | Name                      | Abbreviation |
+/// > |------------|---------------------------|--------------|
+/// > | U+000C     | FORM FEED (FF)            | <FF>         |
+///
+/// Returns a tuple of an object created from the matched part and an unparsed
+/// tail after the matched part.
+///
+/// Implements <https://262.ecma-international.org/14.0/#sec-white-space>.
+pub fn match_ff(text: &str) -> Option<((), &str)> {
+    text.strip_prefix('\u{000C}').map(|tail| ((), tail))
+}
+
 #[cfg(test)]
 mod tests {
     use rstest::rstest;
@@ -154,6 +169,7 @@ mod tests {
                 "\u{FEFF}" => Box::new(crate::_tokenizer::space::match_zwnbsp),
                 "\u{0009}" => Box::new(crate::_tokenizer::space::match_tab),
                 "\u{000B}" => Box::new(crate::_tokenizer::space::match_vt),
+                "\u{000C}" => Box::new(crate::_tokenizer::space::match_ff),
                 _ => Box::new(|_| Option::None)
             };
             Ok(Self {
@@ -165,7 +181,9 @@ mod tests {
 
     #[rstest]
     fn match_space(
-        #[values("\u{200C}", "\u{200D}", "\u{FEFF}", "\t", "\u{000B}")]
+        #[values(
+            "\u{200C}", "\u{200D}", "\u{FEFF}", "\t", "\u{000B}", "\u{000C}"
+        )]
         case: TerminalCase,
         #[values("foo", " ")]
         separator: &str
