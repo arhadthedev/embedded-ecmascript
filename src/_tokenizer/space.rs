@@ -66,6 +66,21 @@ pub fn match_zwnj(text: &str) -> Option<((), &str)> {
     text.strip_prefix('\u{200C}').map(|tail| ((), tail))
 }
 
+/// Try to match start of a string against `<ZWJ>` entry of Table 34:
+/// Format-Control Code Point Usage:
+///
+/// > | Code Point | Name                  | Abbreviation |
+/// > |------------|-----------------------|--------------|
+/// > | U+200D     | ZERO WIDTH JOINER     | <ZWJ>        |
+///
+/// Returns a tuple of an object created from the matched part and an unparsed
+/// tail after the matched part.
+///
+/// Implements <https://262.ecma-international.org/14.0/#sec-unicode-format-control-characters>.
+pub fn match_zwj(text: &str) -> Option<((), &str)> {
+    text.strip_prefix('\u{200D}').map(|tail| ((), tail))
+}
+
 #[cfg(test)]
 mod tests {
     use rstest::rstest;
@@ -89,6 +104,10 @@ mod tests {
                     token: text.to_string(),
                     parser: Box::new(crate::_tokenizer::space::match_zwnj)}
                 ),
+                "\u{200D}" => Ok(Self {
+                    token: text.to_string(),
+                    parser: Box::new(crate::_tokenizer::space::match_zwj)}
+                ),
                 _ => Err(Self::Err{})
             }
         }
@@ -96,7 +115,7 @@ mod tests {
 
     #[rstest]
     fn match_space(
-        #[values("\u{200C}")]
+        #[values("\u{200C}", "\u{200D}")]
         case: TerminalCase,
         #[values("foo", " ")]
         separator: &str
