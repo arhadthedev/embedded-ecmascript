@@ -157,7 +157,7 @@ mod tests {
 
     struct CaseParameterError;
 
-    fn return_none(_: &str) {
+    fn return_none(_: &str) -> Option<((), &str)> {
         Option::None
     }
 
