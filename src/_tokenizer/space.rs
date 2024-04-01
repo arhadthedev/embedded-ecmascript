@@ -145,8 +145,6 @@ mod tests {
     use rstest::rstest;
     use std::str::FromStr;
 
-    type ParserCallable = Box<dyn Fn(&str) -> Option<((), &str)>>;
-
     /// A test case for a parser, creatable from a literal the parser
     /// is documented to process.
     ///
@@ -154,7 +152,7 @@ mod tests {
     /// by the `#[values("\u{...}, ...)]` macro provided by rstest.
     struct TerminalCase {
         token: String,
-        parser: ParserCallable
+        parser: fn(&str) -> Option<((), &str)>
     }
 
     struct CaseParameterError;
