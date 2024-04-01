@@ -157,18 +157,22 @@ mod tests {
 
     struct CaseParameterError;
 
+    fn return_none(_: &str) {
+        Option::None
+    }
+
     impl FromStr for TerminalCase {
         type Err = CaseParameterError;
 
         fn from_str(text: &str) -> Result<Self, Self::Err> {
-            let tested_parser: ParserCallable = match text {
-                "\u{200C}" => Box::new(crate::_tokenizer::space::match_zwnj),
-                "\u{200D}" => Box::new(crate::_tokenizer::space::match_zwj),
-                "\u{FEFF}" => Box::new(crate::_tokenizer::space::match_zwnbsp),
-                "\u{0009}" => Box::new(crate::_tokenizer::space::match_tab),
-                "\u{000B}" => Box::new(crate::_tokenizer::space::match_vt),
-                "\u{000C}" => Box::new(crate::_tokenizer::space::match_ff),
-                _ => Box::new(|_| Option::None)
+            let tested_parser = match text {
+                "\u{200C}" => crate::_tokenizer::space::match_zwnj,
+                "\u{200D}" => crate::_tokenizer::space::match_zwj,
+                "\u{FEFF}" => crate::_tokenizer::space::match_zwnbsp,
+                "\u{0009}" => crate::_tokenizer::space::match_tab,
+                "\u{000B}" => crate::_tokenizer::space::match_vt,
+                "\u{000C}" => crate::_tokenizer::space::match_ff,
+                _ => return_none
             };
             Ok(Self {
                 token: text.to_string(),
