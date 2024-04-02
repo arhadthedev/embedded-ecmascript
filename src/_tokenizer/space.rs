@@ -146,9 +146,9 @@ pub fn match_ff(text: &str) -> Option<((), &str)> {
 /// > | Code Point | Name                      | Abbreviation |
 /// > |------------|---------------------------|--------------|
 /// > | any code point in general category     | <USP>        |
-/// > | “Space_Separator”                      |              | 
+/// > | `Space_Separator`                      |              | 
 ///
-/// Space_Separator (Zs) contains the following:
+/// `Space_Separator` (Zs) contains the following:
 ///
 /// - U+0020 SPACE
 /// - U+00A0 NO-BREAK SPACE
@@ -166,7 +166,7 @@ pub fn match_ff(text: &str) -> Option<((), &str)> {
 /// - U+200A HAIR SPACE
 /// - U+202F NARROW NO-BREAK SPACE
 /// - U+205F MEDIUM MATHEMATICAL SPACE
-/// - U+3000 IDEOGRAPHIC_SPACE
+/// - U+3000 IDEOGRAPHIC SPACE
 ///
 /// Returns a tuple of an object created from the matched part and an unparsed
 /// tail after the matched part.
