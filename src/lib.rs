@@ -44,4 +44,5 @@ pub fn dummy() {
     _tokenizer::space::match_tab("");
     _tokenizer::space::match_vt("");
     _tokenizer::space::match_ff("");
+    _tokenizer::space::match_usp("");
 }
