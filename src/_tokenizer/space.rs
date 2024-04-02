@@ -195,7 +195,7 @@ pub fn match_usp(text: &str) -> Option<((), &str)> {
 
 /// Try to match start of a string against `WhiteSpace` production:
 ///
-/// ```
+/// ```plain
 /// WhiteSpace ::
 ///     <TAB>
 ///     <VT>
