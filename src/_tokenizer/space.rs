@@ -258,7 +258,7 @@ mod tests {
         assert_eq!((case.parser)(""), None);
 
         // Skip false match when the function recognizes a separator.
-        if case.parser != crate::_tokenizer::space::match_usp {
+        if (case.parser)(sep) != Some(((), "")) {
             // Non-matching strings do not match
             assert_eq!((case.parser)(sep), None);
 
