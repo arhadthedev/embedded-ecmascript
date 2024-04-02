@@ -40,9 +40,5 @@ impl Display for SourceCodeError {
 pub fn dummy() {
     _tokenizer::space::match_zwnj("");
     _tokenizer::space::match_zwj("");
-    _tokenizer::space::match_zwnbsp("");
-    _tokenizer::space::match_tab("");
-    _tokenizer::space::match_vt("");
-    _tokenizer::space::match_ff("");
-    _tokenizer::space::match_usp("");
+    _tokenizer::space::match_whitespace("");
 }

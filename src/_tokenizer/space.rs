@@ -193,6 +193,26 @@ pub fn match_usp(text: &str) -> Option<((), &str)> {
     rest.map(|tail| ((), tail))
 }
 
+/// Try to match start of a string against `WhiteSpace` production:
+///
+/// ```plain
+/// WhiteSpace ::
+///     <TAB>
+///     <VT>
+///     <FF>
+///     <ZWNBSP>
+///     <USP>
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-WhiteSpace>.
+pub fn match_whitespace(text: &str) -> Option<((), &str)> {
+    match_tab(text) 
+        .or_else(|| match_vt(text))
+        .or_else(|| match_ff(text))
+        .or_else(|| match_zwnbsp(text))
+        .or_else(|| match_usp(text))
+}
+
 #[cfg(test)]
 mod tests {
     use rstest::rstest;
@@ -287,5 +307,21 @@ mod tests {
         separator: &str
     ) {
         test_token(case.token.as_ref(), separator, case.parser);
+    }
+
+    #[rstest]
+    fn match_whitespace(
+        #[values(
+            "\u{0020}", "\u{00A0}", "\u{1680}", "\u{2000}", "\u{2001}",
+            "\u{2002}", "\u{2003}", "\u{2004}", "\u{2005}", "\u{2006}",
+            "\u{2007}", "\u{2008}", "\u{2009}", "\u{200A}", "\u{202F}",
+            "\u{205F}", "\u{3000}"
+        )]
+        case: TerminalCase,
+        #[values("foo", " ")]
+        separator: &str
+    ) {
+        let tok = case.token.as_ref();
+        test_token(tok, separator, crate::_tokenizer::space::match_whitespace);
     }
 }
