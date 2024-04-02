@@ -42,4 +42,5 @@ pub fn dummy() {
     _tokenizer::space::match_zwj("");
     _tokenizer::space::match_whitespace("");
     _tokenizer::space::match_lf("");
+    _tokenizer::space::match_cr("");
 }
