@@ -322,6 +322,6 @@ mod tests {
         separator: &str
     ) {
         let tok = case.token.as_ref();
-        test_token(tok, separator, crate::_tokenizer::space::match_whitespace)
+        test_token(tok, separator, crate::_tokenizer::space::match_whitespace);
     }
 }
