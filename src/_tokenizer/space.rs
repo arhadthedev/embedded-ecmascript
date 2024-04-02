@@ -273,6 +273,24 @@ pub fn match_ps(text: &str) -> Option<((), &str)> {
     text.strip_prefix('\u{2029}').map(|tail| ((), tail))
 }
 
+/// Try to match start of a string against `LineTerminator` production:
+///
+/// ```plain
+/// LineTerminator ::
+///     <LF>
+///     <CR>
+///     <LS>
+///     <PS>
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-LineTerminator>.
+pub fn match_line_terminator(text: &str) -> Option<((), &str)> {
+    match_lf(text) 
+        .or_else(|| match_cr(text))
+        .or_else(|| match_ls(text))
+        .or_else(|| match_ps(text))
+}
+
 #[cfg(test)]
 mod tests {
     use rstest::rstest;
@@ -388,5 +406,18 @@ mod tests {
     ) {
         let tok = case.token.as_ref();
         test_token(tok, separator, crate::_tokenizer::space::match_whitespace);
+    }
+
+    #[rstest]
+    fn match_line_terminator(
+        #[values(
+            "\u{000A}", "\u{000D}", "\u{2028}", "\u{2029}"
+        )]
+        case: TerminalCase,
+        #[values("foo", " ")]
+        separator: &str
+    ) {
+        let tok = case.token.as_ref();
+        test_token(tok, separator, crate::_tokenizer::space::match_line_terminator);
     }
 }
