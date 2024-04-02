@@ -140,6 +140,59 @@ pub fn match_ff(text: &str) -> Option<((), &str)> {
     text.strip_prefix('\u{000C}').map(|tail| ((), tail))
 }
 
+/// Try to match start of a string against `<USP>` entry of Table 35:
+/// White Space Code Points:
+///
+/// > | Code Point | Name                      | Abbreviation |
+/// > |------------|---------------------------|--------------|
+/// > | any code point in general category     | <USP>        |
+/// > | `Space_Separator`                      |              | 
+///
+/// `Space_Separator` (Zs) contains the following:
+///
+/// - U+0020 SPACE
+/// - U+00A0 NO-BREAK SPACE
+/// - U+1680 OHGRAM SPACE MARK
+/// - U+2000 EN QUAD
+/// - U+2001 EM QUAD
+/// - U+2002 EN SPACE
+/// - U+2003 EM SPACE
+/// - U+2004 THREE-PER-EM SPACE
+/// - U+2005 FOUR-PER-EM SPACE
+/// - U+2006 SIX-PER-EM SPACE
+/// - U+2007 FIGURE SPACE
+/// - U+2008 PUNCTUATION SPACE
+/// - U+2009 THIN SPACE
+/// - U+200A HAIR SPACE
+/// - U+202F NARROW NO-BREAK SPACE
+/// - U+205F MEDIUM MATHEMATICAL SPACE
+/// - U+3000 IDEOGRAPHIC SPACE
+///
+/// Returns a tuple of an object created from the matched part and an unparsed
+/// tail after the matched part.
+///
+/// Implements <https://262.ecma-international.org/14.0/#sec-white-space>.
+pub fn match_usp(text: &str) -> Option<((), &str)> {
+    let rest = text.strip_prefix('\u{0020}') 
+        .or_else(|| text.strip_prefix('\u{00A0}'))
+        .or_else(|| text.strip_prefix('\u{1680}'))
+        .or_else(|| text.strip_prefix('\u{2000}'))
+        .or_else(|| text.strip_prefix('\u{2001}'))
+        .or_else(|| text.strip_prefix('\u{2002}'))
+        .or_else(|| text.strip_prefix('\u{2003}'))
+        .or_else(|| text.strip_prefix('\u{2004}'))
+        .or_else(|| text.strip_prefix('\u{2005}'))
+        .or_else(|| text.strip_prefix('\u{2006}'))
+        .or_else(|| text.strip_prefix('\u{2007}'))
+        .or_else(|| text.strip_prefix('\u{2008}'))
+        .or_else(|| text.strip_prefix('\u{2009}'))
+        .or_else(|| text.strip_prefix('\u{200A}'))
+        .or_else(|| text.strip_prefix('\u{202F}'))
+        .or_else(|| text.strip_prefix('\u{205F}'))
+        .or_else(|| text.strip_prefix('\u{3000}'));
+    rest.map(|tail| ((), tail))
+}
+
 #[cfg(test)]
 mod tests {
     use rstest::rstest;
@@ -172,6 +225,10 @@ mod tests {
                 "\u{0009}" => crate::_tokenizer::space::match_tab,
                 "\u{000B}" => crate::_tokenizer::space::match_vt,
                 "\u{000C}" => crate::_tokenizer::space::match_ff,
+                "\u{0020}" | "\u{00A0}" | "\u{1680}" | "\u{2000}" | "\u{2001}" |
+                "\u{2002}" | "\u{2003}" | "\u{2004}" | "\u{2005}" | "\u{2006}" |
+                "\u{2007}" | "\u{2008}" | "\u{2009}" | "\u{200A}" | "\u{202F}" |
+                "\u{205F}" | "\u{3000}" => crate::_tokenizer::space::match_usp,
                 _ => return_none
             };
             Ok(Self {
@@ -184,7 +241,11 @@ mod tests {
     #[rstest]
     fn match_space(
         #[values(
-            "\u{200C}", "\u{200D}", "\u{FEFF}", "\t", "\u{000B}", "\u{000C}"
+            "\u{200C}", "\u{200D}", "\u{FEFF}", "\t", "\u{000B}", "\u{000C}",
+            "\u{0020}", "\u{00A0}", "\u{1680}", "\u{2000}", "\u{2001}",
+            "\u{2002}", "\u{2003}", "\u{2004}", "\u{2005}", "\u{2006}",
+            "\u{2007}", "\u{2008}", "\u{2009}", "\u{200A}", "\u{202F}",
+            "\u{205F}", "\u{3000}"
         )]
         case: TerminalCase,
         #[values("foo", " ")]
@@ -196,11 +257,14 @@ mod tests {
         // Empty strings do not match
         assert_eq!((case.parser)(""), None);
 
-        // Non-matching strings do not match
-        assert_eq!((case.parser)(sep), None);
+        // Skip false match when the function recognizes a separator.
+        if (case.parser)(sep) != Some(((), "")) {
+            // Non-matching strings do not match
+            assert_eq!((case.parser)(sep), None);
 
-        // Catch arbitrary (regex-like) match of a necessary symbol
-        assert_eq!((case.parser)(format!("{sep}{tok}").as_ref()), None);
+            // Catch arbitrary (regex-like) match of a necessary symbol
+            assert_eq!((case.parser)(format!("{sep}{tok}").as_ref()), None);
+        }
 
         // Test EOF match
         assert_eq!((case.parser)(tok), Some(((), "")));
