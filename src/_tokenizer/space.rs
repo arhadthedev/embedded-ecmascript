@@ -258,6 +258,21 @@ pub fn match_ls(text: &str) -> Option<((), &str)> {
     text.strip_prefix('\u{2028}').map(|tail| ((), tail))
 }
 
+/// Try to match start of a string against `<PS>` entry of Table 36:
+/// Line Terminator Code Points:
+///
+/// > | Code Point | Name                      | Abbreviation |
+/// > |------------|---------------------------|--------------|
+/// > | U+2029     | PARAGRAPH SEPARATOR       | <PS>         |
+///
+/// Returns a tuple of an object created from the matched part and an unparsed
+/// tail after the matched part.
+///
+/// Implements <https://262.ecma-international.org/14.0/#table-line-terminator-code-points>.
+pub fn match_ps(text: &str) -> Option<((), &str)> {
+    text.strip_prefix('\u{2029}').map(|tail| ((), tail))
+}
+
 #[cfg(test)]
 mod tests {
     use rstest::rstest;
@@ -297,6 +312,7 @@ mod tests {
                 "\u{000A}" => crate::_tokenizer::space::match_lf,
                 "\u{000D}" => crate::_tokenizer::space::match_cr,
                 "\u{2028}" => crate::_tokenizer::space::match_ls,
+                "\u{2029}" => crate::_tokenizer::space::match_ps,
                 _ => return_none
             };
             Ok(Self {
@@ -349,6 +365,7 @@ mod tests {
             "\u{2002}", "\u{2003}", "\u{2004}", "\u{2005}", "\u{2006}",
             "\u{2007}", "\u{2008}", "\u{2009}", "\u{200A}", "\u{202F}",
             "\u{205F}", "\u{3000}", "\u{000A}", "\u{000D}", "\u{2028}",
+            "\u{2029}"
         )]
         case: TerminalCase,
         #[values("foo", " ")]
