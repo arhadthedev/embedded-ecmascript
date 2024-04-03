@@ -293,7 +293,7 @@ pub fn match_line_terminator(text: &str) -> Option<((), &str)> {
 
 #[cfg(test)]
 mod tests {
-    use crate::tests::with_token;
+    use crate::tests::{return_none, with_token};
     use rstest::rstest;
     use std::str::FromStr;
 
@@ -308,10 +308,6 @@ mod tests {
     }
 
     struct CaseParameterError;
-
-    const fn return_none(_: &str) -> Option<((), &str)> {
-        Option::None
-    }
 
     impl FromStr for TerminalCase {
         type Err = CaseParameterError;

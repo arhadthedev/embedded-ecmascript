@@ -80,4 +80,8 @@ mod tests {
             Some(((), format!("{sep}{tok}").as_ref()))
         );
     }
+
+    pub const fn return_none(_: &str) -> Option<((), &str)> {
+        Option::None
+    }
 }
