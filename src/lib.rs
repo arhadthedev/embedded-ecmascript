@@ -43,3 +43,41 @@ pub fn dummy() {
     _tokenizer::space::match_whitespace("");
     _tokenizer::space::match_line_terminator("");
 }
+
+#[cfg(test)]
+mod tests {
+    pub fn with_token(tok: &str, sep: &str, parser: fn(&str) -> Option<((), &str)>) {
+        // Empty strings do not match
+        assert_eq!(parser(""), None);
+
+        // Skip false match when the function recognizes a separator.
+        if parser(sep) != Some(((), "")) {
+            // Non-matching strings do not match
+            assert_eq!(parser(sep), None);
+
+            // Catch arbitrary (regex-like) match of a necessary symbol
+            assert_eq!(parser(format!("{sep}{tok}").as_ref()), None);
+        }
+
+        // Test EOF match
+        assert_eq!(parser(tok), Some(((), "")));
+
+        // Test non-EOF match
+        assert_eq!(
+            parser(format!("{tok}{sep}").as_ref()),
+            Some(((), sep))
+        );
+
+        // Test repetitions
+        assert_eq!(
+            parser(format!("{tok}{tok}").as_ref()),
+            Some(((), tok))
+        );
+
+        // Test separated repetitions
+        assert_eq!(
+            parser(format!("{tok}{sep}{tok}").as_ref()),
+            Some(((), format!("{sep}{tok}").as_ref()))
+        );
+    }
+}
