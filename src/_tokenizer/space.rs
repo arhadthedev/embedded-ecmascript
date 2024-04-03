@@ -303,7 +303,7 @@ mod tests {
     /// The creation is performed in [`TerminalCase.from_str`] and invoked
     /// by the `#[values("\u{...}, ...)]` macro provided by rstest.
     struct TerminalCase {
-        token: String,
+        terminal: String,
         parser: fn(&str) -> Option<((), &str)>
     }
 
@@ -331,7 +331,7 @@ mod tests {
                 _ => return_none
             };
             Ok(Self {
-                token: text.to_string(),
+                terminal: text.to_string(),
                 parser: tested_parser
             })
         }
@@ -351,7 +351,7 @@ mod tests {
         #[values("foo", " ")]
         separator: &str
     ) {
-        with_term(case.parser, case.token.as_ref(), separator);
+        with_term(case.parser, case.terminal.as_ref(), separator);
     }
 
     #[rstest]
@@ -366,7 +366,7 @@ mod tests {
         #[values("foo", " ")]
         separator: &str
     ) {
-        let tok = case.token.as_ref();
+        let tok = case.terminal.as_ref();
         with_term(super::match_whitespace, tok, separator);
     }
 
@@ -379,7 +379,7 @@ mod tests {
         #[values("foo", " ")]
         separator: &str
     ) {
-        let tok = case.token.as_ref();
+        let tok = case.terminal.as_ref();
         with_term(super::match_line_terminator, tok, separator);
     }
 }
