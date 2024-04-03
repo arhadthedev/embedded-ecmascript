@@ -351,7 +351,7 @@ mod tests {
         #[values("foo", " ")]
         separator: &str
     ) {
-        with_token(case.token.as_ref(), separator, case.parser);
+        with_token(case.parser, case.token.as_ref(), separator);
     }
 
     #[rstest]
@@ -367,7 +367,7 @@ mod tests {
         separator: &str
     ) {
         let tok = case.token.as_ref();
-        with_token(tok, separator, super::match_whitespace);
+        with_token(super::match_whitespace, tok, separator);
     }
 
     #[rstest]
@@ -380,6 +380,6 @@ mod tests {
         separator: &str
     ) {
         let tok = case.token.as_ref();
-        with_token(tok, separator, super::match_line_terminator);
+        with_token(super::match_line_terminator, tok, separator);
     }
 }

@@ -46,37 +46,37 @@ pub fn dummy() {
 
 #[cfg(test)]
 mod tests {
-    pub fn with_token(tok: &str, sep: &str, parser: fn(&str) -> Option<((), &str)>) {
+    pub fn with_token(tested: fn(&str) -> Option<((), &str)>, tok: &str, sep: &str, ) {
         // Empty strings do not match
-        assert_eq!(parser(""), None);
+        assert_eq!(tested(""), None);
 
         // Skip false match when the function recognizes a separator.
-        if parser(sep) != Some(((), "")) {
+        if tested(sep) != Some(((), "")) {
             // Non-matching strings do not match
-            assert_eq!(parser(sep), None);
+            assert_eq!(tested(sep), None);
 
             // Catch arbitrary (regex-like) match of a necessary symbol
-            assert_eq!(parser(format!("{sep}{tok}").as_ref()), None);
+            assert_eq!(tested(format!("{sep}{tok}").as_ref()), None);
         }
 
         // Test EOF match
-        assert_eq!(parser(tok), Some(((), "")));
+        assert_eq!(tested(tok), Some(((), "")));
 
         // Test non-EOF match
         assert_eq!(
-            parser(format!("{tok}{sep}").as_ref()),
+            tested(format!("{tok}{sep}").as_ref()),
             Some(((), sep))
         );
 
         // Test repetitions
         assert_eq!(
-            parser(format!("{tok}{tok}").as_ref()),
+            tested(format!("{tok}{tok}").as_ref()),
             Some(((), tok))
         );
 
         // Test separated repetitions
         assert_eq!(
-            parser(format!("{tok}{sep}{tok}").as_ref()),
+            tested(format!("{tok}{sep}{tok}").as_ref()),
             Some(((), format!("{sep}{tok}").as_ref()))
         );
     }
