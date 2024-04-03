@@ -261,6 +261,30 @@ pub fn match_line_terminator(text: &str) -> Option<((), &str)> {
         .or_else(|| match_ps(text))
 }
 
+fn match_crlf(text: &str) -> Option<((), &str)> {
+    text.strip_prefix("\u{000D}\u{000A}").map(|tail| ((), tail))
+}
+
+/// Try to match start of a string against `LineTerminatorSequence` production:
+///
+/// ```plain
+/// LineTerminatorSequence ::
+///     <LF>
+///     <CR> [lookahead ≠ <LF>]
+///     <LS>
+///     <PS>
+//      <CR> <LF>
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-LineTerminatorSequence>.
+pub fn match_line_terminator_sequence(text: &str) -> Option<((), &str)> {
+    match_lf(text)
+        .or_else(|| match_crlf(text)) // Try greedy match_crlf before match_cr
+        .or_else(|| match_cr(text))
+        .or_else(|| match_ls(text))
+        .or_else(|| match_ps(text))
+}
+
 #[cfg(test)]
 mod tests {
     use crate::tests::{return_none, with_term};
@@ -349,5 +373,14 @@ mod tests {
     ) {
         let tok = case.terminal.as_ref();
         with_term(super::match_line_terminator, tok, separator);
+        with_term(super::match_line_terminator_sequence, tok, separator);
+    }
+
+    #[rstest]
+    fn match_line_terminator_sequence_crlf(
+        #[values("foo", " ")]
+        separator: &str
+    ) {
+        with_term(super::match_line_terminator_sequence, "\r\n", separator);
     }
 }
