@@ -38,8 +38,8 @@ impl Display for SourceCodeError {
 }
 
 pub fn dummy() {
-    _tokenizer::space::match_zwnj("");
-    _tokenizer::space::match_zwj("");
+    _tokenizer::names::match_zwnj("");
+    _tokenizer::names::match_zwj("");
     _tokenizer::space::match_whitespace("");
     _tokenizer::space::match_line_terminator("");
 }

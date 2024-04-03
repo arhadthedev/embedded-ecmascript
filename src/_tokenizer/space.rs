@@ -51,36 +51,6 @@
 //! > prior permission. Title to copyright in this work will at all times remain
 //! > with copyright holders.
 
-/// Try to match start of a string against `<ZWNJ>` entry of Table 34:
-/// Format-Control Code Point Usage:
-///
-/// > | Code Point | Name                      | Abbreviation |
-/// > |------------|---------------------------|--------------|
-/// > | U+200C     | ZERO WIDTH NON-JOINER     | <ZWNJ>       |
-///
-/// Returns a tuple of an object created from the matched part and an unparsed
-/// tail after the matched part.
-///
-/// Implements <https://262.ecma-international.org/14.0/#sec-unicode-format-control-characters>.
-pub fn match_zwnj(text: &str) -> Option<((), &str)> {
-    text.strip_prefix('\u{200C}').map(|tail| ((), tail))
-}
-
-/// Try to match start of a string against `<ZWJ>` entry of Table 34:
-/// Format-Control Code Point Usage:
-///
-/// > | Code Point | Name                      | Abbreviation |
-/// > |------------|---------------------------|--------------|
-/// > | U+200D     | ZERO WIDTH JOINER         | <ZWJ>        |
-///
-/// Returns a tuple of an object created from the matched part and an unparsed
-/// tail after the matched part.
-///
-/// Implements <https://262.ecma-international.org/14.0/#sec-unicode-format-control-characters>.
-pub fn match_zwj(text: &str) -> Option<((), &str)> {
-    text.strip_prefix('\u{200D}').map(|tail| ((), tail))
-}
-
 /// Try to match start of a string against `<ZWNBSP>` entry of Table 34:
 /// Format-Control Code Point Usage:
 ///
@@ -314,8 +284,6 @@ mod tests {
 
         fn from_str(text: &str) -> Result<Self, Self::Err> {
             let tested_parser = match text {
-                "\u{200C}" => super::match_zwnj,
-                "\u{200D}" => super::match_zwj,
                 "\u{FEFF}" => super::match_zwnbsp,
                 "\u{0009}" => super::match_tab,
                 "\u{000B}" => super::match_vt,
@@ -340,7 +308,7 @@ mod tests {
     #[rstest]
     fn match_space(
         #[values(
-            "\u{200C}", "\u{200D}", "\u{FEFF}", "\t", "\u{000B}", "\u{000C}",
+            "\u{FEFF}", "\t", "\u{000B}", "\u{000C}",
             "\u{0020}", "\u{00A0}", "\u{1680}", "\u{2000}", "\u{2001}",
             "\u{2002}", "\u{2003}", "\u{2004}", "\u{2005}", "\u{2006}",
             "\u{2007}", "\u{2008}", "\u{2009}", "\u{200A}", "\u{202F}",

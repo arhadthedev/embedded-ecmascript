@@ -6,4 +6,5 @@
 //! make this class public for a user; they would need to create their own
 //! parser to timely switch sets of lexical grammars.
 
+pub mod names;
 pub mod space;
