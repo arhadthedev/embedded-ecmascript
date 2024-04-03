@@ -293,7 +293,7 @@ pub fn match_line_terminator(text: &str) -> Option<((), &str)> {
 
 #[cfg(test)]
 mod tests {
-    use crate::tests::{return_none, with_token};
+    use crate::tests::{return_none, with_term};
     use rstest::rstest;
     use std::str::FromStr;
 
@@ -351,7 +351,7 @@ mod tests {
         #[values("foo", " ")]
         separator: &str
     ) {
-        with_token(case.parser, case.token.as_ref(), separator);
+        with_term(case.parser, case.token.as_ref(), separator);
     }
 
     #[rstest]
@@ -367,7 +367,7 @@ mod tests {
         separator: &str
     ) {
         let tok = case.token.as_ref();
-        with_token(super::match_whitespace, tok, separator);
+        with_term(super::match_whitespace, tok, separator);
     }
 
     #[rstest]
@@ -380,6 +380,6 @@ mod tests {
         separator: &str
     ) {
         let tok = case.token.as_ref();
-        with_token(super::match_line_terminator, tok, separator);
+        with_term(super::match_line_terminator, tok, separator);
     }
 }

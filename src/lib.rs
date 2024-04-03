@@ -46,7 +46,7 @@ pub fn dummy() {
 
 #[cfg(test)]
 mod tests {
-    pub fn with_token(tested: fn(&str) -> Option<((), &str)>, tok: &str, sep: &str, ) {
+    pub fn with_term(tested: fn(&str) -> Option<((), &str)>, tok: &str, sep: &str, ) {
         // Empty strings do not match
         assert_eq!(tested(""), None);
 
