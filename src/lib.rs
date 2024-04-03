@@ -43,3 +43,45 @@ pub fn dummy() {
     _tokenizer::space::match_whitespace("");
     _tokenizer::space::match_line_terminator("");
 }
+
+#[cfg(test)]
+mod tests {
+    pub fn with_term(tested: fn(&str) -> Option<((), &str)>, tok: &str, sep: &str, ) {
+        // Empty strings do not match
+        assert_eq!(tested(""), None);
+
+        // Skip false match when the function recognizes a separator.
+        if tested(sep) != Some(((), "")) {
+            // Non-matching strings do not match
+            assert_eq!(tested(sep), None);
+
+            // Catch arbitrary (regex-like) match of a necessary symbol
+            assert_eq!(tested(format!("{sep}{tok}").as_ref()), None);
+        }
+
+        // Test EOF match
+        assert_eq!(tested(tok), Some(((), "")));
+
+        // Test non-EOF match
+        assert_eq!(
+            tested(format!("{tok}{sep}").as_ref()),
+            Some(((), sep))
+        );
+
+        // Test repetitions
+        assert_eq!(
+            tested(format!("{tok}{tok}").as_ref()),
+            Some(((), tok))
+        );
+
+        // Test separated repetitions
+        assert_eq!(
+            tested(format!("{tok}{sep}{tok}").as_ref()),
+            Some(((), format!("{sep}{tok}").as_ref()))
+        );
+    }
+
+    pub const fn return_none(_: &str) -> Option<((), &str)> {
+        Option::None
+    }
+}

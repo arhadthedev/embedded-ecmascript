@@ -293,6 +293,7 @@ pub fn match_line_terminator(text: &str) -> Option<((), &str)> {
 
 #[cfg(test)]
 mod tests {
+    use crate::tests::{return_none, with_term};
     use rstest::rstest;
     use std::str::FromStr;
 
@@ -302,77 +303,38 @@ mod tests {
     /// The creation is performed in [`TerminalCase.from_str`] and invoked
     /// by the `#[values("\u{...}, ...)]` macro provided by rstest.
     struct TerminalCase {
-        token: String,
+        terminal: String,
         parser: fn(&str) -> Option<((), &str)>
     }
 
     struct CaseParameterError;
-
-    const fn return_none(_: &str) -> Option<((), &str)> {
-        Option::None
-    }
 
     impl FromStr for TerminalCase {
         type Err = CaseParameterError;
 
         fn from_str(text: &str) -> Result<Self, Self::Err> {
             let tested_parser = match text {
-                "\u{200C}" => crate::_tokenizer::space::match_zwnj,
-                "\u{200D}" => crate::_tokenizer::space::match_zwj,
-                "\u{FEFF}" => crate::_tokenizer::space::match_zwnbsp,
-                "\u{0009}" => crate::_tokenizer::space::match_tab,
-                "\u{000B}" => crate::_tokenizer::space::match_vt,
-                "\u{000C}" => crate::_tokenizer::space::match_ff,
+                "\u{200C}" => super::match_zwnj,
+                "\u{200D}" => super::match_zwj,
+                "\u{FEFF}" => super::match_zwnbsp,
+                "\u{0009}" => super::match_tab,
+                "\u{000B}" => super::match_vt,
+                "\u{000C}" => super::match_ff,
                 "\u{0020}" | "\u{00A0}" | "\u{1680}" | "\u{2000}" | "\u{2001}" |
                 "\u{2002}" | "\u{2003}" | "\u{2004}" | "\u{2005}" | "\u{2006}" |
                 "\u{2007}" | "\u{2008}" | "\u{2009}" | "\u{200A}" | "\u{202F}" |
-                "\u{205F}" | "\u{3000}" => crate::_tokenizer::space::match_usp,
-                "\u{000A}" => crate::_tokenizer::space::match_lf,
-                "\u{000D}" => crate::_tokenizer::space::match_cr,
-                "\u{2028}" => crate::_tokenizer::space::match_ls,
-                "\u{2029}" => crate::_tokenizer::space::match_ps,
+                "\u{205F}" | "\u{3000}" => super::match_usp,
+                "\u{000A}" => super::match_lf,
+                "\u{000D}" => super::match_cr,
+                "\u{2028}" => super::match_ls,
+                "\u{2029}" => super::match_ps,
                 _ => return_none
             };
             Ok(Self {
-                token: text.to_string(),
+                terminal: text.to_string(),
                 parser: tested_parser
             })
         }
-    }
-
-    fn test_token(tok: &str, sep: &str, parser: fn(&str) -> Option<((), &str)>) {
-        // Empty strings do not match
-        assert_eq!(parser(""), None);
-
-        // Skip false match when the function recognizes a separator.
-        if parser(sep) != Some(((), "")) {
-            // Non-matching strings do not match
-            assert_eq!(parser(sep), None);
-
-            // Catch arbitrary (regex-like) match of a necessary symbol
-            assert_eq!(parser(format!("{sep}{tok}").as_ref()), None);
-        }
-
-        // Test EOF match
-        assert_eq!(parser(tok), Some(((), "")));
-
-        // Test non-EOF match
-        assert_eq!(
-            parser(format!("{tok}{sep}").as_ref()),
-            Some(((), sep))
-        );
-
-        // Test repetitions
-        assert_eq!(
-            parser(format!("{tok}{tok}").as_ref()),
-            Some(((), tok))
-        );
-
-        // Test separated repetitions
-        assert_eq!(
-            parser(format!("{tok}{sep}{tok}").as_ref()),
-            Some(((), format!("{sep}{tok}").as_ref()))
-        );
     }
 
     #[rstest]
@@ -389,7 +351,7 @@ mod tests {
         #[values("foo", " ")]
         separator: &str
     ) {
-        test_token(case.token.as_ref(), separator, case.parser);
+        with_term(case.parser, case.terminal.as_ref(), separator);
     }
 
     #[rstest]
@@ -404,8 +366,8 @@ mod tests {
         #[values("foo", " ")]
         separator: &str
     ) {
-        let tok = case.token.as_ref();
-        test_token(tok, separator, crate::_tokenizer::space::match_whitespace);
+        let tok = case.terminal.as_ref();
+        with_term(super::match_whitespace, tok, separator);
     }
 
     #[rstest]
@@ -417,7 +379,7 @@ mod tests {
         #[values("foo", " ")]
         separator: &str
     ) {
-        let tok = case.token.as_ref();
-        test_token(tok, separator, crate::_tokenizer::space::match_line_terminator);
+        let tok = case.terminal.as_ref();
+        with_term(super::match_line_terminator, tok, separator);
     }
 }
