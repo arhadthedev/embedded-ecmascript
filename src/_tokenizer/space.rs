@@ -318,20 +318,20 @@ mod tests {
 
         fn from_str(text: &str) -> Result<Self, Self::Err> {
             let tested_parser = match text {
-                "\u{200C}" => crate::_tokenizer::space::match_zwnj,
-                "\u{200D}" => crate::_tokenizer::space::match_zwj,
-                "\u{FEFF}" => crate::_tokenizer::space::match_zwnbsp,
-                "\u{0009}" => crate::_tokenizer::space::match_tab,
-                "\u{000B}" => crate::_tokenizer::space::match_vt,
-                "\u{000C}" => crate::_tokenizer::space::match_ff,
+                "\u{200C}" => super::match_zwnj,
+                "\u{200D}" => super::match_zwj,
+                "\u{FEFF}" => super::match_zwnbsp,
+                "\u{0009}" => super::match_tab,
+                "\u{000B}" => super::match_vt,
+                "\u{000C}" => super::match_ff,
                 "\u{0020}" | "\u{00A0}" | "\u{1680}" | "\u{2000}" | "\u{2001}" |
                 "\u{2002}" | "\u{2003}" | "\u{2004}" | "\u{2005}" | "\u{2006}" |
                 "\u{2007}" | "\u{2008}" | "\u{2009}" | "\u{200A}" | "\u{202F}" |
-                "\u{205F}" | "\u{3000}" => crate::_tokenizer::space::match_usp,
-                "\u{000A}" => crate::_tokenizer::space::match_lf,
-                "\u{000D}" => crate::_tokenizer::space::match_cr,
-                "\u{2028}" => crate::_tokenizer::space::match_ls,
-                "\u{2029}" => crate::_tokenizer::space::match_ps,
+                "\u{205F}" | "\u{3000}" => super::match_usp,
+                "\u{000A}" => super::match_lf,
+                "\u{000D}" => super::match_cr,
+                "\u{2028}" => super::match_ls,
+                "\u{2029}" => super::match_ps,
                 _ => return_none
             };
             Ok(Self {
@@ -371,7 +371,7 @@ mod tests {
         separator: &str
     ) {
         let tok = case.token.as_ref();
-        with_token(tok, separator, crate::_tokenizer::space::match_whitespace);
+        with_token(tok, separator, super::match_whitespace);
     }
 
     #[rstest]
@@ -384,6 +384,6 @@ mod tests {
         separator: &str
     ) {
         let tok = case.token.as_ref();
-        with_token(tok, separator, crate::_tokenizer::space::match_line_terminator);
+        with_token(tok, separator, super::match_line_terminator);
     }
 }
