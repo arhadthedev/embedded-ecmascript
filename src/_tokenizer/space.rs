@@ -279,7 +279,7 @@ fn match_crlf(text: &str) -> Option<((), &str)> {
 /// Implements <https://262.ecma-international.org/14.0/#prod-LineTerminatorSequence>.
 pub fn match_line_terminator_sequence(text: &str) -> Option<((), &str)> {
     match_lf(text)
-        .or_else(|| match_crlf(text)) // Try a greedy match_crlf before match_cr
+        .or_else(|| match_crlf(text)) // Try greedy match_crlf before match_cr
         .or_else(|| match_cr(text))
         .or_else(|| match_ls(text))
         .or_else(|| match_ps(text))
