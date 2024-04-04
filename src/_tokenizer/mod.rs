@@ -7,4 +7,5 @@
 //! parser to timely switch sets of lexical grammars.
 
 pub mod names;
+pub mod punctuators;
 pub mod space;
