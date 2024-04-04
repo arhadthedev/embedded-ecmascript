@@ -51,6 +51,21 @@
 //! > prior permission. Title to copyright in this work will at all times remain
 //! > with copyright holders.
 
+/// Try to match start of a string against `DivPunctuator` production:
+///
+/// ```plain
+/// DivPunctuator ::
+///     `/`
+///     `/=`
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-DivPunctuator>.
+pub fn match_div_punctuator(text: &str) -> Option<((), &str)> {
+    let rest = text.strip_prefix("/=") 
+        .or_else(|| text.strip_prefix('/'));
+    rest.map(|tail| ((), tail))
+}
+
 /// Try to match start of a string against `RightBracePunctuator` production:
 ///
 /// ```plain
@@ -87,6 +102,7 @@ mod tests {
         fn from_str(text: &str) -> Result<Self, Self::Err> {
             let tested_parser = match text {
                 "}" => super::match_right_brace_punctuator,
+                "/" | "/=" => super::match_div_punctuator,
                 _ => return_none
             };
             Ok(Self {
@@ -99,7 +115,7 @@ mod tests {
     #[rstest]
     fn match_punctuator(
         #[values(
-            "}"
+            "}", "/", "/="
         )]
         case: TerminalCase,
         #[values("foo", " ")]
