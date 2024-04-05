@@ -49,7 +49,11 @@ pub fn dummy() {
 
 #[cfg(test)]
 mod tests {
-    pub fn with_term(tested: fn(&str) -> Option<((), &str)>, tok: &str, sep: &str, ) {
+    pub fn with_term(
+        tested: fn(&str) -> Option<((), &str)>,
+        input: &str,
+        sep: &str,
+    ) {
         // Empty strings do not match
         assert_eq!(tested(""), None);
 
@@ -59,28 +63,28 @@ mod tests {
             assert_eq!(tested(sep), None);
 
             // Catch arbitrary (regex-like) match of a necessary symbol
-            assert_eq!(tested(format!("{sep}{tok}").as_ref()), None);
+            assert_eq!(tested(format!("{sep}{input}").as_ref()), None);
         }
 
         // Test EOF match
-        assert_eq!(tested(tok), Some(((), "")));
+        assert_eq!(tested(input), Some(((), "")));
 
         // Test non-EOF match
         assert_eq!(
-            tested(format!("{tok}{sep}").as_ref()),
+            tested(format!("{input}{sep}").as_ref()),
             Some(((), sep))
         );
 
         // Test repetitions
         assert_eq!(
-            tested(format!("{tok}{tok}").as_ref()),
-            Some(((), tok))
+            tested(format!("{input}{input}").as_ref()),
+            Some(((), input))
         );
 
         // Test separated repetitions
         assert_eq!(
-            tested(format!("{tok}{sep}{tok}").as_ref()),
-            Some(((), format!("{sep}{tok}").as_ref()))
+            tested(format!("{input}{sep}{input}").as_ref()),
+            Some(((), format!("{sep}{input}").as_ref()))
         );
     }
 
