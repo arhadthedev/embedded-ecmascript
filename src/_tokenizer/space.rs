@@ -287,7 +287,7 @@ pub fn match_line_terminator_sequence(text: &str) -> Option<((), &str)> {
 
 #[cfg(test)]
 mod tests {
-    use crate::tests::{return_none, with_term};
+    use crate::_tokenizer::tests::{return_none, with_term};
     use rstest::rstest;
     use std::str::FromStr;
 
