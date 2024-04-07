@@ -333,7 +333,7 @@ mod tests {
                 super::match_whitespace(&case.input),
                 &case.expected_tail
             )
-        }
+        };
     }
 
     #[rstest]
