@@ -302,12 +302,12 @@ mod tests {
         )]
         tested: TerminalCase,
         #[values("foo", " ")]
-        separator: String
+        separator: &str
     ) {
         if separator == " " {
             return;
         }
-        for case in generate_cases(tested.terminal, separator) {
+        for case in generate_cases(&tested.terminal, separator) {
             assert_match_tail((tested.parser)(&case.input), &case.expected_tail);
         }
     }
@@ -322,12 +322,12 @@ mod tests {
         )]
         tested: TerminalCase,
         #[values("foo", " ")]
-        separator: String
+        separator: &str
     ) {
         if separator == " " {
             return;
         }
-        for case in generate_cases(tested.terminal, separator) {
+        for case in generate_cases(&tested.terminal, separator) {
             assert_match_tail((tested.parser)(&case.input), &case.expected_tail);
             assert_match_tail(
                 super::match_whitespace(&case.input),
@@ -343,12 +343,12 @@ mod tests {
         )]
         tested: TerminalCase,
         #[values("foo", " ")]
-        separator: String
+        separator: &str
     ) {
         // This test is a subset of match_space used to separately test
         // match_line_terminator and match_line_terminator_sequence. Thus,
         // tested.parser is touched in match_space but deliberately unused here.
-        for case in generate_cases(tested.terminal, separator) {
+        for case in generate_cases(&tested.terminal, separator) {
             assert_match_tail(
                 super::match_line_terminator(&case.input),
                 &case.expected_tail
@@ -363,9 +363,9 @@ mod tests {
     #[rstest]
     fn match_line_terminator_sequence_crlf(
         #[values("foo", " ")]
-        separator: String
+        separator: &str
     ) {
-        for case in generate_cases("\r\n".to_string(), separator) {
+        for case in generate_cases("\r\n", separator) {
             assert_match_tail(
                 super::match_line_terminator_sequence(&case.input),
                 &case.expected_tail

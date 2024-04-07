@@ -93,9 +93,9 @@ mod tests {
         )]
         tested: TerminalCase,
         #[values("foo", " ")]
-        separator: String
+        separator: &str
     ) {
-        for case in generate_cases(tested.terminal, separator) {
+        for case in generate_cases(&tested.terminal, separator) {
             assert_match_tail((tested.parser)(&case.input), &case.expected_tail);
         }
     }

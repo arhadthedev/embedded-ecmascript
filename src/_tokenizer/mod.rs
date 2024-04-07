@@ -20,27 +20,27 @@ mod tests {
         pub expected_tail: Option<String>,
     }
 
-    pub fn generate_cases(input: String, sep: String) -> Vec<TestCase> {
+    pub fn generate_cases(input: &str, sep: &str) -> Vec<TestCase> {
         vec![
             // Empty strings do not match
             TestCase{input: "".to_string(), expected_tail: None},
 
             // Non-matching strings do not match
-            TestCase{input: sep.clone(), expected_tail: None},
+            TestCase{input: sep.to_string(), expected_tail: None},
 
             // Match in start of the string only
             TestCase{input: format!("{sep}{input}"), expected_tail: None},
 
             // EOF match
-            TestCase{input: input.clone(), expected_tail: Some("".to_string())},
+            TestCase{input: input.to_string(), expected_tail: Some("".to_string())},
 
             // Non-EOF match
-            TestCase{input: format!("{input}{sep}"), expected_tail: Some(sep.clone())},
+            TestCase{input: format!("{input}{sep}"), expected_tail: Some(sep.to_string())},
 
             // Head-to-tail repetition
             TestCase{
                 input: format!("{input}{input}"),
-                expected_tail: Some(input.clone())
+                expected_tail: Some(input.to_string())
             },
 
             // Intervined repetition
