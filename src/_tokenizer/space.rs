@@ -332,7 +332,7 @@ mod tests {
             assert_match_tail(
                 super::match_whitespace(&case.input),
                 &case.expected_tail
-            )
+            );
         };
     }
 

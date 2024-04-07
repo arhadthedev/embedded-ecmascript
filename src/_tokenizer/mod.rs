@@ -58,7 +58,7 @@ mod tests {
         assert_eq!(
             checked.map(|result| result.1.to_string()),
             reference_tail.clone()
-        )
+        );
     }
 
     /// A test case for a parser, creatable from a literal the parser
