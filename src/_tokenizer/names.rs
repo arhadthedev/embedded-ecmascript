@@ -83,47 +83,18 @@ pub fn match_zwj(text: &str) -> Option<((), &str)> {
 
 #[cfg(test)]
 mod tests {
-    use crate::_tokenizer::tests::{return_none, with_term};
+    use crate::_tokenizer::tests::{TerminalCase, with_term};
     use rstest::rstest;
-    use std::str::FromStr;
-
-    /// A test case for a parser, creatable from a literal the parser
-    /// is documented to process.
-    ///
-    /// The creation is performed in [`TerminalCase.from_str`] and invoked
-    /// by the `#[values("\u{...}, ...)]` macro provided by rstest.
-    struct TerminalCase {
-        token: String,
-        parser: fn(&str) -> Option<((), &str)>
-    }
-
-    struct CaseParameterError;
-
-    impl FromStr for TerminalCase {
-        type Err = CaseParameterError;
-
-        fn from_str(text: &str) -> Result<Self, Self::Err> {
-            let tested_parser = match text {
-                "\u{200C}" => super::match_zwnj,
-                "\u{200D}" => super::match_zwj,
-                _ => return_none
-            };
-            Ok(Self {
-                token: text.to_string(),
-                parser: tested_parser
-            })
-        }
-    }
 
     #[rstest]
     fn match_space(
         #[values(
             "\u{200C}", "\u{200D}"
         )]
-        case: TerminalCase,
+        tested: TerminalCase,
         #[values("foo", " ")]
         separator: &str
     ) {
-        with_term(case.parser, case.token.as_ref(), separator);
+        with_term(tested.parser, tested.terminal.as_ref(), separator);
     }
 }

@@ -287,47 +287,8 @@ pub fn match_line_terminator_sequence(text: &str) -> Option<((), &str)> {
 
 #[cfg(test)]
 mod tests {
-    use crate::_tokenizer::tests::{return_none, with_term};
+    use crate::_tokenizer::tests::{TerminalCase, with_term};
     use rstest::rstest;
-    use std::str::FromStr;
-
-    /// A test case for a parser, creatable from a literal the parser
-    /// is documented to process.
-    ///
-    /// The creation is performed in [`TerminalCase.from_str`] and invoked
-    /// by the `#[values("\u{...}, ...)]` macro provided by rstest.
-    struct TerminalCase {
-        terminal: String,
-        parser: fn(&str) -> Option<((), &str)>
-    }
-
-    struct CaseParameterError;
-
-    impl FromStr for TerminalCase {
-        type Err = CaseParameterError;
-
-        fn from_str(text: &str) -> Result<Self, Self::Err> {
-            let tested_parser = match text {
-                "\u{FEFF}" => super::match_zwnbsp,
-                "\u{0009}" => super::match_tab,
-                "\u{000B}" => super::match_vt,
-                "\u{000C}" => super::match_ff,
-                "\u{0020}" | "\u{00A0}" | "\u{1680}" | "\u{2000}" | "\u{2001}" |
-                "\u{2002}" | "\u{2003}" | "\u{2004}" | "\u{2005}" | "\u{2006}" |
-                "\u{2007}" | "\u{2008}" | "\u{2009}" | "\u{200A}" | "\u{202F}" |
-                "\u{205F}" | "\u{3000}" => super::match_usp,
-                "\u{000A}" => super::match_lf,
-                "\u{000D}" => super::match_cr,
-                "\u{2028}" => super::match_ls,
-                "\u{2029}" => super::match_ps,
-                _ => return_none
-            };
-            Ok(Self {
-                terminal: text.to_string(),
-                parser: tested_parser
-            })
-        }
-    }
 
     #[rstest]
     fn match_space(
@@ -339,11 +300,11 @@ mod tests {
             "\u{205F}", "\u{3000}", "\u{000A}", "\u{000D}", "\u{2028}",
             "\u{2029}"
         )]
-        case: TerminalCase,
+        tested: TerminalCase,
         #[values("foo", " ")]
         separator: &str
     ) {
-        with_term(case.parser, case.terminal.as_ref(), separator);
+        with_term(tested.parser, tested.terminal.as_ref(), separator);
     }
 
     #[rstest]
@@ -354,11 +315,11 @@ mod tests {
             "\u{2007}", "\u{2008}", "\u{2009}", "\u{200A}", "\u{202F}",
             "\u{205F}", "\u{3000}"
         )]
-        case: TerminalCase,
+        tested: TerminalCase,
         #[values("foo", " ")]
         separator: &str
     ) {
-        let tok = case.terminal.as_ref();
+        let tok = tested.terminal.as_ref();
         with_term(super::match_whitespace, tok, separator);
     }
 
@@ -367,11 +328,11 @@ mod tests {
         #[values(
             "\u{000A}", "\u{000D}", "\u{2028}", "\u{2029}"
         )]
-        case: TerminalCase,
+        tested: TerminalCase,
         #[values("foo", " ")]
         separator: &str
     ) {
-        let tok = case.terminal.as_ref();
+        let tok = tested.terminal.as_ref();
         with_term(super::match_line_terminator, tok, separator);
         with_term(super::match_line_terminator_sequence, tok, separator);
     }
