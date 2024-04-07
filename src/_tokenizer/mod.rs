@@ -51,6 +51,8 @@ mod tests {
         ]
     }
 
+    pub type WrappedParser = Box<dyn Fn(&str) -> Option<String>>;
+
     /// A test case for a parser to check how it splits the input string into
     /// a literal (ignored) and a tail (checked).
     ///
@@ -60,13 +62,13 @@ mod tests {
         pub terminal: String,
 
         /// A wrapper that discards returned object leaving only a tail
-        pub parser: Box<dyn Fn(&str) -> Option<String>>
+        pub parser: WrappedParser
     }
 
     pub struct CaseParameterError;
 
     fn wrap<O, F: Fn(&str) -> Option<(O, &str)> + 'static>(callable: F)
-        -> Box<dyn Fn(&str) -> Option<String>>
+        -> Box<dyn WrappedParser>
     {
         Box::new(move |text| callable(text).map(|result| result.1.to_string()))
     }
