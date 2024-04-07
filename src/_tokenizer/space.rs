@@ -307,7 +307,7 @@ mod tests {
         if separator == " " {
             return;
         }
-        for case in generate_cases(tested.terminal, separator.clone()) {
+        for case in generate_cases(tested.terminal, separator) {
             assert_match_tail((tested.parser)(&case.input), &case.expected_tail);
         }
     }
@@ -327,7 +327,7 @@ mod tests {
         if separator == " " {
             return;
         }
-        for case in generate_cases(tested.terminal, separator.clone()) {
+        for case in generate_cases(tested.terminal, separator) {
             assert_match_tail((tested.parser)(&case.input), &case.expected_tail);
             assert_match_tail(
                 super::match_whitespace(&case.input),
