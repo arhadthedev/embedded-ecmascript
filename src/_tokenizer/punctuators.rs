@@ -51,6 +51,12 @@
 //! > prior permission. Title to copyright in this work will at all times remain
 //! > with copyright holders.
 
+#[derive(Debug, PartialEq, Eq)]
+pub enum DivPunctuator {
+    Div,
+    DivAssign
+}
+
 /// Try to match start of a string against `DivPunctuator` production:
 ///
 /// ```plain
@@ -60,10 +66,15 @@
 /// ```
 ///
 /// Implements <https://262.ecma-international.org/14.0/#prod-DivPunctuator>.
-pub fn match_div_punctuator(text: &str) -> Option<((), &str)> {
-    let rest = text.strip_prefix("/=") 
-        .or_else(|| text.strip_prefix('/'));
-    rest.map(|tail| ((), tail))
+pub fn match_div_punctuator(text: &str) -> Option<(DivPunctuator, &str)> {
+    text
+        .strip_prefix("/=").map(
+            |tail| (DivPunctuator::DivAssign, tail)
+        )
+        .or_else(|| text.strip_prefix('/').map(
+            |tail| (DivPunctuator::Div, tail)
+        ))
+            
 }
 
 /// Try to match start of a string against `RightBracePunctuator` production:
@@ -95,5 +106,17 @@ mod tests {
         for case in generate_cases(&tested.terminal, separator) {
             assert!((tested.parser)(&case.input) == case.expected_tail);
         }
+    }
+
+    #[rstest]
+    fn match_parsed() {
+        assert_eq!(
+            super::match_div_punctuator("/"),
+            Some((super::DivPunctuator::Div, ""))
+        );
+        assert_eq!(
+            super::match_div_punctuator("/="),
+            Some((super::DivPunctuator::DivAssign, ""))
+        );
     }
 }
