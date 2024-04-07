@@ -68,10 +68,12 @@ pub enum DivPunctuator {
 /// Implements <https://262.ecma-international.org/14.0/#prod-DivPunctuator>.
 pub fn match_div_punctuator(text: &str) -> Option<(DivPunctuator, &str)> {
     text
-        .strip_prefix("/=").map(|tail| (DivPunctuator::DivAssign, tail))
-        .or_else(
-            || text.strip_prefix('/').map(|tail| (DivPunctuator::Div, tail))
+        .strip_prefix("/=").map(
+            |tail| (DivPunctuator::DivAssign, tail)
         )
+        .or_else(|| text.strip_prefix('/').map(
+            |tail| (DivPunctuator::Div, tail)
+        ))
             
 }
 
