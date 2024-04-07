@@ -117,10 +117,10 @@ mod tests {
         #[values(
             "}", "/", "/="
         )]
-        case: TerminalCase,
+        tested: TerminalCase,
         #[values("foo", " ")]
         separator: &str
     ) {
-        with_term(case.parser, case.terminal.as_ref(), separator);
+        with_term(tested.parser, tested.terminal.as_ref(), separator);
     }
 }

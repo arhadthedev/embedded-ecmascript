@@ -339,11 +339,11 @@ mod tests {
             "\u{205F}", "\u{3000}", "\u{000A}", "\u{000D}", "\u{2028}",
             "\u{2029}"
         )]
-        case: TerminalCase,
+        tested: TerminalCase,
         #[values("foo", " ")]
         separator: &str
     ) {
-        with_term(case.parser, case.terminal.as_ref(), separator);
+        with_term(tested.parser, tested.terminal.as_ref(), separator);
     }
 
     #[rstest]
@@ -354,11 +354,11 @@ mod tests {
             "\u{2007}", "\u{2008}", "\u{2009}", "\u{200A}", "\u{202F}",
             "\u{205F}", "\u{3000}"
         )]
-        case: TerminalCase,
+        tested: TerminalCase,
         #[values("foo", " ")]
         separator: &str
     ) {
-        let tok = case.terminal.as_ref();
+        let tok = tested.terminal.as_ref();
         with_term(super::match_whitespace, tok, separator);
     }
 
@@ -367,11 +367,11 @@ mod tests {
         #[values(
             "\u{000A}", "\u{000D}", "\u{2028}", "\u{2029}"
         )]
-        case: TerminalCase,
+        tested: TerminalCase,
         #[values("foo", " ")]
         separator: &str
     ) {
-        let tok = case.terminal.as_ref();
+        let tok = tested.terminal.as_ref();
         with_term(super::match_line_terminator, tok, separator);
         with_term(super::match_line_terminator_sequence, tok, separator);
     }

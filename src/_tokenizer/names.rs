@@ -120,10 +120,10 @@ mod tests {
         #[values(
             "\u{200C}", "\u{200D}"
         )]
-        case: TerminalCase,
+        tested: TerminalCase,
         #[values("foo", " ")]
         separator: &str
     ) {
-        with_term(case.parser, case.token.as_ref(), separator);
+        with_term(tested.parser, tested.token.as_ref(), separator);
     }
 }
