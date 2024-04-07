@@ -80,7 +80,7 @@ pub fn match_right_brace_punctuator(text: &str) -> Option<((), &str)> {
 
 #[cfg(test)]
 mod tests {
-    use crate::_tokenizer::tests::{TerminalCase, with_term};
+    use crate::_tokenizer::tests::{assert_match_tail, generate_cases, TerminalCase};
     use rstest::rstest;
 
     #[rstest]
@@ -92,6 +92,8 @@ mod tests {
         #[values("foo", " ")]
         separator: &str
     ) {
-        with_term(tested.parser, tested.terminal.as_ref(), separator);
+        for case in generate_cases(&tested.terminal, separator) {
+            assert_match_tail((tested.parser)(&case.input), &case.expected_tail);
+        }
     }
 }

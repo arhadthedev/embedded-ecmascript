@@ -287,7 +287,7 @@ pub fn match_line_terminator_sequence(text: &str) -> Option<((), &str)> {
 
 #[cfg(test)]
 mod tests {
-    use crate::_tokenizer::tests::{TerminalCase, with_term};
+    use crate::_tokenizer::tests::{assert_match_tail, generate_cases, TerminalCase};
     use rstest::rstest;
 
     #[rstest]
@@ -304,7 +304,12 @@ mod tests {
         #[values("foo", " ")]
         separator: &str
     ) {
-        with_term(tested.parser, tested.terminal.as_ref(), separator);
+        if separator == " " {
+            return;
+        }
+        for case in generate_cases(&tested.terminal, separator) {
+            assert_match_tail((tested.parser)(&case.input), &case.expected_tail);
+        }
     }
 
     #[rstest]
@@ -319,8 +324,16 @@ mod tests {
         #[values("foo", " ")]
         separator: &str
     ) {
-        let tok = tested.terminal.as_ref();
-        with_term(super::match_whitespace, tok, separator);
+        if separator == " " {
+            return;
+        }
+        for case in generate_cases(&tested.terminal, separator) {
+            assert_match_tail((tested.parser)(&case.input), &case.expected_tail);
+            assert_match_tail(
+                super::match_whitespace(&case.input),
+                &case.expected_tail
+            );
+        };
     }
 
     #[rstest]
@@ -332,9 +345,19 @@ mod tests {
         #[values("foo", " ")]
         separator: &str
     ) {
-        let tok = tested.terminal.as_ref();
-        with_term(super::match_line_terminator, tok, separator);
-        with_term(super::match_line_terminator_sequence, tok, separator);
+        // This test is a subset of match_space used to separately test
+        // match_line_terminator and match_line_terminator_sequence. Thus,
+        // tested.parser is touched in match_space but deliberately unused here.
+        for case in generate_cases(&tested.terminal, separator) {
+            assert_match_tail(
+                super::match_line_terminator(&case.input),
+                &case.expected_tail
+            );
+            assert_match_tail(
+                super::match_line_terminator_sequence(&case.input),
+                &case.expected_tail
+            );
+        }
     }
 
     #[rstest]
@@ -342,6 +365,11 @@ mod tests {
         #[values("foo", " ")]
         separator: &str
     ) {
-        with_term(super::match_line_terminator_sequence, "\r\n", separator);
+        for case in generate_cases("\r\n", separator) {
+            assert_match_tail(
+                super::match_line_terminator_sequence(&case.input),
+                &case.expected_tail
+            );
+        }
     }
 }
