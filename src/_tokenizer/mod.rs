@@ -68,7 +68,7 @@ mod tests {
     pub struct CaseParameterError;
 
     fn wrap<O, F: Fn(&str) -> Option<(O, &str)> + 'static>(callable: F)
-        -> Box<dyn WrappedParser>
+        -> WrappedParser
     {
         Box::new(move |text| callable(text).map(|result| result.1.to_string()))
     }
