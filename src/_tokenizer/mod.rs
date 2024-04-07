@@ -23,7 +23,7 @@ mod tests {
     pub fn generate_cases(input: &str, sep: &str) -> Vec<TestCase> {
         vec![
             // Empty strings do not match
-            TestCase{input: "".to_string(), expected_tail: None},
+            TestCase{input: String::new(), expected_tail: None},
 
             // Non-matching strings do not match
             TestCase{input: sep.to_string(), expected_tail: None},
@@ -32,7 +32,7 @@ mod tests {
             TestCase{input: format!("{sep}{input}"), expected_tail: None},
 
             // EOF match
-            TestCase{input: input.to_string(), expected_tail: Some("".to_string())},
+            TestCase{input: input.to_string(), expected_tail: Some(String::new())},
 
             // Non-EOF match
             TestCase{input: format!("{input}{sep}"), expected_tail: Some(sep.to_string())},
