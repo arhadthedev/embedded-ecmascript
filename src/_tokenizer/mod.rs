@@ -73,6 +73,8 @@ mod tests {
         type Err = CaseParameterError;
 
         fn from_str(text: &str) -> Result<Self, Self::Err> {
+            // Keep the arms unmerged for proper sorting of disjoined patterns.
+            #[allow(clippy::match_same_arms)]
             let tested_parser = match text {
                 "\u{0009}" => super::space::match_tab,
                 "\u{000A}" => super::space::match_lf,
