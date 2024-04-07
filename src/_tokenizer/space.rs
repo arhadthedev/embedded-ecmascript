@@ -287,7 +287,7 @@ pub fn match_line_terminator_sequence(text: &str) -> Option<((), &str)> {
 
 #[cfg(test)]
 mod tests {
-    use crate::_tokenizer::tests::{assert_match_tail, generate_cases, TerminalCase};
+    use crate::_tokenizer::tests::{generate_cases, TerminalCase};
     use rstest::rstest;
 
     #[rstest]
@@ -308,7 +308,7 @@ mod tests {
             return;
         }
         for case in generate_cases(&tested.terminal, separator) {
-            assert_match_tail((tested.parser)(&case.input), &case.expected_tail);
+            assert!((tested.parser)(&case.input) == case.expected_tail);
         }
     }
 
@@ -328,10 +328,10 @@ mod tests {
             return;
         }
         for case in generate_cases(&tested.terminal, separator) {
-            assert_match_tail((tested.parser)(&case.input), &case.expected_tail);
-            assert_match_tail(
-                super::match_whitespace(&case.input),
-                &case.expected_tail
+            assert!((tested.parser)(&case.input) == case.expected_tail);
+            assert!(
+                super::match_whitespace(&case.input).map(|result| result.1) ==
+                case.expected_tail.as_deref()
             );
         };
     }
@@ -349,13 +349,13 @@ mod tests {
         // match_line_terminator and match_line_terminator_sequence. Thus,
         // tested.parser is touched in match_space but deliberately unused here.
         for case in generate_cases(&tested.terminal, separator) {
-            assert_match_tail(
-                super::match_line_terminator(&case.input),
-                &case.expected_tail
+            assert!(
+                super::match_line_terminator(&case.input).map(|result| result.1) ==
+                case.expected_tail.as_deref()
             );
-            assert_match_tail(
-                super::match_line_terminator_sequence(&case.input),
-                &case.expected_tail
+            assert!(
+                super::match_line_terminator_sequence(&case.input).map(|result| result.1) ==
+                case.expected_tail.as_deref()
             );
         }
     }
@@ -366,9 +366,9 @@ mod tests {
         separator: &str
     ) {
         for case in generate_cases("\r\n", separator) {
-            assert_match_tail(
-                super::match_line_terminator_sequence(&case.input),
-                &case.expected_tail
+            assert!(
+                super::match_line_terminator_sequence(&case.input).map(|result| result.1) ==
+                case.expected_tail.as_deref()
             );
         }
     }
