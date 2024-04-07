@@ -51,7 +51,7 @@
 //! > prior permission. Title to copyright in this work will at all times remain
 //! > with copyright holders.
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum DivPunctuator {
     Div,
     DivAssign
