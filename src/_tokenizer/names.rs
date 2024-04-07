@@ -93,7 +93,7 @@ mod tests {
     /// The creation is performed in [`TerminalCase.from_str`] and invoked
     /// by the `#[values("\u{...}, ...)]` macro provided by rstest.
     struct TerminalCase {
-        token: String,
+        terminal: String,
         parser: fn(&str) -> Option<((), &str)>
     }
 
@@ -109,7 +109,7 @@ mod tests {
                 _ => return_none
             };
             Ok(Self {
-                token: text.to_string(),
+                terminal: text.to_string(),
                 parser: tested_parser
             })
         }
@@ -124,6 +124,6 @@ mod tests {
         #[values("foo", " ")]
         separator: &str
     ) {
-        with_term(tested.parser, tested.token.as_ref(), separator);
+        with_term(tested.parser, tested.terminal.as_ref(), separator);
     }
 }
