@@ -53,8 +53,8 @@
 
 #[derive(Debug, PartialEq, Eq)]
 pub enum DivPunctuator {
-    Div,
-    DivAssign
+    DivisionAssignment,
+    Division,
 }
 
 /// Try to match start of a string against `DivPunctuator` production:
@@ -69,10 +69,10 @@ pub enum DivPunctuator {
 pub fn match_div_punctuator(text: &str) -> Option<(DivPunctuator, &str)> {
     text
         .strip_prefix("/=").map(
-            |tail| (DivPunctuator::DivAssign, tail)
+            |tail| (DivPunctuator::DivisionAssignment, tail)
         )
         .or_else(|| text.strip_prefix('/').map(
-            |tail| (DivPunctuator::Div, tail)
+            |tail| (DivPunctuator::Division, tail)
         ))
             
 }
@@ -112,11 +112,11 @@ mod tests {
     fn match_parsed() {
         assert_eq!(
             super::match_div_punctuator("/"),
-            Some((super::DivPunctuator::Div, ""))
+            Some((super::DivPunctuator::Division, ""))
         );
         assert_eq!(
             super::match_div_punctuator("/="),
-            Some((super::DivPunctuator::DivAssign, ""))
+            Some((super::DivPunctuator::DivisionAssignment, ""))
         );
     }
 }
