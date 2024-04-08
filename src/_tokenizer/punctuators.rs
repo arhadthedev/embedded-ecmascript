@@ -51,6 +51,241 @@
 //! > prior permission. Title to copyright in this work will at all times remain
 //! > with copyright holders.
 
+
+#[derive(Debug, PartialEq, Eq)]
+pub enum OtherPunctuator {
+    Addition,
+    AdditionAssignment,
+    And,
+    AndAssignment,
+    Assignment,
+    BitAnd,
+    BitAndAssignment,
+    BitNot,
+    BitOr,
+    BitOrAssignment,
+    BitXor,
+    BitXorAssignment,
+    ClosingBracket,
+    ClosingParenthesis,
+    Colon,
+    Comma,
+    Decrement,
+    Dot,
+    Ellipsis,
+    Exponentiation,
+    ExponentiationAssignment,
+    FunctionArrow,
+    Increment,
+    LeftShift,
+    LeftShiftAssignment,
+    Less,
+    LessOrEqual,
+    LooseEquality,
+    LooseInequality,
+    Modulo,
+    ModuloAssignment,
+    More,
+    MoreOrEqual,
+    Multiplication,
+    MultiplicationAssignment,
+    Not,
+    NullishCoalescence,
+    NullishCoalescenceAssignment,
+    OpeningBrace,
+    OpeningBracket,
+    OpeningParenthesis,
+    Or,
+    OrAssignment,
+    QuestionMark,
+    RightShift,
+    RightShiftAssignment,
+    Semicolon,
+    StrictEquality,
+    StrictInequality,
+    Subtraction,
+    SubtractionAssignment,
+    UnsignedRightShift,
+    UnsignedRightShiftAssignment,
+}
+
+/// Try to match start of a string against `OtherPunctuator` production:
+///
+/// ```plain
+/// OtherPunctuator ::
+///     `{` `(` `)` `[` `]` `.` `...` `;` `,` `<` `>` `<=` `>=` `==` `!=` `===`
+///     `!==` `+` `-` `*` `%` `**` `++` `--` `<<` `>>` `>>>` `&` `|` `^` `!` `~`
+///     `&&` `||` `??` `?` `:` `=` `+=` `-=` `*=` `%=` `**=` `<<=` `>>=` `>>>=`
+///     `&=` `|=` `^=` `&&=` `||=` `??=` `=>`
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-OtherPunctuator>.
+pub fn match_other_punctuator(text: &str) -> Option<(OtherPunctuator, &str)> {
+    // Note: if  one punctuator is the same as a start of other punctuator
+    // (like += and +), check the longer one first to not prematurely bail out
+    // on the shorter one leaving an undermatched tail.
+    text
+        .strip_prefix('{').map(
+            |tail| (OtherPunctuator::OpeningBrace, tail)
+        )
+        .or_else(|| text.strip_prefix('(').map(
+            |tail| (OtherPunctuator::OpeningParenthesis, tail)
+        ))
+        .or_else(|| text.strip_prefix(')').map(
+            |tail| (OtherPunctuator::ClosingParenthesis, tail)
+        ))
+        .or_else(|| text.strip_prefix('[').map(
+            |tail| (OtherPunctuator::OpeningBracket, tail)
+        ))
+        .or_else(|| text.strip_prefix(']').map(
+            |tail| (OtherPunctuator::ClosingBracket, tail)
+        ))
+        .or_else(|| text.strip_prefix("...").map(
+            |tail| (OtherPunctuator::Ellipsis, tail)
+        ))
+        .or_else(|| text.strip_prefix('.').map(
+            |tail| (OtherPunctuator::Dot, tail)
+        ))
+        .or_else(|| text.strip_prefix(';').map(
+            |tail| (OtherPunctuator::Semicolon, tail)
+        ))
+        .or_else(|| text.strip_prefix(',').map(
+            |tail| (OtherPunctuator::Comma, tail)
+        ))
+        .or_else(|| text.strip_prefix("<=").map(
+            |tail| (OtherPunctuator::LessOrEqual, tail)
+        ))
+        .or_else(|| text.strip_prefix('<').map(
+            |tail| (OtherPunctuator::Less, tail)
+        ))
+        .or_else(|| text.strip_prefix(">=").map(
+            |tail| (OtherPunctuator::MoreOrEqual, tail)
+        ))
+        .or_else(|| text.strip_prefix('>').map(
+            |tail| (OtherPunctuator::More, tail)
+        ))
+        .or_else(|| text.strip_prefix("===").map(
+            |tail| (OtherPunctuator::StrictEquality, tail)
+        ))
+        .or_else(|| text.strip_prefix("==").map(
+            |tail| (OtherPunctuator::LooseEquality, tail)
+        ))
+        .or_else(|| text.strip_prefix("!==").map(
+            |tail| (OtherPunctuator::StrictInequality, tail)
+        ))
+        .or_else(|| text.strip_prefix("!=").map(
+            |tail| (OtherPunctuator::LooseInequality, tail)
+        ))
+        .or_else(|| text.strip_prefix("++").map(
+            |tail| (OtherPunctuator::Increment, tail)
+        ))
+        .or_else(|| text.strip_prefix("+=").map(
+            |tail| (OtherPunctuator::AdditionAssignment, tail)
+        ))
+        .or_else(|| text.strip_prefix('+').map(
+            |tail| (OtherPunctuator::Addition, tail)
+        ))
+        .or_else(|| text.strip_prefix("--").map(
+            |tail| (OtherPunctuator::Decrement, tail)
+        ))
+        .or_else(|| text.strip_prefix("-=").map(
+            |tail| (OtherPunctuator::SubtractionAssignment, tail)
+        ))
+        .or_else(|| text.strip_prefix('-').map(
+            |tail| (OtherPunctuator::Subtraction, tail)
+        ))
+        .or_else(|| text.strip_prefix("%=").map(
+            |tail| (OtherPunctuator::ModuloAssignment, tail)
+        ))
+        .or_else(|| text.strip_prefix('%').map(
+            |tail| (OtherPunctuator::Modulo, tail)
+        ))
+        .or_else(|| text.strip_prefix("**=").map(
+            |tail| (OtherPunctuator::ExponentiationAssignment, tail)
+        ))
+        .or_else(|| text.strip_prefix("**").map(
+            |tail| (OtherPunctuator::Exponentiation, tail)
+        ))
+        .or_else(|| text.strip_prefix("*=").map(
+            |tail| (OtherPunctuator::MultiplicationAssignment, tail)
+        ))
+        .or_else(|| text.strip_prefix('*').map(
+            |tail| (OtherPunctuator::Multiplication, tail)
+        ))
+        .or_else(|| text.strip_prefix(">>>=").map(
+            |tail| (OtherPunctuator::UnsignedRightShiftAssignment, tail)
+        ))
+        .or_else(|| text.strip_prefix(">>>").map(
+            |tail| (OtherPunctuator::UnsignedRightShift, tail)
+        ))
+        .or_else(|| text.strip_prefix(">>=").map(
+            |tail| (OtherPunctuator::RightShiftAssignment, tail)
+        ))
+        .or_else(|| text.strip_prefix(">>").map(
+            |tail| (OtherPunctuator::RightShift, tail)
+        ))
+        .or_else(|| text.strip_prefix("<<=").map(
+            |tail| (OtherPunctuator::LeftShiftAssignment, tail)
+        ))
+        .or_else(|| text.strip_prefix("<<").map(
+            |tail| (OtherPunctuator::LeftShift, tail)
+        ))
+        .or_else(|| text.strip_prefix("&&=").map(
+            |tail| (OtherPunctuator::AndAssignment, tail)
+        ))
+        .or_else(|| text.strip_prefix("&&").map(
+            |tail| (OtherPunctuator::And, tail)
+        ))
+        .or_else(|| text.strip_prefix("&=").map(
+            |tail| (OtherPunctuator::BitAndAssignment, tail)
+        ))
+        .or_else(|| text.strip_prefix('&').map(
+            |tail| (OtherPunctuator::BitAnd, tail)
+        ))
+        .or_else(|| text.strip_prefix("||=").map(
+            |tail| (OtherPunctuator::OrAssignment, tail)
+        ))
+        .or_else(|| text.strip_prefix("||").map(
+            |tail| (OtherPunctuator::Or, tail)
+        ))
+        .or_else(|| text.strip_prefix("|=").map(
+            |tail| (OtherPunctuator::BitOrAssignment, tail)
+        ))
+        .or_else(|| text.strip_prefix('|').map(
+            |tail| (OtherPunctuator::BitOr, tail)
+        ))
+        .or_else(|| text.strip_prefix("^=").map(
+            |tail| (OtherPunctuator::BitXorAssignment, tail)
+        ))
+        .or_else(|| text.strip_prefix('^').map(
+            |tail| (OtherPunctuator::BitXor, tail)
+        ))
+        .or_else(|| text.strip_prefix('!').map(
+            |tail| (OtherPunctuator::Not, tail)
+        ))
+        .or_else(|| text.strip_prefix('~').map(
+            |tail| (OtherPunctuator::BitNot, tail)
+        ))
+        .or_else(|| text.strip_prefix("??=").map(
+            |tail| (OtherPunctuator::NullishCoalescenceAssignment, tail)
+        ))
+        .or_else(|| text.strip_prefix("??").map(
+            |tail| (OtherPunctuator::NullishCoalescence, tail)
+        ))
+        .or_else(|| text.strip_prefix('?').map(
+            |tail| (OtherPunctuator::QuestionMark, tail)
+        ))
+        .or_else(|| text.strip_prefix(':').map(
+            |tail| (OtherPunctuator::Colon, tail)
+        ))
+        .or_else(|| text.strip_prefix("=>").map(
+            |tail| (OtherPunctuator::FunctionArrow, tail)
+        ))
+        .or_else(|| text.strip_prefix('=').map(
+            |tail| (OtherPunctuator::Assignment, tail)
+        ))
+}
+
 #[derive(Debug, PartialEq, Eq)]
 pub enum DivPunctuator {
     DivisionAssignment,
@@ -97,19 +332,25 @@ mod tests {
     #[rstest]
     fn match_punctuator(
         #[values(
-            "}", "/", "/="
+            "}", "/", "/=",
+
+            "{", "(", ")", "[", "]", ".", "...", ";", ",", "<", ">", "<=", ">=",
+            "==", "!=", "===", "!==", "+", "-", "*", "%", "**", "++", "--",
+            "<<", ">>", ">>>", "&", "|", "^", "!", "~", "&&", "||", "??", "?",
+            ":", "=", "+=", "-=", "*=", "%=", "**=", "<<=", ">>=", ">>>=", "&=",
+            "|=", "^=", "&&=", "||=", "??=", "=>",
         )]
         tested: TerminalCase,
         #[values("foo", " ")]
         separator: &str
     ) {
         for case in generate_cases(&tested.terminal, separator) {
-            assert!((tested.parser)(&case.input) == case.expected_tail);
+            assert_eq!((tested.parser)(&case.input), case.expected_tail);
         }
     }
 
     #[rstest]
-    fn match_parsed() {
+    fn match_parsed_div() {
         assert_eq!(
             super::match_div_punctuator("/"),
             Some((super::DivPunctuator::Division, ""))
@@ -117,6 +358,222 @@ mod tests {
         assert_eq!(
             super::match_div_punctuator("/="),
             Some((super::DivPunctuator::DivisionAssignment, ""))
+        );
+    }
+
+    #[rstest]
+    fn match_parsed_other() {
+        assert_eq!(
+            super::match_other_punctuator("+"),
+            Some((super::OtherPunctuator::Addition, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("+="),
+            Some((super::OtherPunctuator::AdditionAssignment, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("&&"),
+            Some((super::OtherPunctuator::And, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("&&="),
+            Some((super::OtherPunctuator::AndAssignment, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("="),
+            Some((super::OtherPunctuator::Assignment, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("&"),
+            Some((super::OtherPunctuator::BitAnd, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("&="),
+            Some((super::OtherPunctuator::BitAndAssignment, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("~"),
+            Some((super::OtherPunctuator::BitNot, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("|"),
+            Some((super::OtherPunctuator::BitOr, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("|="),
+            Some((super::OtherPunctuator::BitOrAssignment, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("^"),
+            Some((super::OtherPunctuator::BitXor, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("^="),
+            Some((super::OtherPunctuator::BitXorAssignment, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("]"),
+            Some((super::OtherPunctuator::ClosingBracket, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator(")"),
+            Some((super::OtherPunctuator::ClosingParenthesis, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator(":"),
+            Some((super::OtherPunctuator::Colon, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator(","),
+            Some((super::OtherPunctuator::Comma, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("--"),
+            Some((super::OtherPunctuator::Decrement, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("."),
+            Some((super::OtherPunctuator::Dot, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("..."),
+            Some((super::OtherPunctuator::Ellipsis, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("**"),
+            Some((super::OtherPunctuator::Exponentiation, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("**="),
+            Some((super::OtherPunctuator::ExponentiationAssignment, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("->"),
+            Some((super::OtherPunctuator::FunctionArrow, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("++"),
+            Some((super::OtherPunctuator::Increment, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("<<"),
+            Some((super::OtherPunctuator::LeftShift, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("<<="),
+            Some((super::OtherPunctuator::LeftShiftAssignment, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("<"),
+            Some((super::OtherPunctuator::Less, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("<="),
+            Some((super::OtherPunctuator::LessOrEqual, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("=="),
+            Some((super::OtherPunctuator::LooseEquality, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("!="),
+            Some((super::OtherPunctuator::LooseInequality, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("%"),
+            Some((super::OtherPunctuator::Modulo, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("%="),
+            Some((super::OtherPunctuator::ModuloAssignment, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator(">"),
+            Some((super::OtherPunctuator::More, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator(">="),
+            Some((super::OtherPunctuator::MoreOrEqual, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("*"),
+            Some((super::OtherPunctuator::Multiplication, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("*="),
+            Some((super::OtherPunctuator::MultiplicationAssignment, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("!"),
+            Some((super::OtherPunctuator::Not, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("??"),
+            Some((super::OtherPunctuator::NullishCoalescence, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("??="),
+            Some((super::OtherPunctuator::NullishCoalescenceAssignment, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("{"),
+            Some((super::OtherPunctuator::OpeningBrace, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("["),
+            Some((super::OtherPunctuator::OpeningBracket, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("("),
+            Some((super::OtherPunctuator::OpeningParenthesis, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("|"),
+            Some((super::OtherPunctuator::Or, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("|="),
+            Some((super::OtherPunctuator::OrAssignment, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("?"),
+            Some((super::OtherPunctuator::QuestionMark, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator(">>"),
+            Some((super::OtherPunctuator::RightShift, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator(">>="),
+            Some((super::OtherPunctuator::RightShiftAssignment, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator(";"),
+            Some((super::OtherPunctuator::Semicolon, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("==="),
+            Some((super::OtherPunctuator::StrictEquality, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("!=="),
+            Some((super::OtherPunctuator::StrictInequality, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("-"),
+            Some((super::OtherPunctuator::Subtraction, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator("-="),
+            Some((super::OtherPunctuator::SubtractionAssignment, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator(">>>"),
+            Some((super::OtherPunctuator::UnsignedRightShift, ""))
+        );
+        assert_eq!(
+            super::match_other_punctuator(">>>="),
+            Some((super::OtherPunctuator::UnsignedRightShiftAssignment, ""))
         );
     }
 }
