@@ -329,6 +329,10 @@ mod tests {
     use crate::_tokenizer::tests::{generate_cases, TerminalCase};
     use rstest::rstest;
 
+    fn is_double(term: &str) -> bool {
+        ["++", "--", "??", "**", ">>", "<<", "||", "&&", "=="].contains(&term)
+    }
+
     #[rstest]
     fn match_punctuator(
         #[values(
@@ -344,7 +348,14 @@ mod tests {
         #[values("foo", " ")]
         separator: &str
     ) {
-        for case in generate_cases(&tested.terminal, separator) {
+        let all = generate_cases(&tested.terminal, separator);
+        // Remove cases with token repetitions ("{token}{token}"). The lexer
+        // should consume the first token and leave the second one for later.
+        // However, repetition of a token like "+" or "*" give another, totally
+        // valid token "++" or "**" that breaks debug assertion on the second
+        // character repetition left behind.
+        let safe_cases = all.iter().filter(|case| !is_double(&case.input));
+        for case in safe_cases {
             assert_eq!((tested.parser)(&case.input), case.expected_tail);
         }
     }
