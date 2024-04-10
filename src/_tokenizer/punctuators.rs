@@ -152,29 +152,26 @@ pub fn match_other_punctuator(text: &str) -> Option<(OtherPunctuator, &str)> {
         .or_else(|| text.strip_prefix(',').map(
             |tail| (OtherPunctuator::Comma, tail)
         ))
-        .or_else(|| text.strip_prefix("<=").map(
-            |tail| (OtherPunctuator::LessOrEqual, tail)
-        ))
-        .or_else(|| text.strip_prefix('<').map(
-            |tail| (OtherPunctuator::Less, tail)
-        ))
-        .or_else(|| text.strip_prefix(">=").map(
-            |tail| (OtherPunctuator::MoreOrEqual, tail)
-        ))
-        .or_else(|| text.strip_prefix('>').map(
-            |tail| (OtherPunctuator::More, tail)
-        ))
         .or_else(|| text.strip_prefix("===").map(
             |tail| (OtherPunctuator::StrictEquality, tail)
         ))
+        .or_else(|| text.strip_prefix("=>").map(
+            |tail| (OtherPunctuator::FunctionArrow, tail)
+        ))
         .or_else(|| text.strip_prefix("==").map(
             |tail| (OtherPunctuator::LooseEquality, tail)
+        ))
+        .or_else(|| text.strip_prefix('=').map(
+            |tail| (OtherPunctuator::Assignment, tail)
         ))
         .or_else(|| text.strip_prefix("!==").map(
             |tail| (OtherPunctuator::StrictInequality, tail)
         ))
         .or_else(|| text.strip_prefix("!=").map(
             |tail| (OtherPunctuator::LooseInequality, tail)
+        ))
+        .or_else(|| text.strip_prefix('!').map(
+            |tail| (OtherPunctuator::Not, tail)
         ))
         .or_else(|| text.strip_prefix("++").map(
             |tail| (OtherPunctuator::Increment, tail)
@@ -224,11 +221,23 @@ pub fn match_other_punctuator(text: &str) -> Option<(OtherPunctuator, &str)> {
         .or_else(|| text.strip_prefix(">>").map(
             |tail| (OtherPunctuator::RightShift, tail)
         ))
+        .or_else(|| text.strip_prefix(">=").map(
+            |tail| (OtherPunctuator::MoreOrEqual, tail)
+        ))
+        .or_else(|| text.strip_prefix('>').map(
+            |tail| (OtherPunctuator::More, tail)
+        ))
         .or_else(|| text.strip_prefix("<<=").map(
             |tail| (OtherPunctuator::LeftShiftAssignment, tail)
         ))
         .or_else(|| text.strip_prefix("<<").map(
             |tail| (OtherPunctuator::LeftShift, tail)
+        ))
+        .or_else(|| text.strip_prefix("<=").map(
+            |tail| (OtherPunctuator::LessOrEqual, tail)
+        ))
+        .or_else(|| text.strip_prefix('<').map(
+            |tail| (OtherPunctuator::Less, tail)
         ))
         .or_else(|| text.strip_prefix("&&=").map(
             |tail| (OtherPunctuator::AndAssignment, tail)
@@ -260,9 +269,6 @@ pub fn match_other_punctuator(text: &str) -> Option<(OtherPunctuator, &str)> {
         .or_else(|| text.strip_prefix('^').map(
             |tail| (OtherPunctuator::BitXor, tail)
         ))
-        .or_else(|| text.strip_prefix('!').map(
-            |tail| (OtherPunctuator::Not, tail)
-        ))
         .or_else(|| text.strip_prefix('~').map(
             |tail| (OtherPunctuator::BitNot, tail)
         ))
@@ -277,12 +283,6 @@ pub fn match_other_punctuator(text: &str) -> Option<(OtherPunctuator, &str)> {
         ))
         .or_else(|| text.strip_prefix(':').map(
             |tail| (OtherPunctuator::Colon, tail)
-        ))
-        .or_else(|| text.strip_prefix("=>").map(
-            |tail| (OtherPunctuator::FunctionArrow, tail)
-        ))
-        .or_else(|| text.strip_prefix('=').map(
-            |tail| (OtherPunctuator::Assignment, tail)
         ))
 }
 
@@ -329,8 +329,20 @@ mod tests {
     use crate::_tokenizer::tests::{generate_cases, TerminalCase};
     use rstest::rstest;
 
+    /// Remove cases with token repetitions ("{token}{token}") that give
+    /// unexpected results.
     fn is_double(term: &str) -> bool {
-        ["++", "--", "??", "**", ">>", "<<", "||", "&&", "=="].contains(&term)
+        // Operators that have both single- and double-symbol versions can
+        // either:
+        [
+            // consume short operator repetition as a single long version
+            // thus giving, for example, `Some((Increment, "")` instead of
+            // lazy `Some(Plus, "+")` expected by tests
+            "++", "--", "??", "**", "<<", "||", "&&",
+            // or lead to an ambiguous operator syntax error giving, for
+            // example, `None` for ">>>>" instead of `Some((RightShift, ">>"))`.
+            ">>", ">>>>", "==", "====", "======"
+        ].contains(&term)
     }
 
     #[rstest]
@@ -349,11 +361,6 @@ mod tests {
         separator: &str
     ) {
         let all = generate_cases(&tested.terminal, separator);
-        // Remove cases with token repetitions ("{token}{token}"). The lexer
-        // should consume the first token and leave the second one for later.
-        // However, repetition of a token like "+" or "*" give another, totally
-        // valid token "++" or "**" that breaks debug assertion on the second
-        // character repetition left behind.
         let safe_cases = all.iter().filter(|case| !is_double(&case.input));
         for case in safe_cases {
             assert_eq!((tested.parser)(&case.input), case.expected_tail);
@@ -459,7 +466,7 @@ mod tests {
             Some((super::OtherPunctuator::ExponentiationAssignment, ""))
         );
         assert_eq!(
-            super::match_other_punctuator("->"),
+            super::match_other_punctuator("=>"),
             Some((super::OtherPunctuator::FunctionArrow, ""))
         );
         assert_eq!(
@@ -539,11 +546,11 @@ mod tests {
             Some((super::OtherPunctuator::OpeningParenthesis, ""))
         );
         assert_eq!(
-            super::match_other_punctuator("|"),
+            super::match_other_punctuator("||"),
             Some((super::OtherPunctuator::Or, ""))
         );
         assert_eq!(
-            super::match_other_punctuator("|="),
+            super::match_other_punctuator("||="),
             Some((super::OtherPunctuator::OrAssignment, ""))
         );
         assert_eq!(
