@@ -87,6 +87,13 @@ mod tests {
                 "\u{000D}" => wrap(super::space::match_cr),
                 "\u{0020}" => wrap(super::space::match_usp),
                 "/" | "/=" => wrap(super::punctuators::match_div_punctuator),
+                "{" | "(" | ")" | "[" | "]" | "." | "..." | ";" | "," | "<" |
+                ">" | "<=" | ">=" | "==" | "!=" | "===" | "!==" | "+" | "-" |
+                "*" | "%" | "**" | "++" | "--" | "<<" | ">>" | ">>>" | "&" |
+                "|" | "^" | "!" | "~" | "&&" | "||" | "??" | "?" | ":" | "=" |
+                "+=" | "-=" | "*=" | "%=" | "**=" | "<<=" | ">>=" | ">>>=" |
+                "&=" | "|=" | "^=" | "&&=" | "||=" | "??=" |
+                "=>" => wrap(super::punctuators::match_other_punctuator),
                 "}" => wrap(super::punctuators::match_right_brace_punctuator),
                 "\u{00A0}" => wrap(super::space::match_usp),
                 "\u{1680}" => wrap(super::space::match_usp),
