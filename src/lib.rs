@@ -49,7 +49,7 @@ pub fn dummy() {
             _
         )
     ) = _tokenizer::punctuators::match_punctuator("") {
-        ()
+        print!("");
     }
     _tokenizer::punctuators::match_div_punctuator("");
     _tokenizer::punctuators::match_right_brace_punctuator("");
