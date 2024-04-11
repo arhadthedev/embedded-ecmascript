@@ -43,8 +43,10 @@ pub fn dummy() {
     _tokenizer::space::match_whitespace("");
     _tokenizer::space::match_line_terminator("");
     _tokenizer::space::match_line_terminator_sequence("");
-    _tokenizer::punctuators::match_optional_chaining_punctuator("");
-    _tokenizer::punctuators::match_other_punctuator("");
+    match _tokenizer::punctuators::match_punctuator("") {
+        Some((_tokenizer::punctuators::Punctuator::Other(_tokenizer::punctuators::OtherPunctuator::And), _)) => (),
+        _ => ()
+    }
     _tokenizer::punctuators::match_div_punctuator("");
     _tokenizer::punctuators::match_right_brace_punctuator("");
 }

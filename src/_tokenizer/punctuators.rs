@@ -53,6 +53,29 @@
 
 use super::numeric::match_decimal_digit;
 
+pub enum Punctuator {
+    OptionalChaining,
+    Other(OtherPunctuator)
+}
+
+/// Try to match start of a string against `Punctuator` production:
+///
+/// ```plain
+/// Punctuator ::
+///     OptionalChainingPunctuator
+///     OtherPunctuator
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-Punctuator>.
+pub fn match_punctuator(text: &str) -> Option<(Punctuator, &str)> {
+    match_optional_chaining_punctuator(text).map(
+            |((), tail)| (Punctuator::OptionalChaining, tail)
+        )
+        .or_else(|| match_other_punctuator(text).map(
+            |(parsed, tail)| (Punctuator::Other(parsed), tail)
+        ))
+}
+
 /// Try to match start of a string against `OptionalChainingPunctuator` production:
 ///
 /// ```plain
@@ -380,6 +403,10 @@ mod tests {
         let safe_cases = all.iter().filter(|case| !is_double(&case.input));
         for case in safe_cases {
             assert_eq!((tested.parser)(&case.input), case.expected_tail);
+            assert_eq!(
+                super::match_punctuator(&case.input).map(|(_, tail)| tail),
+                case.expected_tail.as_deref()
+            )
         }
     }
 
