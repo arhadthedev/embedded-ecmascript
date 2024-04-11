@@ -330,7 +330,7 @@ mod tests {
         for case in generate_cases(&tested.terminal, separator) {
             assert!((tested.parser)(&case.input) == case.expected_tail);
             assert!(
-                super::match_whitespace(&case.input).map(|result| result.1) ==
+                super::match_whitespace(&case.input).map(|(_, tail)| tail) ==
                 case.expected_tail.as_deref()
             );
         };
@@ -350,11 +350,11 @@ mod tests {
         // tested.parser is touched in match_space but deliberately unused here.
         for case in generate_cases(&tested.terminal, separator) {
             assert!(
-                super::match_line_terminator(&case.input).map(|result| result.1) ==
+                super::match_line_terminator(&case.input).map(|(_, tail)| tail) ==
                 case.expected_tail.as_deref()
             );
             assert!(
-                super::match_line_terminator_sequence(&case.input).map(|result| result.1) ==
+                super::match_line_terminator_sequence(&case.input).map(|(_, tail)| tail) ==
                 case.expected_tail.as_deref()
             );
         }
@@ -367,7 +367,7 @@ mod tests {
     ) {
         for case in generate_cases("\r\n", separator) {
             assert!(
-                super::match_line_terminator_sequence(&case.input).map(|result| result.1) ==
+                super::match_line_terminator_sequence(&case.input).map(|(_, tail)| tail) ==
                 case.expected_tail.as_deref()
             );
         }
