@@ -71,7 +71,7 @@ mod tests {
     fn wrap<O, F: Fn(&str) -> Option<(O, &str)> + 'static>(callable: F)
         -> WrappedParser
     {
-        Box::new(move |text| callable(text).map(|result| result.1.to_string()))
+        Box::new(move |text| callable(text).map(|(_, tail)| tail.to_string()))
     }
 
     impl FromStr for TerminalCase {

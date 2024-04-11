@@ -36,6 +36,21 @@ jobs:
       #
       # We use `-W` because `RUSTFLAGS=-Dwarnings` turns warnings into errors
       # anyway.
+      #
+      # Also, we explicitly allow some diagnostics:
+      #
+      # - clippy::ignored_unit_patterns: we replace a numeric name of a single
+      #   enum field (like `|foo| foo.1`) with partial tuple unpacking (like
+      #   `|(_, bar) bar|`) so the purpose of the field is instantly
+      #   understood by a first-time reader. So replacing `_` with `()` cannot
+      #   be done here
+      #
+      # - clippy::large_stack_frames: rctest triggers this diagnostics so
+      #   disable it until we sort out what causes it
+      #
+      # - clippy::too_many_lines: allow large lexer matchers as
+      #   the ECMAScript specification prescribes
+      #  
       run: >
         cargo clippy
         --all-targets
@@ -44,6 +59,7 @@ jobs:
         -W clippy::pedantic
         -W clippy::nursery
         -W clippy::cargo
+        -A clippy::ignored_unit_patterns
         -A clippy::large_stack_frames
         -A clippy::too_many_lines
   unit:

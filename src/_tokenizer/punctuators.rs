@@ -324,7 +324,6 @@ pub fn match_div_punctuator(text: &str) -> Option<(DivPunctuator, &str)> {
         .or_else(|| text.strip_prefix('/').map(
             |tail| (DivPunctuator::Division, tail)
         ))
-            
 }
 
 /// Try to match start of a string against `RightBracePunctuator` production:
