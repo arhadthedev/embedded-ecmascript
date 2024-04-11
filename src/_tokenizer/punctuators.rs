@@ -69,11 +69,11 @@ pub enum Punctuator {
 /// Implements <https://262.ecma-international.org/14.0/#prod-Punctuator>.
 pub fn match_punctuator(text: &str) -> Option<(Punctuator, &str)> {
     match_optional_chaining_punctuator(text).map(
-            |((), tail)| (Punctuator::OptionalChaining, tail)
-        )
-        .or_else(|| match_other_punctuator(text).map(
-            |(parsed, tail)| (Punctuator::Other(parsed), tail)
-        ))
+        |((), tail)| (Punctuator::OptionalChaining, tail)
+    )
+    .or_else(|| match_other_punctuator(text).map(
+        |(parsed, tail)| (Punctuator::Other(parsed), tail)
+    ))
 }
 
 /// Try to match start of a string against `OptionalChainingPunctuator` production:
