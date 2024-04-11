@@ -63,7 +63,7 @@ use super::numeric::match_decimal_digit;
 /// Implements <https://262.ecma-international.org/14.0/#prod-OptionalChainingPunctuator>.
 pub fn match_optional_chaining_punctuator(text: &str) -> Option<((), &str)> {
     text.strip_prefix("?.")
-        .filter(|tail| match_decimal_digit(tail) == None)
+        .filter(|tail| match_decimal_digit(tail).is_none())
         .map(|tail| ((), tail))
 }
 
