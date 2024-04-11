@@ -90,6 +90,7 @@ mod tests {
                 "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" =>
                     wrap(super::numeric::match_decimal_digit),
                 "/" | "/=" => wrap(super::punctuators::match_div_punctuator),
+                "?." => wrap(super::punctuators::match_optional_chaining_punctuator),
                 "{" | "(" | ")" | "[" | "]" | "." | "..." | ";" | "," | "<" |
                 ">" | "<=" | ">=" | "==" | "!=" | "===" | "!==" | "+" | "-" |
                 "*" | "%" | "**" | "++" | "--" | "<<" | ">>" | ">>>" | "&" |
