@@ -383,7 +383,7 @@ mod tests {
     }
 
     #[rstest]
-    fn match_punctuator(
+    fn match_punctuators(
         #[values(
             "?.",
 
@@ -403,6 +403,27 @@ mod tests {
         let safe_cases = all.iter().filter(|case| !is_double(&case.input));
         for case in safe_cases {
             assert_eq!((tested.parser)(&case.input), case.expected_tail);
+        }
+    }
+
+    #[rstest]
+    fn match_punctuator(
+        #[values(
+            "?.",
+
+            "{", "(", ")", "[", "]", ".", "...", ";", ",", "<", ">", "<=", ">=",
+            "==", "!=", "===", "!==", "+", "-", "*", "%", "**", "++", "--",
+            "<<", ">>", ">>>", "&", "|", "^", "!", "~", "&&", "||", "??", "?",
+            ":", "=", "+=", "-=", "*=", "%=", "**=", "<<=", ">>=", ">>>=", "&=",
+            "|=", "^=", "&&=", "||=", "??=", "=>",
+        )]
+        tested: TerminalCase,
+        #[values("foo", " ")]
+        separator: &str
+    ) {
+        let all = generate_cases(&tested.terminal, separator);
+        let safe_cases = all.iter().filter(|case| !is_double(&case.input));
+        for case in safe_cases {
             assert_eq!(
                 super::match_punctuator(&case.input).map(|(_, tail)| tail),
                 case.expected_tail.as_deref()
