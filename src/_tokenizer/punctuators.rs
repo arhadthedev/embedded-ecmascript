@@ -406,7 +406,7 @@ mod tests {
             assert_eq!(
                 super::match_punctuator(&case.input).map(|(_, tail)| tail),
                 case.expected_tail.as_deref()
-            )
+            );
         }
     }
 
