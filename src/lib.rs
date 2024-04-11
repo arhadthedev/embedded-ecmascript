@@ -40,10 +40,10 @@ impl Display for SourceCodeError {
 pub fn dummy() {
     _tokenizer::names::match_zwnj("");
     _tokenizer::names::match_zwj("");
-    _tokenizer::numeric::match_decimal_digit("");
     _tokenizer::space::match_whitespace("");
     _tokenizer::space::match_line_terminator("");
     _tokenizer::space::match_line_terminator_sequence("");
+    _tokenizer::punctuators::match_optional_chaining_punctuator("");
     _tokenizer::punctuators::match_other_punctuator("");
     _tokenizer::punctuators::match_div_punctuator("");
     _tokenizer::punctuators::match_right_brace_punctuator("");
