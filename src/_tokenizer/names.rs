@@ -273,7 +273,7 @@ pub fn match_ascii_letter(text: &str) -> Option<(char, &str)> {
     let start = input.next();
     let tail = input.as_str();
     start
-        .filter(|character| character.is_ascii_alphabetic())
+        .filter(char::is_ascii_alphabetic)
         .map(|character| (character, tail))
 }
 
