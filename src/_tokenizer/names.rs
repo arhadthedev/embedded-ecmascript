@@ -256,6 +256,27 @@ pub fn match_reserved_word(text: &str) -> Option<(ReservedWord, &str)> {
         ))
 }
 
+/// Try to match start of a string against `AsciiLetter` production:
+///
+/// ```plain
+/// AsciiLetter :: one of
+///     a b c d e f g h i j k l m n o p q r s t u v w x y z
+///     A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+/// ```
+///
+/// Returns a tuple of an object created from the matched part and an unparsed
+/// tail after the matched part.
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-AsciiLetter>.
+pub fn match_ascii_letter(text: &str) -> Option<(char, &str)> {
+    let mut input = text.chars();
+    let start = input.next();
+    let tail = input.as_str();
+    start
+        .filter(|character| character.is_ascii_alphabetic())
+        .map(|character| (character, tail))
+}
+
 /// Try to match start of a string against `UnicodeIDStart` production:
 ///
 /// ```plain
@@ -304,7 +325,7 @@ mod tests {
     #[rstest]
     fn match_id(
         #[values(
-            "d", "д", "大", "\u{0903}", "\u{200C}", "\u{200D}"
+            "X", "d", "д", "大", "\u{0903}", "\u{200C}", "\u{200D}"
         )]
         tested: TerminalCase,
         #[values("foo", " ")]
