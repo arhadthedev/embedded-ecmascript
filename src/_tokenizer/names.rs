@@ -256,6 +256,33 @@ pub fn match_reserved_word(text: &str) -> Option<(ReservedWord, &str)> {
         ))
 }
 
+/// Try to match start of a string against `IdentifierPartChar` production:
+///
+/// ```plain
+/// IdentifierPartChar ::
+///     UnicodeIDContinue
+///     $
+///     <ZWNJ>
+///     <ZWJ>
+/// ```
+///
+/// Returns a tuple of an object created from the matched part and an unparsed
+/// tail after the matched part.
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-IdentifierPartChar>.
+pub fn match_identifier_part_char(text: &str) -> Option<(char, &str)> {
+    match_unicode_id_continue(text)
+    .or_else(|| text.strip_prefix('$').map(
+        |tail| ('$', tail)
+    ))
+    .or_else(|| match_zwnj(text).map(
+        |((), tail)| ('\u{200C}', tail)
+    ))
+    .or_else(|| match_zwj(text).map(
+        |((), tail)| ('\u{200D}', tail)
+    ))
+}
+
 /// Try to match start of a string against `AsciiLetter` production:
 ///
 /// ```plain
@@ -321,6 +348,25 @@ pub fn match_unicode_id_continue(text: &str) -> Option<(char, &str)> {
 mod tests {
     use crate::_tokenizer::tests::{generate_cases, TerminalCase};
     use rstest::rstest;
+
+    #[rstest]
+    fn match_identifier_part_char(
+        #[values(
+            "X", "d", "д", "大", "$", "\u{0903}", "\u{200C}", "\u{200D}"
+        )]
+        tested: TerminalCase,
+        #[values("foo", " ")]
+        separator: &str
+    ) {
+        let all = generate_cases(&tested.terminal, separator);
+        let safe_cases = all.iter().filter(|case| !case.input.starts_with("foo"));
+        for case in safe_cases {
+            assert_eq!(
+                super::match_identifier_part_char(&case.input).map(|(_, tail)| tail),
+                case.expected_tail.as_deref()
+            );
+        }
+    }
 
     #[rstest]
     fn match_id(
