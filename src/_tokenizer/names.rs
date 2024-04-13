@@ -81,6 +81,179 @@ pub fn match_zwj(text: &str) -> Option<((), &str)> {
     text.strip_prefix('\u{200D}').map(|tail| ((), tail))
 }
 
+pub enum ReservedWord {
+    Await,
+    Break,
+    Case,
+    Catch,
+    Class,
+    Const,
+    Continue,
+    Debugger,
+    Default,
+    Delete,
+    Do,
+    Else,
+    Enum,
+    Export,
+    Extends,
+    False,
+    Finally,
+    For,
+    Function,
+    If,
+    Import,
+    In,
+    InstanceOf,
+    New,
+    Null,
+    Return,
+    Super,
+    Switch,
+    This,
+    Throw,
+    True,
+    Try,
+    Typeof,
+    Var,
+    Void,
+    While,
+    With,
+    Yield,
+}
+
+/// Try to match start of a string against `ReservedWord` production:
+///
+/// ```plain
+/// ReservedWord :: one of
+///     await break case catch class const continue debugger default delete do
+///     else enum export extends false finally for function if import in
+///     instanceof new null return super switch this throw true try typeof var
+///     void while with yield
+/// ```
+///
+/// Returns a tuple of an object created from the matched part and an unparsed
+/// tail after the matched part.
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-ReservedWord>.
+pub fn match_reserved_word(text: &str) -> Option<(ReservedWord, &str)> {
+    text
+        .strip_prefix("await").map(
+            |tail| (ReservedWord::Await, tail)
+        )
+        .or_else(|| text.strip_prefix("break").map(
+            |tail| (ReservedWord::Break, tail)
+        ))
+        .or_else(|| text.strip_prefix("case").map(
+            |tail| (ReservedWord::Case, tail)
+        ))
+        .or_else(|| text.strip_prefix("catch").map(
+            |tail| (ReservedWord::Catch, tail)
+        ))
+        .or_else(|| text.strip_prefix("class").map(
+            |tail| (ReservedWord::Class, tail)
+        ))
+        .or_else(|| text.strip_prefix("const").map(
+            |tail| (ReservedWord::Const, tail)
+        ))
+        .or_else(|| text.strip_prefix("continue").map(
+            |tail| (ReservedWord::Continue, tail)
+        ))
+        .or_else(|| text.strip_prefix("debugger").map(
+            |tail| (ReservedWord::Debugger, tail)
+        ))
+        .or_else(|| text.strip_prefix("default").map(
+            |tail| (ReservedWord::Default, tail)
+        ))
+        .or_else(|| text.strip_prefix("delete").map(
+            |tail| (ReservedWord::Delete, tail)
+        ))
+        .or_else(|| text.strip_prefix("do").map(
+            |tail| (ReservedWord::Do, tail)
+        ))
+        .or_else(|| text.strip_prefix("else").map(
+            |tail| (ReservedWord::Else, tail)
+        ))
+        .or_else(|| text.strip_prefix("enum").map(
+            |tail| (ReservedWord::Enum, tail)
+        ))
+        .or_else(|| text.strip_prefix("export").map(
+            |tail| (ReservedWord::Export, tail)
+        ))
+        .or_else(|| text.strip_prefix("extends").map(
+            |tail| (ReservedWord::Extends, tail)
+        ))
+        .or_else(|| text.strip_prefix("false").map(
+            |tail| (ReservedWord::False, tail)
+        ))
+        .or_else(|| text.strip_prefix("finally").map(
+            |tail| (ReservedWord::Finally, tail)
+        ))
+        .or_else(|| text.strip_prefix("for").map(
+            |tail| (ReservedWord::For, tail)
+        ))
+        .or_else(|| text.strip_prefix("function").map(
+            |tail| (ReservedWord::Function, tail)
+        ))
+        .or_else(|| text.strip_prefix("if").map(
+            |tail| (ReservedWord::If, tail)
+        ))
+        .or_else(|| text.strip_prefix("import").map(
+            |tail| (ReservedWord::Import, tail)
+        ))
+        .or_else(|| text.strip_prefix("instanceof").map(
+            |tail| (ReservedWord::InstanceOf, tail)
+        ))
+        .or_else(|| text.strip_prefix("in").map(
+            |tail| (ReservedWord::In, tail)
+        ))
+        .or_else(|| text.strip_prefix("new").map(
+            |tail| (ReservedWord::New, tail)
+        ))
+        .or_else(|| text.strip_prefix("null").map(
+            |tail| (ReservedWord::Null, tail)
+        ))
+        .or_else(|| text.strip_prefix("return").map(
+            |tail| (ReservedWord::Return, tail)
+        ))
+        .or_else(|| text.strip_prefix("super").map(
+            |tail| (ReservedWord::Super, tail)
+        ))
+        .or_else(|| text.strip_prefix("switch").map(
+            |tail| (ReservedWord::Switch, tail)
+        ))
+        .or_else(|| text.strip_prefix("this").map(
+            |tail| (ReservedWord::This, tail)
+        ))
+        .or_else(|| text.strip_prefix("throw").map(
+            |tail| (ReservedWord::Throw, tail)
+        ))
+        .or_else(|| text.strip_prefix("true").map(
+            |tail| (ReservedWord::True, tail)
+        ))
+        .or_else(|| text.strip_prefix("try").map(
+            |tail| (ReservedWord::Try, tail)
+        ))
+        .or_else(|| text.strip_prefix("typeof").map(
+            |tail| (ReservedWord::Typeof, tail)
+        ))
+        .or_else(|| text.strip_prefix("var").map(
+            |tail| (ReservedWord::Var, tail)
+        ))
+        .or_else(|| text.strip_prefix("void").map(
+            |tail| (ReservedWord::Void, tail)
+        ))
+        .or_else(|| text.strip_prefix("while").map(
+            |tail| (ReservedWord::While, tail)
+        ))
+        .or_else(|| text.strip_prefix("with").map(
+            |tail| (ReservedWord::With, tail)
+        ))
+        .or_else(|| text.strip_prefix("yield").map(
+            |tail| (ReservedWord::Yield, tail)
+        ))
+}
+
 #[cfg(test)]
 mod tests {
     use crate::_tokenizer::tests::{generate_cases, TerminalCase};
@@ -97,6 +270,25 @@ mod tests {
     ) {
         for case in generate_cases(&tested.terminal, separator) {
             assert!((tested.parser)(&case.input) == case.expected_tail);
+        }
+    }
+
+    #[rstest]
+    fn match_reserved_word(
+        #[values(
+            "await", "break", "case", "catch", "class", "const", "continue",
+            "debugger", "default", "delete", "do", "else", "enum", "export",
+            "extends", "false", "finally", "for", "function", "if", "import",
+            "in", "instanceof", "new", "null", "return", "super", "switch",
+            "this", "throw", "true", "try", "typeof", "var", "void", "while",
+            "with", "yield",
+        )]
+        tested: TerminalCase,
+        #[values("foo", " ")]
+        separator: &str
+    ) {
+        for case in generate_cases(&tested.terminal, separator) {
+            assert_eq!((tested.parser)(&case.input), case.expected_tail);
         }
     }
 }

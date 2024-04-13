@@ -81,6 +81,14 @@ mod tests {
             // Keep the arms unmerged for proper sorting of disjoined patterns.
             #[allow(clippy::match_same_arms)]
             let tested_parser = match text {
+                "await" | "break" | "case" | "catch" | "class" | "const" |
+                "continue" | "debugger" | "default" | "delete" | "do" | "else" |
+                "enum" | "export" | "extends" | "false" | "finally" | "for" |
+                "function" | "if" | "import" | "in" | "instanceof" | "new" |
+                "null" | "return" | "super" | "switch" | "this" | "throw" |
+                "true" | "try" | "typeof" | "var" | "void" | "while" | "with" |
+                "yield" => wrap(super::names::match_reserved_word),
+
                 "\u{0009}" => wrap(super::space::match_tab),
                 "\u{000A}" => wrap(super::space::match_lf),
                 "\u{000B}" => wrap(super::space::match_vt),
