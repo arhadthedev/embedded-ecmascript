@@ -12,3 +12,4 @@ categories = ["compilers", "parser-implementations"]
 
 [dependencies]
 rstest = "0.18.2"
+unicode-ident = "1.0.12"
