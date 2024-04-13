@@ -28,6 +28,7 @@ name = "embedded-ecmascript"
 version = "0.1.0"
 dependencies = [
  "rstest",
+ "unicode-ident",
 ]
 
 [[package]]
