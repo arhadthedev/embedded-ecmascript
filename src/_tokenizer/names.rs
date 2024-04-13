@@ -271,9 +271,7 @@ pub fn match_reserved_word(text: &str) -> Option<(ReservedWord, &str)> {
 ///
 /// Implements <https://262.ecma-international.org/14.0/#prod-IdentifierPartChar>.
 pub fn match_identifier_part_char(text: &str) -> Option<(char, &str)> {
-    match_unicode_id_continue(text).map(
-        |(parsed, tail)| (parsed, tail)
-    )
+    match_unicode_id_continue(text)
     .or_else(|| text.strip_prefix('$').map(
         |tail| ('$', tail)
     ))
