@@ -41,6 +41,7 @@ pub fn dummy() {
     _tokenizer::names::match_zwnj("");
     _tokenizer::names::match_zwj("");
     _tokenizer::names::match_reserved_word("");
+    _tokenizer::names::match_ascii_letter("");
     _tokenizer::names::match_unicode_id_start("");
     _tokenizer::names::match_unicode_id_continue("");
     _tokenizer::space::match_whitespace("");
