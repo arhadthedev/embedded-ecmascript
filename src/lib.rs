@@ -46,6 +46,7 @@ impl Display for SourceCodeError {
 
 pub fn dummy() {
     _tokenizer::names::match_reserved_word("");
+    _tokenizer::names::match_identifier_start_char("");
     _tokenizer::names::match_identifier_part_char("");
     _tokenizer::names::match_ascii_letter("");
     _tokenizer::names::match_unicode_id_start("");
