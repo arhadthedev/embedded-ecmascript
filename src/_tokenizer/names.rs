@@ -375,7 +375,7 @@ mod tests {
      #[rstest]
     fn match_identifier_start_char(
         #[values(
-            /*"X", "d", "д", "大",*/ "$", "_", "\u{1885}", "\u{212E}" 
+            "X", "d", "д", "大", "$", "_", "\u{1885}", "\u{212E}" 
         )]
         tested: TerminalCase,
         #[values("foo", " ")]
