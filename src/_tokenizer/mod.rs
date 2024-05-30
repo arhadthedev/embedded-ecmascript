@@ -52,6 +52,10 @@ mod tests {
         ]
     }
 
+    pub fn unwrap_tail<X>(parsed: Option<(X, &str)>) -> Option<String> {
+        parsed.map(|(_, tail)| tail.to_string())
+    }
+
     pub type WrappedParser = Box<dyn Fn(&str) -> Option<String>>;
 
     /// A test case for a parser to check how it splits the input string into

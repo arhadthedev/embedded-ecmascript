@@ -369,7 +369,7 @@ pub fn match_unicode_id_continue(text: &str) -> Option<(char, &str)> {
 
 #[cfg(test)]
 mod tests {
-    use crate::_tokenizer::tests::{generate_cases, TerminalCase};
+    use crate::_tokenizer::tests::{generate_cases, TerminalCase, unwrap_tail};
     use rstest::rstest;
 
      #[rstest]
@@ -385,8 +385,8 @@ mod tests {
         let safe_cases = all.iter().filter(|case| !case.input.starts_with("foo"));
         for case in safe_cases {
             assert_eq!(
-                super::match_identifier_start_char(&case.input).map(|(_, tail)| tail),
-                case.expected_tail.as_deref()
+                unwrap_tail(super::match_identifier_start_char(&case.input)),
+                case.expected_tail
             );
         }
     }
@@ -404,8 +404,8 @@ mod tests {
         let safe_cases = all.iter().filter(|case| !case.input.starts_with("foo"));
         for case in safe_cases {
             assert_eq!(
-                super::match_identifier_part_char(&case.input).map(|(_, tail)| tail),
-                case.expected_tail.as_deref()
+                unwrap_tail(super::match_identifier_part_char(&case.input)),
+                case.expected_tail
             );
         }
     }
