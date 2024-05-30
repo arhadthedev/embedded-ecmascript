@@ -363,7 +363,7 @@ pub fn match_right_brace_punctuator(text: &str) -> Option<((), &str)> {
 
 #[cfg(test)]
 mod tests {
-    use crate::_tokenizer::tests::{generate_cases, TerminalCase};
+    use crate::_tokenizer::tests::{generate_cases, TerminalCase, unwrap_tail};
     use rstest::rstest;
 
     /// Remove cases with token repetitions ("{token}{token}") that give
@@ -425,8 +425,8 @@ mod tests {
         let safe_cases = all.iter().filter(|case| !is_double(&case.input));
         for case in safe_cases {
             assert_eq!(
-                super::match_punctuator(&case.input).map(|(_, tail)| tail),
-                case.expected_tail.as_deref()
+                unwrap_tail(super::match_punctuator(&case.input)),
+                case.expected_tail
             );
         }
     }
