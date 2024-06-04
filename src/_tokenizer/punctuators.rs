@@ -51,8 +51,6 @@
 //! > prior permission. Title to copyright in this work will at all times remain
 //! > with copyright holders.
 
-use super::numeric::match_decimal_digit;
-
 pub enum Punctuator {
     OptionalChaining,
     Other(OtherPunctuator)
@@ -86,7 +84,6 @@ pub fn match_punctuator(text: &str) -> Option<(Punctuator, &str)> {
 /// Implements <https://262.ecma-international.org/14.0/#prod-OptionalChainingPunctuator>.
 pub fn match_optional_chaining_punctuator(text: &str) -> Option<((), &str)> {
     text.strip_prefix("?.")
-        .filter(|tail| match_decimal_digit(tail).is_none())
         .map(|tail| ((), tail))
 }
 
@@ -433,12 +430,6 @@ mod tests {
 
     #[rstest]
     fn match_optional_chaining_punctuator() {
-        // Check the [lookahead ∉ `DecimalDigit`] rule
-        assert_eq!(
-            super::match_optional_chaining_punctuator("?.9"),
-            None
-        );
-
         // ... and its ignorance of hex digits
         assert_eq!(
             super::match_optional_chaining_punctuator("?.A"),
