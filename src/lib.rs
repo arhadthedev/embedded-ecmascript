@@ -24,10 +24,17 @@ pub enum Token {
     NumericLiteral(f64),
 }
 
-/// Break a `.js`/`.mjs` text chunk into a start token and an unprocessed tail.
+/// Extract a first token from a `.js`/`.mjs` text.
+///
+/// Returns a tuple of the token and an unprocessed input tail.
 ///
 /// Tokenization is done as described in
 /// <https://262.ecma-international.org/14.0/#sec-ecmascript-language-lexical-grammar>.
+///
+/// # Errors
+///
+/// Will return `Err` with rustc-style formatted error message string, if input
+/// start does not form a correct  ECMAScript 2023 token.
 ///
 /// # Panics
 ///
