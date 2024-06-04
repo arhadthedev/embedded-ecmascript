@@ -28,6 +28,11 @@ pub enum Token {
 ///
 /// Tokenization is done as described in
 /// <https://262.ecma-international.org/14.0/#sec-ecmascript-language-lexical-grammar>.
+///
+/// # Panics
+///
+/// Will panic if the root grammar errorneously defines an empty goal symbol.
+/// This means a broken grammar file used by developers to build the parser.
 pub fn get_next_token(input: &str) -> Result<(Token, &str), String> {
     let result = lexical::Ecma262Parser::parse(lexical::Rule::DecimalDigit, input);
     match result {
