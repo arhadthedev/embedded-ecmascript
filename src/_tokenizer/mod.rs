@@ -7,7 +7,6 @@
 //! parser to timely switch sets of lexical grammars.
 
 pub mod names;
-pub mod numeric;
 pub mod punctuators;
 pub mod space;
 
@@ -99,8 +98,6 @@ mod tests {
                 "\u{000C}" => wrap(super::space::match_ff),
                 "\u{000D}" => wrap(super::space::match_cr),
                 "\u{0020}" => wrap(super::space::match_usp),
-                "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" =>
-                    wrap(super::numeric::match_decimal_digit),
                 "d" | "д" | "大" => wrap(super::names::match_unicode_id_start),
                 "X" => wrap(super::names::match_ascii_letter),
                 "\u{0903}" => wrap(super::names::match_unicode_id_continue),
