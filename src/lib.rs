@@ -40,13 +40,13 @@ pub fn get_next_token(input: &str) -> Result<(Token, &str), String> {
             let token = tokens.nth_back(0).unwrap(); 
             let token_size = token.as_str().len();
             let tail = &input[token_size..];
-            Ok((process(token), tail))
+            Ok((calculate(token), tail))
         },
         Err(error) => Err(error.to_string())
     }
 }
 
-fn process(token: Pair<lexical::Rule>) -> Token {
+fn calculate(token: Pair<lexical::Rule>) -> Token {
     match token.as_rule() {
         lexical::Rule::DecimalDigit => Token::NumericLiteral(token.as_str().parse::<f64>().unwrap()),
     }
