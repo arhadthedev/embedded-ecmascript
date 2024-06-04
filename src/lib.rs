@@ -7,11 +7,50 @@
 //! Each grammar rule looks like `Production :: ProductionDefinition`. Each
 //! production has an algorithm for each static and dynamic semantics.
 
+mod lexical {
+    use pest_derive::Parser;
+
+    #[derive(Parser)]
+    #[grammar = "lexical_grammar.pest"]
+    pub struct Ecma262Parser;
+}
+
+use pest::iterators::Pair;
+use pest::Parser;
+
+/// An output of the tokenization step
+#[derive(Clone, Debug, PartialEq)]
+pub enum Token {
+    NumericLiteral(f64),
+}
+
+/// Break a `.js`/`.mjs` text chunk into a start token and an unprocessed tail.
+///
+/// Tokeniation is done as described in <>
+pub fn get_next_token(input: &str) -> Result<(Token, &str), String> {
+    let result = lexical::Ecma262Parser::parse(lexical::Rule::DecimalDigit, input);
+    match result {
+        Ok(mut tokens) => {
+            let token = tokens.nth_back(0).unwrap(); 
+            let token_size = token.as_str().len();
+            let tail = &input[token_size..];
+            Ok((process(token), tail))
+        },
+        Err(error) => Err(error.to_string())
+    }
+}
+
+fn process(token: Pair<lexical::Rule>) -> Token {
+    match token.as_rule() {
+        lexical::Rule::DecimalDigit => Token::NumericLiteral(token.as_str().parse::<f64>().unwrap()),
+    }
+}
+
 mod _tokenizer;
 
 use std::cmp::{Eq, PartialEq};
 use std::error::Error;
-use std::fmt::{Debug, Display, Formatter, Result};
+use std::fmt::{Debug, Display, Formatter, Result as _Result};
 use std::ops::Range;
 
 /// An error message that can be attributed to a certain piece of source code.
@@ -33,7 +72,7 @@ impl Error for SourceCodeError {
 }
 
 impl Display for SourceCodeError {
-    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+    fn fmt(&self, f: &mut Formatter<'_>) -> _Result {
         write!(
             f,
             "error in characters #{}-#{}: {}",
