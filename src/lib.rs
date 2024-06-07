@@ -15,7 +15,7 @@ mod lexical {
     pub struct Ecma262Parser;
 }
 
-use pest::iterators::Pair;
+use pest::iterators::Pairs;
 use pest::Parser;
 
 /// An output of the tokenization step
@@ -43,21 +43,24 @@ pub enum Token {
 pub fn get_next_token(input: &str) -> Result<(Token, &str), String> {
     let result = lexical::Ecma262Parser::parse(lexical::Rule::DecimalDigit, input);
     match result {
-        Ok(mut tokens) => {
-            let token = tokens.nth_back(0).unwrap(); 
-            let token_size = token.as_str().len();
-            let tail = &input[token_size..];
-            Ok((calculate(&token), tail))
-        },
+        Ok(tokens) => Ok(calculate(tokens)),
         Err(error) => Err(error.to_string())
     }
 }
 
-fn calculate(token: &Pair<lexical::Rule>) -> Token {
-    let value = token.as_str();
-    match token.as_rule() {
-        lexical::Rule::DecimalDigit => Token::NumericLiteral(value.parse::<f64>().unwrap()),
-    }
+fn calculate(mut tokens: Pairs<lexical::Rule>) -> (Token, &str) {
+    let root_token = tokens.next().unwrap();
+    let mut subtokens = root_token.into_inner();
+
+    let found = subtokens.next().unwrap();
+    let tail = subtokens.next().unwrap();
+
+    let value = found.as_str();
+    let parsed = match found.as_rule() {
+        lexical::Rule::Digit => Token::NumericLiteral(value.parse::<f64>().unwrap()),
+        lexical::Rule::Tail | lexical::Rule::DecimalDigit => unreachable!(),
+    };
+    (parsed, tail.as_str())
 }
 
 mod _tokenizer;
