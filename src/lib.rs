@@ -15,13 +15,39 @@ mod lexical {
     pub struct Ecma262Parser;
 }
 
-use pest::iterators::Pairs;
-use pest::Parser;
+use from_pest::FromPest;
+use pest::{Parser, Span};
+use pest_ast::FromPest;
 
 /// An output of the tokenization step
 #[derive(Clone, Debug, PartialEq)]
 pub enum Token {
     NumericLiteral(f64),
+}
+
+fn span_into_str(span: Span) -> &str {
+    span.as_str()
+}
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::Digit))]
+struct Digit {
+    #[pest_ast(outer(with(span_into_str), with(str::parse), with(Result::unwrap)))]
+    pub value: f64
+}
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::UnprocessedTail))]
+struct UnprocessedTail<'src> {
+     #[pest_ast(outer(with(span_into_str)))]
+    pub content: &'src str,
+}
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::DecimalDigit))]
+struct DecimalDigit<'src> {
+    pub digit: Digit,
+    pub tail: UnprocessedTail<'src>
 }
 
 /// Extract a first token from a `.js`/`.mjs` text.
@@ -43,24 +69,12 @@ pub enum Token {
 pub fn get_next_token(input: &str) -> Result<(Token, &str), String> {
     let result = lexical::Ecma262Parser::parse(lexical::Rule::DecimalDigit, input);
     match result {
-        Ok(tokens) => Ok(calculate(tokens)),
+        Ok(mut tokens) => {
+            let parsed = DecimalDigit::from_pest(&mut tokens).unwrap();
+            Ok((Token::NumericLiteral(parsed.digit.value), parsed.tail.content))
+        },
         Err(error) => Err(error.to_string())
     }
-}
-
-fn calculate(mut tokens: Pairs<lexical::Rule>) -> (Token, &str) {
-    let root_token = tokens.next().unwrap();
-    let mut subtokens = root_token.into_inner();
-
-    let found = subtokens.next().unwrap();
-    let tail = subtokens.next().unwrap();
-
-    let value = found.as_str();
-    let parsed = match found.as_rule() {
-        lexical::Rule::Digit => Token::NumericLiteral(value.parse::<f64>().unwrap()),
-        lexical::Rule::UnprocessedTail | lexical::Rule::DecimalDigit => unreachable!(),
-    };
-    (parsed, tail.as_str())
 }
 
 mod _tokenizer;

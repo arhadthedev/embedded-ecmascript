@@ -11,7 +11,12 @@ keywords = ["parser", "ecmascript", "javascript", "compiler"]
 categories = ["compilers", "parser-implementations"]
 
 [dependencies]
+# We need <https://github.com/pest-parser/ast/pull/27> fix not available
+# in crates.io yet.
+from-pest = { git = "https://github.com/pest-parser/ast.git", rev = "09255d74" }
 pest = "2.7.10"
+# git key accepts the repo root URL and Cargo traverses the tree to find the crate
+pest-ast = { git = "https://github.com/pest-parser/ast.git", rev = "09255d74" }
 pest_derive = "2.7.10"
 rstest = "0.18.2"
 unicode-ident = "1.0.12"
