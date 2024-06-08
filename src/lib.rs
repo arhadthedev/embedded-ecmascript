@@ -16,7 +16,7 @@ mod lexical {
 }
 
 use from_pest::FromPest;
-use pest::{Parser, Span};
+use pest::{iterators::Pairs, Parser, Span};
 use pest_ast::FromPest;
 
 /// An output of the tokenization step
@@ -37,13 +37,6 @@ struct Digit {
 }
 
 #[derive(Debug, FromPest)]
-#[pest_ast(rule(lexical::Rule::UnprocessedTail))]
-struct UnprocessedTail<'src> {
-     #[pest_ast(outer(with(span_into_str)))]
-    pub content: &'src str,
-}
-
-#[derive(Debug, FromPest)]
 #[pest_ast(rule(lexical::Rule::DecimalDigit))]
 struct DecimalDigit {
     pub digit: Digit,
@@ -51,9 +44,8 @@ struct DecimalDigit {
 
 #[derive(Debug, FromPest)]
 #[pest_ast(rule(lexical::Rule::InputElementDiv))]
-struct InputElementDiv<'src> {
+struct InputElementDiv {
     pub token: DecimalDigit,
-    pub tail: UnprocessedTail<'src>
 }
 
 /// Extract a first token from a `.js`/`.mjs` text.
@@ -74,13 +66,22 @@ struct InputElementDiv<'src> {
 /// This means a broken grammar file used by developers to build the parser.
 pub fn get_next_token(input: &str) -> Result<(Token, &str), String> {
     let result = lexical::Ecma262Parser::parse(lexical::Rule::InputElementDiv, input);
+    let tail = get_unprocessed_tail(result.clone().unwrap(), input);
     match result {
         Ok(mut tokens) => {
             let parsed = InputElementDiv::from_pest(&mut tokens).unwrap();
-            Ok((Token::NumericLiteral(parsed.token.digit.value), parsed.tail.content))
+            Ok((Token::NumericLiteral(parsed.token.digit.value), tail))
         },
         Err(error) => Err(error.to_string())
     }
+}
+
+fn get_unprocessed_tail<'src>(
+    mut recognized_source_start: Pairs<lexical::Rule>,
+    whole_source: &'src str
+) -> &'src str {
+    let processed_substring = recognized_source_start.next().unwrap().as_span();
+    &whole_source[processed_substring.end()..]
 }
 
 mod _tokenizer;
