@@ -25,9 +25,6 @@ pub enum Token {
     NumericLiteral(f64),
 }
 
-// Turning the argument into a reference causes "expected `&Span<'_>`, found
-// `Span<'_>`" error on `#[pest_ast(outer(with(span_into_str)))]`.
-#[allow(clippy::clone_on_copy)]
 fn span_into_str(span: Span) -> &str {
     span.as_str()
 }

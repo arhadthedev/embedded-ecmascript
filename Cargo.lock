@@ -82,8 +82,7 @@ dependencies = [
 [[package]]
 name = "from-pest"
 version = "0.3.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d3380d8b4f459e3bb35904036044393332e71d5316be9061d9b545c44b6064db"
+source = "git+https://github.com/pest-parser/ast.git?rev=09255d74#09255d748b63ecd5741cefb5275763323871f898"
 dependencies = [
  "log",
  "pest",
@@ -248,8 +247,7 @@ dependencies = [
 [[package]]
 name = "pest-ast"
 version = "0.3.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "40b5ac58ac48a503d1efdcf0ff044b442c07ac4645d179c62d4af79db89f9cda"
+source = "git+https://github.com/pest-parser/ast.git?rev=09255d74#09255d748b63ecd5741cefb5275763323871f898"
 dependencies = [
  "itertools",
  "proc-macro2",
