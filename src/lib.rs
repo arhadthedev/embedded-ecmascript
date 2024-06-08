@@ -58,7 +58,7 @@ fn calculate(mut tokens: Pairs<lexical::Rule>) -> (Token, &str) {
     let value = found.as_str();
     let parsed = match found.as_rule() {
         lexical::Rule::Digit => Token::NumericLiteral(value.parse::<f64>().unwrap()),
-        lexical::Rule::Tail | lexical::Rule::DecimalDigit => unreachable!(),
+        lexical::Rule::UnprocessedTail | lexical::Rule::DecimalDigit => unreachable!(),
     };
     (parsed, tail.as_str())
 }
