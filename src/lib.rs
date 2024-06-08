@@ -45,8 +45,14 @@ struct UnprocessedTail<'src> {
 
 #[derive(Debug, FromPest)]
 #[pest_ast(rule(lexical::Rule::DecimalDigit))]
-struct DecimalDigit<'src> {
+struct DecimalDigit {
     pub digit: Digit,
+}
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::InputElementDiv))]
+struct InputElementDiv<'src> {
+    pub token: DecimalDigit,
     pub tail: UnprocessedTail<'src>
 }
 
@@ -67,11 +73,11 @@ struct DecimalDigit<'src> {
 /// Will panic if the root grammar errorneously defines an empty goal symbol.
 /// This means a broken grammar file used by developers to build the parser.
 pub fn get_next_token(input: &str) -> Result<(Token, &str), String> {
-    let result = lexical::Ecma262Parser::parse(lexical::Rule::DecimalDigit, input);
+    let result = lexical::Ecma262Parser::parse(lexical::Rule::InputElementDiv, input);
     match result {
         Ok(mut tokens) => {
-            let parsed = DecimalDigit::from_pest(&mut tokens).unwrap();
-            Ok((Token::NumericLiteral(parsed.digit.value), parsed.tail.content))
+            let parsed = InputElementDiv::from_pest(&mut tokens).unwrap();
+            Ok((Token::NumericLiteral(parsed.token.digit.value), parsed.tail.content))
         },
         Err(error) => Err(error.to_string())
     }
