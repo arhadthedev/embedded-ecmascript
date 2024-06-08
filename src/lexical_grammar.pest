@@ -55,13 +55,6 @@
 
 Digit = { ASCII_DIGIT }
 
-/// A match for anything beyond the first token.
-///
-/// Function [get_next_token] recognies one token at a time to allow switching
-/// goal symbols. So the function returns a tuple of a token and the unprocessed
-/// rest (tail) of the input string. 
-UnprocessedTail = { ANY* }
-
 /// A match for <https://262.ecma-international.org/14.0/#prod-DecimalDigit>
 ///
 /// ```plain
@@ -81,4 +74,4 @@ DecimalDigit = { Digit }
 ///     DivPunctuator
 ///     RightBracePunctuator
 /// ```
-InputElementDiv = { SOI ~ DecimalDigit ~ UnprocessedTail }
+InputElementDiv = { SOI ~ DecimalDigit }
