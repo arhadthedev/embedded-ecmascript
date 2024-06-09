@@ -66,9 +66,9 @@ struct InputElementDiv {
 /// This means a broken grammar file used by developers to build the parser.
 pub fn get_next_token(input: &str) -> Result<(Token, &str), String> {
     let result = lexical::Ecma262Parser::parse(lexical::Rule::InputElementDiv, input);
-    let tail = get_unprocessed_tail(result.clone().unwrap(), input);
     match result {
         Ok(mut tokens) => {
+            let tail = get_unprocessed_tail(tokens.clone(), input);
             let parsed = InputElementDiv::from_pest(&mut tokens).unwrap();
             Ok((Token::NumericLiteral(parsed.token.digit.value), tail))
         },
