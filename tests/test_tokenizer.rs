@@ -6,7 +6,7 @@ mod tests {
 
     #[test]
     fn test_error_infrastructure() {
-        assert_matches!(get_next_token(":"), Err(message) if message.len() > 0);
+        assert_matches!(get_next_token(":"), Err(message) if !message.is_empty());
     }
 
     #[rstest]
