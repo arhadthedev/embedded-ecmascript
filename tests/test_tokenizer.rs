@@ -1,7 +1,13 @@
 #[cfg(test)]
 mod tests {
+    use claims::assert_matches;
     use embedded_ecmascript::{get_next_token, Token};
     use rstest::rstest;
+
+    #[test]
+    fn test_error_infrastructure() {
+        assert_matches!(get_next_token(":"), Err(message) if message.len() > 0);
+    }
 
     #[rstest]
     fn match_decimal_digit(
