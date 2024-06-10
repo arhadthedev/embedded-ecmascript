@@ -22,6 +22,7 @@ use pest_ast::FromPest;
 /// An output of the tokenization step
 #[derive(Clone, Debug, PartialEq)]
 pub enum Token {
+    WhiteSpace,
     NumericLiteral(f64),
 }
 
@@ -43,9 +44,14 @@ struct DecimalDigit {
 }
 
 #[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::WhiteSpace))]
+struct WhiteSpace;
+
+#[derive(Debug, FromPest)]
 #[pest_ast(rule(lexical::Rule::InputElementDiv))]
-struct InputElementDiv {
-    pub token: DecimalDigit,
+enum InputElementDiv {
+    WhiteSpace(WhiteSpace),
+    DecimalDigit(DecimalDigit),
 }
 
 /// Extract a first token from a `.js`/`.mjs` text.
@@ -70,9 +76,16 @@ pub fn get_next_token(input: &str) -> Result<(Token, &str), String> {
         Ok(mut tokens) => {
             let tail = get_unprocessed_tail(tokens.clone(), input);
             let parsed = InputElementDiv::from_pest(&mut tokens).unwrap();
-            Ok((Token::NumericLiteral(parsed.token.digit.value), tail))
+            Ok((extract_token(parsed), tail))
         },
         Err(error) => Err(error.to_string())
+    }
+}
+
+const fn extract_token(symbol_tree: InputElementDiv) -> Token {
+    match symbol_tree {
+        InputElementDiv::DecimalDigit(value) => Token::NumericLiteral(value.digit.value),
+        InputElementDiv::WhiteSpace(_) => Token::WhiteSpace,
     }
 }
 
