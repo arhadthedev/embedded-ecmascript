@@ -15,13 +15,15 @@ mod lexical {
     pub struct Ecma262Parser;
 }
 
+use enum_dispatch::enum_dispatch;
 use from_pest::FromPest;
 use pest::{iterators::Pairs, Parser, Span};
 use pest_ast::FromPest;
 
 /// An output of the tokenization step
 #[derive(Clone, Debug, PartialEq)]
-pub enum Token {
+pub enum Token<'src> {
+    Comment(&'src str),
     NumericLiteral(f64),
 }
 
@@ -44,8 +46,35 @@ struct DecimalDigit {
 
 #[derive(Debug, FromPest)]
 #[pest_ast(rule(lexical::Rule::InputElementDiv))]
-struct InputElementDiv {
-    pub token: DecimalDigit,
+enum InputElementDiv<'src> {
+    DecimalDigit(DecimalDigit),
+    Comment(Comment<'src>),
+}
+
+#[enum_dispatch]
+trait CommentStaticSemantics<'src> {
+    fn content(&self) -> &'src str;
+}
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::Comment))]
+#[enum_dispatch(CommentStaticSemantics)]
+enum Comment<'src> {
+    MultiLineComment(MultiLineComment<'src>),
+}
+
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::MultiLineComment))]
+struct MultiLineComment<'src> {
+    #[pest_ast(outer(with(span_into_str)))]
+    content: &'src str,
+}
+
+impl<'src> CommentStaticSemantics<'src> for MultiLineComment<'src> {
+    fn content(&self) -> &'src str {
+        self.content
+    }
 }
 
 /// Extract a first token from a `.js`/`.mjs` text.
@@ -70,7 +99,7 @@ pub fn get_next_token(input: &str) -> Result<(Token, &str), String> {
         Ok(mut tokens) => {
             let tail = get_unprocessed_tail(tokens.clone(), input);
             let parsed = InputElementDiv::from_pest(&mut tokens).unwrap();
-            Ok((Token::NumericLiteral(parsed.token.digit.value), tail))
+            Ok((extract_token(parsed), tail))
         },
         Err(error) => Err(error.to_string())
     }
@@ -82,6 +111,13 @@ fn get_unprocessed_tail<'src>(
 ) -> &'src str {
     let processed_substring = recognized_source_start.next().unwrap().as_span();
     &whole_source[processed_substring.end()..]
+}
+
+fn extract_token(symbol_tree: InputElementDiv) -> Token {
+    match symbol_tree {
+        InputElementDiv::DecimalDigit(value) => Token::NumericLiteral(value.digit.value),
+        InputElementDiv::Comment(text) => Token::Comment(text.content()),
+    }
 }
 
 mod _tokenizer;

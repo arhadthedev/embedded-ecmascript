@@ -55,6 +55,12 @@
 
 Digit = { ASCII_DIGIT }
 
+/************************************************
+ *
+ * 12 ECMAScript Language: Lexical Grammar
+ *
+ ************************************************/
+
 /// A match for <https://262.ecma-international.org/14.0/#prod-DecimalDigit>
 ///
 /// ```plain
@@ -74,4 +80,67 @@ DecimalDigit = { Digit }
 ///     DivPunctuator
 ///     RightBracePunctuator
 /// ```
-InputElementDiv = { SOI ~ DecimalDigit }
+InputElementDiv = { SOI ~ (Comment | DecimalDigit) }
+
+/************************************************
+ *
+ * 12.4 Comments
+ *
+ ************************************************/
+
+/// A match for <https://262.ecma-international.org/14.0/#prod-Comment>.
+///
+/// ```plain
+/// Comment ::
+///     MultiLineComment
+///     SingleLineComment
+/// ```
+Comment = { MultiLineComment }
+
+/// A match for <https://262.ecma-international.org/14.0/#prod-MultiLineComment>.
+///
+/// ```plain
+/// MultiLineComment ::
+///     `/*` MultiLineCommentChars_opt `*/`
+/// ```
+MultiLineComment = { "/*" ~ MultiLineCommentChars? ~ "*/" }
+
+/// A match for <https://262.ecma-international.org/14.0/#prod-MultiLineCommentChars>.
+///
+/// ```plain
+/// MultiLineCommentChars ::
+///     MultiLineNotAsteriskChar MultiLineCommentChars_opt
+///     `*` PostAsteriskCommentChars_opt
+/// ```
+MultiLineCommentChars = @{
+    ( MultiLineNotAsteriskChar ~ MultiLineCommentChars? ) |
+    ( "*" ~ PostAsteriskCommentChars? )
+}
+
+/// A match for <https://262.ecma-international.org/14.0/#prod-PostAsteriskCommentChars>.
+///
+/// ```plain
+/// PostAsteriskCommentChars ::
+///     MultiLineNotForwardSlashOrAsteriskChar MultiLineCommentChars_opt
+///     `*` PostAsteriskCommentChars_opt
+/// ```
+PostAsteriskCommentChars = {
+    ( MultiLineNotForwardSlashOrAsteriskChar ~ MultiLineCommentChars? ) |
+    ( "*" ~ PostAsteriskCommentChars? )
+}
+
+/// A match for <https://262.ecma-international.org/14.0/#prod-MultiLineNotAsteriskChar>.
+///
+/// ```plain
+/// MultiLineNotAsteriskChar ::
+///     SourceCharacter but not `*`
+/// ```
+MultiLineNotAsteriskChar = { !"*" }
+
+/// A match for <https://262.ecma-international.org/14.0/#prod-MultiLineNotForwardSlashOrAsteriskChar>.
+///
+/// ```plain
+/// MultiLineNotForwardSlashOrAsteriskChar ::
+///     SourceCharacter but not one of `/` or `*`
+/// ```
+MultiLineNotForwardSlashOrAsteriskChar = { !( "/" | "*" ) }

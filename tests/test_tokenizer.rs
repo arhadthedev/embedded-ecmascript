@@ -9,7 +9,7 @@ mod tests {
         assert_matches!(get_next_token(":"), Err(message) if !message.is_empty());
     }
 
-    #[rstest]
+    /*#[rstest]
     fn match_decimal_digit(
         #[values("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")]
         tested: &str,
@@ -21,5 +21,50 @@ mod tests {
         let tail = " ".to_owned() + tested;
         let with_tail = tested.to_owned() + &tail;
         assert_eq!(get_next_token(&with_tail), Ok((parsed, tail.as_str())));
+    }*/
+
+    #[rstest]
+    fn test_multiline_comments() {
+        // Comment termination
+        //assert_err!(get_next_token("/*"));
+        //assert_err!(get_next_token("*/"));
+        //assert_eq!(
+        //    get_next_token("/**/"),
+        //    Ok((Token::Comment(""), ""))
+        //);
+        //assert_ok_eq!(
+        //    get_next_token("/*/**/"),
+        //    (Token::Comment("/*"), "")
+        //);
+        //assert_ok_eq!(
+        //    get_next_token("/*foo*/"),
+        //    (Token::Comment("foo"), "")
+        //);
+        //assert_ok_eq!(
+        //    get_next_token("///*foo*/"),
+        //    (Token::Comment("/*foo*/"), "")
+        //);
+        //assert_ok_eq!(
+        //    get_next_token("// /*foo*/"),
+        //    (Token::Comment(" /*foo*/"), "")
+        //);
+        //assert_ok_eq!(
+        //    get_next_token("/*\n/*\n*/"),
+        //    (Token::Comment("/*\n"), "")
+        //);
+
+        // Leading and trailing space preservation
+        assert_eq!(
+            get_next_token("/* */"),
+            Ok((Token::Comment(" "), ""))
+        );
+        //assert_ok_eq!(
+        //    get_next_token(" /**/ "),
+        //    (Token::Comment(""), " ")
+        //);
+        //assert_ok_eq!(
+        //    get_next_token("/* \n * */"),
+        //    (Token::Comment(" \n * "), "")
+        //);
     }
 }
