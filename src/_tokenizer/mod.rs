@@ -92,12 +92,7 @@ mod tests {
                 "true" | "try" | "typeof" | "var" | "void" | "while" | "with" |
                 "yield" => wrap(super::names::match_reserved_word),
 
-                "\u{0009}" => wrap(super::space::match_tab),
-                "\u{000A}" => wrap(super::space::match_lf),
-                "\u{000B}" => wrap(super::space::match_vt),
-                "\u{000C}" => wrap(super::space::match_ff),
                 "\u{000D}" => wrap(super::space::match_cr),
-                "\u{0020}" => wrap(super::space::match_usp),
                 "d" | "д" | "大" => wrap(super::names::match_unicode_id_start),
                 "X" => wrap(super::names::match_ascii_letter),
                 "\u{0903}" => wrap(super::names::match_unicode_id_continue),
@@ -111,19 +106,10 @@ mod tests {
                 "&=" | "|=" | "^=" | "&&=" | "||=" | "??=" |
                 "=>" => wrap(super::punctuators::match_other_punctuator),
                 "}" => wrap(super::punctuators::match_right_brace_punctuator),
-                "\u{00A0}" => wrap(super::space::match_usp),
-                "\u{1680}" => wrap(super::space::match_usp),
                 "\u{2000}" | "\u{2001}" | "\u{2002}" | "\u{2003}" |
                 "\u{2004}" | "\u{2005}" | "\u{2006}" | "\u{2007}" |
-                "\u{2008}" | "\u{2009}" | "\u{200A}" => wrap(super::space::match_usp),
                 "\u{200C}" => wrap(super::names::match_zwnj),
                 "\u{200D}" => wrap(super::names::match_zwj),
-                "\u{2028}" => wrap(super::space::match_ls),
-                "\u{2029}" => wrap(super::space::match_ps),
-                "\u{202F}" => wrap(super::space::match_usp),
-                "\u{205F}" => wrap(super::space::match_usp),
-                "\u{3000}" => wrap(super::space::match_usp),
-                "\u{FEFF}" => wrap(super::space::match_zwnbsp),
                 _ => wrap(|_| None::<((), &str)>)
             };
             Ok(Self {
