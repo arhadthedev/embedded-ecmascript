@@ -40,6 +40,22 @@ mod tests {
     }
 
     #[rstest]
+    fn test_identifier_name(
+        #[values("X", "d", "д", "大", "$")]
+        tested: &str,
+    ) {
+        assert_eq!(
+            get_next_token(tested),
+            Ok((Token::IdentifierName(tested.to_owned()), ""))
+        );
+        let doubled = tested.to_owned() + tested;
+        assert_eq!(
+            get_next_token(&doubled),
+            Ok((Token::IdentifierName(doubled.clone()), ""))
+        );
+    }
+
+    #[rstest]
     fn match_decimal_digit(
         #[values("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")]
         tested: &str,
