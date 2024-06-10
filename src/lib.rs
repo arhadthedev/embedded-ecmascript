@@ -24,6 +24,7 @@ use pest_ast::FromPest;
 pub enum Token {
     WhiteSpace,
     LineTerminator,
+    IdentifierName(String),
     NumericLiteral(f64),
 }
 
@@ -53,10 +54,25 @@ struct WhiteSpace;
 struct LineTerminator;
 
 #[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::IdentifierName))]
+struct IdentifierName {
+    // Escape sequence decoding do not allow to use `&str`
+    #[pest_ast(outer(with(span_into_str), with(str::to_string)))]
+    pub decoded: String
+}
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::CommonToken))]
+enum CommonToken {
+    IdentifierName(IdentifierName),
+}
+
+#[derive(Debug, FromPest)]
 #[pest_ast(rule(lexical::Rule::InputElementDiv))]
 enum InputElementDiv {
     WhiteSpace(WhiteSpace),
     LineTerminator(LineTerminator),
+    CommonToken(CommonToken),
     DecimalDigit(DecimalDigit),
 }
 
@@ -88,10 +104,15 @@ pub fn get_next_token(input: &str) -> Result<(Token, &str), String> {
     }
 }
 
-const fn extract_token(symbol_tree: InputElementDiv) -> Token {
+fn extract_token(symbol_tree: InputElementDiv) -> Token {
     match symbol_tree {
         InputElementDiv::DecimalDigit(value) => Token::NumericLiteral(value.digit.value),
         InputElementDiv::WhiteSpace(_) => Token::WhiteSpace,
+        InputElementDiv::CommonToken(token) => {
+            match token {
+                CommonToken::IdentifierName(name) => Token::IdentifierName(name.decoded),
+            }
+        }
         InputElementDiv::LineTerminator(_) => Token::LineTerminator,
     }
 }

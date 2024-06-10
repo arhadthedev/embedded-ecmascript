@@ -82,8 +82,32 @@ DecimalDigit = { Digit }
 /// ```
 InputElementDiv = {
     SOI ~
-    (WhiteSpace | LineTerminator | DecimalDigit)
+    ( WhiteSpace | LineTerminator | CommonToken | DecimalDigit )
 }
+
+/************************************************
+ *
+ * 12.1 Unicode Format-Control Characters
+ *
+ ************************************************/
+
+/// A match for `<ZWNJ>` entry of Table 34: Format-Control Code Point Usage:
+///
+/// > | Code Point | Name                      | Abbreviation |
+/// > |------------|---------------------------|--------------|
+/// > | U+200C     | ZERO WIDTH NON-JOINER     | <ZWNJ>       |
+///
+/// Implements <https://262.ecma-international.org/14.0/#sec-unicode-format-control-characters>.
+ZWNJ = { "\u{200C}" }
+
+/// A match for `<ZWJ>` entry of Table 34: Format-Control Code Point Usage:
+///
+/// > | Code Point | Name                      | Abbreviation |
+/// > |------------|---------------------------|--------------|
+/// > | U+200D     | ZERO WIDTH JOINER         | <ZWJ>        |
+///
+/// Implements <https://262.ecma-international.org/14.0/#sec-unicode-format-control-characters>.
+ZWJ = { "\u{200D}" }
 
 /************************************************
  *
@@ -237,3 +261,119 @@ LineTerminator = @{ LF | CR | LS | PS }
 ///
 /// Implements <https://262.ecma-international.org/14.0/#prod-LineTerminatorSequence>.
 LineTerminatorSequence = @{ LF | CR ~ !LF | LS | PS | CR ~ LF }
+
+/************************************************
+ *
+ * 12.6 Tokens
+ *
+ ************************************************/
+
+/// A match for `CommonToken` production:
+///
+/// ```plain
+/// CommonToken ::
+///     IdentifierName
+///     PrivateIdentifier
+///     Punctuator
+///     NumericLiteral
+///     StringLiteral
+///     Template
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-CommonToken>.
+CommonToken = { IdentifierName }
+
+/************************************************
+ *
+ * 12.7 Names and Keywords
+ *
+ ************************************************/
+
+/// A match for `IdentifierName` production:
+///
+/// ```plain
+/// IdentifierName ::
+///     IdentifierStart
+///     IdentifierName IdentifierPart
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-IdentifierName>.
+IdentifierName = @{ IdentifierStart ~ IdentifierPart* }
+
+/// A match for `IdentifierStart` production:
+///
+/// ```plain
+/// IdentifierStart ::
+///     IdentifierStartChar
+///     `\` UnicodeEscapeSequence
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-IdentifierStart>.
+IdentifierStart = { IdentifierStartChar }
+
+/// A match for `IdentifierPart` production:
+///
+/// ```plain
+/// IdentifierPart ::
+///     IdentifierPartChar
+///     `\` UnicodeEscapeSequence
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-IdentifierPart>.
+IdentifierPart = { IdentifierPartChar }
+
+/// A match for `IdentifierStartChar` production:
+///
+/// ```plain
+/// IdentifierStartChar ::
+///     UnicodeIDStart
+///     $
+///     _
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-IdentifierStartChar>.
+IdentifierStartChar = { UnicodeIDStart | "$" | "_" }
+
+/// A match for `IdentifierPartChar` production:
+///
+/// ```plain
+/// IdentifierPartChar ::
+///     UnicodeIDContinue
+///     $
+///     <ZWNJ>
+///     <ZWJ>
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-IdentifierPartChar>.
+IdentifierPartChar = { UnicodeIDContinue | "$" | ZWNJ | ZWJ }
+
+/// A match for `AsciiLetter` production:
+///
+/// ```plain
+/// AsciiLetter :: one of
+///     a b c d e f g h i j k l m n o p q r s t u v w x y z
+///     A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-AsciiLetter>.
+AsciiLetter = { ASCII_ALPHA }
+
+/// A match for `UnicodeIDStart` production:
+///
+/// ```plain
+/// UnicodeIDStart ::
+///     any Unicode code point with the Unicode property “ID_Start”
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-UnicodeIDStart>.
+UnicodeIDStart = { ID_START }
+
+/// A match for `UnicodeIDContinue` production:
+///
+/// ```plain
+/// UnicodeIDContinue ::
+///     any Unicode code point with the Unicode property “ID_Continue”
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-UnicodeIDContinue>.
+UnicodeIDContinue = { ID_CONTINUE }
