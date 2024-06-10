@@ -24,6 +24,22 @@ mod tests {
     }
 
     #[rstest]
+    fn test_line_terminator(
+        #[values("\r", "\n", "\u{2028}", "\u{2029}")]
+        tested: &str,
+    ) {
+        assert_matches!(get_next_token(tested), Ok((Token::LineTerminator, "")));
+    }
+
+    #[rstest]
+    fn test_line_terminator_special() {
+        // The parser consumes `\r\n` as string literal line continuation only.
+        // See how `LineTerminator` and `LineTerminatorSequence` grammar rules
+        // are defined and used in ECMA-262.
+        assert_matches!(get_next_token("\r\n"), Ok((Token::LineTerminator, "\n")));
+    }
+
+    #[rstest]
     fn match_decimal_digit(
         #[values("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")]
         tested: &str,

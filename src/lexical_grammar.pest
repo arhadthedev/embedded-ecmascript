@@ -82,7 +82,7 @@ DecimalDigit = { Digit }
 /// ```
 InputElementDiv = {
     SOI ~
-    (WhiteSpace | DecimalDigit)
+    (WhiteSpace | LineTerminator | DecimalDigit)
 }
 
 /************************************************
@@ -173,3 +173,72 @@ USP = { SPACE_SEPARATOR }
 ///     <USP>
 /// ```
 WhiteSpace = @{ TAB | VT | FF | ZWNBSP | USP }
+
+/************************************************
+ *
+ * 12.3 Line Terminators
+ *
+ ************************************************/
+
+/// A match for the `<LF>` entry of Table 36: Line Terminator Code Points:
+///
+/// > | Code Point | Name                      | Abbreviation |
+/// > |------------|---------------------------|--------------|
+/// > | U+000A     | LINE FEED (LF)            | <LF>         |
+///
+/// Implements <https://262.ecma-international.org/14.0/#table-line-terminator-code-points>.
+LF = { "\u{000A}" }
+
+/// A match for the `<CR>` entry of Table 36: Line Terminator Code Points:
+///
+/// > | Code Point | Name                      | Abbreviation |
+/// > |------------|---------------------------|--------------|
+/// > | U+000D     | CARRIAGE RETURN (CR)      | <CR>         |
+///
+/// Implements <https://262.ecma-international.org/14.0/#table-line-terminator-code-points>.
+CR = { "\u{000D}" }
+
+/// A match for the `<LS>` entry of Table 36: Line Terminator Code Points:
+///
+/// > | Code Point | Name                      | Abbreviation |
+/// > |------------|---------------------------|--------------|
+/// > | U+2028     | LINE SEPARATOR            | <LS>         |
+///
+/// Implements <https://262.ecma-international.org/14.0/#table-line-terminator-code-points>.
+LS = { "\u{2028}" }
+
+/// A match for the `<PS>` entry of Table 36: Line Terminator Code Points:
+///
+/// > | Code Point | Name                      | Abbreviation |
+/// > |------------|---------------------------|--------------|
+/// > | U+2029     | PARAGRAPH SEPARATOR       | <PS>         |
+///
+/// Implements <https://262.ecma-international.org/14.0/#table-line-terminator-code-points>.
+PS = { "\u{2029}" }
+
+/// A match for `LineTerminator` production:
+///
+/// ```plain
+/// LineTerminator ::
+///     <LF>
+///     <CR>
+///     <LS>
+///     <PS>
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-LineTerminator>.
+LineTerminator = @{ LF | CR | LS | PS }
+
+/// A match for `LineTerminatorSequence` production:
+///
+/// ```plain
+/// LineTerminatorSequence ::
+///     <LF>
+///     <CR> [lookahead ≠ <LF>]
+///     <LS>
+///     <PS>
+//      <CR> <LF>
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-LineTerminatorSequence>.
+LineTerminatorSequence = @{ LF | CR ~ !LF | LS | PS | CR ~ LF }

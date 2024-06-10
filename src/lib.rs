@@ -23,6 +23,7 @@ use pest_ast::FromPest;
 #[derive(Clone, Debug, PartialEq)]
 pub enum Token {
     WhiteSpace,
+    LineTerminator,
     NumericLiteral(f64),
 }
 
@@ -48,9 +49,14 @@ struct DecimalDigit {
 struct WhiteSpace;
 
 #[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::LineTerminator))]
+struct LineTerminator;
+
+#[derive(Debug, FromPest)]
 #[pest_ast(rule(lexical::Rule::InputElementDiv))]
 enum InputElementDiv {
     WhiteSpace(WhiteSpace),
+    LineTerminator(LineTerminator),
     DecimalDigit(DecimalDigit),
 }
 
@@ -86,6 +92,7 @@ const fn extract_token(symbol_tree: InputElementDiv) -> Token {
     match symbol_tree {
         InputElementDiv::DecimalDigit(value) => Token::NumericLiteral(value.digit.value),
         InputElementDiv::WhiteSpace(_) => Token::WhiteSpace,
+        InputElementDiv::LineTerminator(_) => Token::LineTerminator,
     }
 }
 
