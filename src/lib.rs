@@ -82,7 +82,7 @@ pub fn get_next_token(input: &str) -> Result<(Token, &str), String> {
     }
 }
 
-fn extract_token(symbol_tree: InputElementDiv) -> Token {
+const fn extract_token(symbol_tree: InputElementDiv) -> Token {
     match symbol_tree {
         InputElementDiv::DecimalDigit(value) => Token::NumericLiteral(value.digit.value),
         InputElementDiv::WhiteSpace(_) => Token::WhiteSpace,
