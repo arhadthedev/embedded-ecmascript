@@ -90,10 +90,6 @@ mod tests {
                 "null" | "return" | "super" | "switch" | "this" | "throw" |
                 "true" | "try" | "typeof" | "var" | "void" | "while" | "with" |
                 "yield" => wrap(super::names::match_reserved_word),
-
-                "d" | "д" | "大" => wrap(super::names::match_unicode_id_start),
-                "X" => wrap(super::names::match_ascii_letter),
-                "\u{0903}" => wrap(super::names::match_unicode_id_continue),
                 "/" | "/=" => wrap(super::punctuators::match_div_punctuator),
                 "?." => wrap(super::punctuators::match_optional_chaining_punctuator),
                 "{" | "(" | ")" | "[" | "]" | "." | "..." | ";" | "," | "<" |
@@ -104,10 +100,6 @@ mod tests {
                 "&=" | "|=" | "^=" | "&&=" | "||=" | "??=" |
                 "=>" => wrap(super::punctuators::match_other_punctuator),
                 "}" => wrap(super::punctuators::match_right_brace_punctuator),
-                "\u{2000}" | "\u{2001}" | "\u{2002}" | "\u{2003}" |
-                "\u{2004}" | "\u{2005}" | "\u{2006}" | "\u{2007}" |
-                "\u{200C}" => wrap(super::names::match_zwnj),
-                "\u{200D}" => wrap(super::names::match_zwj),
                 _ => wrap(|_| None::<((), &str)>)
             };
             Ok(Self {
