@@ -91,8 +91,7 @@ InputElementDiv = {
  *
  ************************************************/
 
-/// A match for the start of a string against `<ZWNBSP>` entry of Table 34:
-/// Format-Control Code Point Usage:
+/// A match for `<ZWNBSP>` entry of Table 34: Format-Control Code Point Usage:
 ///
 /// > | Code Point | Name                      | Abbreviation |
 /// > |------------|---------------------------|--------------|
@@ -101,8 +100,7 @@ InputElementDiv = {
 /// Implements <https://262.ecma-international.org/14.0/#sec-unicode-format-control-characters>.
 ZWNBSP = { "\u{FEFF}" }
 
-/// A match for the start of a string against `<TAB>` entry of Table 35:
-/// White Space Code Points:
+/// A match for `<TAB>` entry of Table 35: White Space Code Points:
 ///
 /// > | Code Point | Name                      | Abbreviation |
 /// > |------------|---------------------------|--------------|
@@ -111,8 +109,7 @@ ZWNBSP = { "\u{FEFF}" }
 /// Implements <https://262.ecma-international.org/14.0/#sec-white-space>.
 TAB = { "\u{0009}" }
 
-/// A match for the start of a string against `<VT>` entry of Table 35:
-/// White Space Code Points:
+/// A match for `<VT>` entry of Table 35: White Space Code Points:
 ///
 /// > | Code Point | Name                      | Abbreviation |
 /// > |------------|---------------------------|--------------|
@@ -121,8 +118,7 @@ TAB = { "\u{0009}" }
 /// Implements <https://262.ecma-international.org/14.0/#sec-white-space>.
 VT = { "\u{000B}" }
 
-/// A match for the start of a string against `<FF>` entry of Table 35:
-/// White Space Code Points:
+/// A match for `<FF>` entry of Table 35: White Space Code Points:
 ///
 /// > | Code Point | Name                      | Abbreviation |
 /// > |------------|---------------------------|--------------|
@@ -131,8 +127,7 @@ VT = { "\u{000B}" }
 /// Implements <https://262.ecma-international.org/14.0/#sec-white-space>.
 FF = { "\u{000C}" }
 
-/// A match for the start of a string against `<USP>` entry of Table 35:
-/// White Space Code Points:
+/// A match for `<USP>` entry of Table 35: White Space Code Points:
 ///
 /// > | Code Point | Name                      | Abbreviation |
 /// > |------------|---------------------------|--------------|
