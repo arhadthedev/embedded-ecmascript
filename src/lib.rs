@@ -147,8 +147,6 @@ pub fn dummy() {
     _tokenizer::names::match_identifier_part_char("");
     _tokenizer::names::match_ascii_letter("");
     _tokenizer::names::match_unicode_id_start("");
-    _tokenizer::space::match_line_terminator("");
-    _tokenizer::space::match_line_terminator_sequence("");
     if let Some(
         (
             _tokenizer::punctuators::Punctuator::Other(_tokenizer::punctuators::OtherPunctuator::And),

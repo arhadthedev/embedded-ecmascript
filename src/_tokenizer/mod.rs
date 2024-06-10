@@ -8,7 +8,6 @@
 
 pub mod names;
 pub mod punctuators;
-pub mod space;
 
 #[cfg(test)]
 mod tests {
@@ -92,7 +91,6 @@ mod tests {
                 "true" | "try" | "typeof" | "var" | "void" | "while" | "with" |
                 "yield" => wrap(super::names::match_reserved_word),
 
-                "\u{000D}" => wrap(super::space::match_cr),
                 "d" | "д" | "大" => wrap(super::names::match_unicode_id_start),
                 "X" => wrap(super::names::match_ascii_letter),
                 "\u{0903}" => wrap(super::names::match_unicode_id_continue),
