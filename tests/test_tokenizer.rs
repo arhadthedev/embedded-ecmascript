@@ -10,6 +10,20 @@ mod tests {
     }
 
     #[rstest]
+    fn test_whitespace(
+        #[values(
+            "\u{FEFF}", "\t", "\u{000B}", "\u{000C}", " ",
+            "\u{00A0}", "\u{1680}", "\u{2000}", "\u{2001}", "\u{2002}",
+            "\u{2003}", "\u{2004}", "\u{2005}", "\u{2006}", "\u{2007}",
+            "\u{2008}", "\u{2009}", "\u{200A}", "\u{202F}", "\u{205F}",
+            "\u{3000}",
+        )]
+        tested: &str,
+    ) {
+        assert_matches!(get_next_token(tested), Ok((Token::WhiteSpace, "")));
+    }
+
+    #[rstest]
     fn match_decimal_digit(
         #[values("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")]
         tested: &str,

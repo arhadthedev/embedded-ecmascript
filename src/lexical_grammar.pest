@@ -63,6 +63,12 @@ Digit = { ASCII_DIGIT }
 /// ```
 DecimalDigit = { Digit }
 
+/************************************************
+ *
+ * 12 ECMAScript Language: Lexical Grammar
+ *
+ ************************************************/
+
 /// A match for <https://262.ecma-international.org/14.0/#prod-InputElementDiv>.
 ///
 /// ```plain
@@ -74,4 +80,96 @@ DecimalDigit = { Digit }
 ///     DivPunctuator
 ///     RightBracePunctuator
 /// ```
-InputElementDiv = { SOI ~ DecimalDigit }
+InputElementDiv = {
+    SOI ~
+    (WhiteSpace | DecimalDigit)
+}
+
+/************************************************
+ *
+ * 12.2 White Space
+ *
+ ************************************************/
+
+/// A match for the start of a string against `<ZWNBSP>` entry of Table 34:
+/// Format-Control Code Point Usage:
+///
+/// > | Code Point | Name                      | Abbreviation |
+/// > |------------|---------------------------|--------------|
+/// > | U+FEFF     | ZERO WIDTH NO-BREAK SPACE | <ZWNBSP>     |
+///
+/// Implements <https://262.ecma-international.org/14.0/#sec-unicode-format-control-characters>.
+ZWNBSP = { "\u{FEFF}" }
+
+/// A match for the start of a string against `<TAB>` entry of Table 35:
+/// White Space Code Points:
+///
+/// > | Code Point | Name                      | Abbreviation |
+/// > |------------|---------------------------|--------------|
+/// > | U+0009     | CHARACTER TABULATION      | <TAB>        |
+///
+/// Implements <https://262.ecma-international.org/14.0/#sec-white-space>.
+TAB = { "\u{0009}" }
+
+/// A match for the start of a string against `<VT>` entry of Table 35:
+/// White Space Code Points:
+///
+/// > | Code Point | Name                      | Abbreviation |
+/// > |------------|---------------------------|--------------|
+/// > | U+000B     | LINE TABULATION           | <VT>         |
+///
+/// Implements <https://262.ecma-international.org/14.0/#sec-white-space>.
+VT = { "\u{000B}" }
+
+/// A match for the start of a string against `<FF>` entry of Table 35:
+/// White Space Code Points:
+///
+/// > | Code Point | Name                      | Abbreviation |
+/// > |------------|---------------------------|--------------|
+/// > | U+000C     | FORM FEED (FF)            | <FF>         |
+///
+/// Implements <https://262.ecma-international.org/14.0/#sec-white-space>.
+FF = { "\u{000C}" }
+
+/// A match for the start of a string against `<USP>` entry of Table 35:
+/// White Space Code Points:
+///
+/// > | Code Point | Name                      | Abbreviation |
+/// > |------------|---------------------------|--------------|
+/// > | any code point in general category     | <USP>        |
+/// > | `Space_Separator`                      |              | 
+///
+/// `Space_Separator` (Zs) contains the following:
+///
+/// - U+0020 SPACE
+/// - U+00A0 NO-BREAK SPACE
+/// - U+1680 OHGRAM SPACE MARK
+/// - U+2000 EN QUAD
+/// - U+2001 EM QUAD
+/// - U+2002 EN SPACE
+/// - U+2003 EM SPACE
+/// - U+2004 THREE-PER-EM SPACE
+/// - U+2005 FOUR-PER-EM SPACE
+/// - U+2006 SIX-PER-EM SPACE
+/// - U+2007 FIGURE SPACE
+/// - U+2008 PUNCTUATION SPACE
+/// - U+2009 THIN SPACE
+/// - U+200A HAIR SPACE
+/// - U+202F NARROW NO-BREAK SPACE
+/// - U+205F MEDIUM MATHEMATICAL SPACE
+/// - U+3000 IDEOGRAPHIC SPACE
+///
+/// Implements <https://262.ecma-international.org/14.0/#sec-white-space>.
+USP = { SPACE_SEPARATOR }
+
+/// A match for <https://262.ecma-international.org/14.0/#prod-WhiteSpace>.
+///
+/// ```plain
+/// WhiteSpace ::
+///     <TAB>
+///     <VT>
+///     <FF>
+///     <ZWNBSP>
+///     <USP>
+/// ```
+WhiteSpace = @{ TAB | VT | FF | ZWNBSP | USP }
