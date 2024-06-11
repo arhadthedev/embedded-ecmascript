@@ -20,7 +20,7 @@ use pest::{iterators::Pairs, Parser, Span};
 use pest_ast::FromPest;
 
 /// A keyword; may be used as a name in some cases.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Keyword {
     Await,
     Break,
