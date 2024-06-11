@@ -6,7 +6,6 @@
 //! make this class public for a user; they would need to create their own
 //! parser to timely switch sets of lexical grammars.
 
-pub mod names;
 pub mod punctuators;
 
 #[cfg(test)]
@@ -83,13 +82,6 @@ mod tests {
             // Keep the arms unmerged for proper sorting of disjoined patterns.
             #[allow(clippy::match_same_arms)]
             let tested_parser = match text {
-                "await" | "break" | "case" | "catch" | "class" | "const" |
-                "continue" | "debugger" | "default" | "delete" | "do" | "else" |
-                "enum" | "export" | "extends" | "false" | "finally" | "for" |
-                "function" | "if" | "import" | "in" | "instanceof" | "new" |
-                "null" | "return" | "super" | "switch" | "this" | "throw" |
-                "true" | "try" | "typeof" | "var" | "void" | "while" | "with" |
-                "yield" => wrap(super::names::match_reserved_word),
                 "/" | "/=" => wrap(super::punctuators::match_div_punctuator),
                 "?." => wrap(super::punctuators::match_optional_chaining_punctuator),
                 "{" | "(" | ")" | "[" | "]" | "." | "..." | ";" | "," | "<" |
