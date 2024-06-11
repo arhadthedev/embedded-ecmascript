@@ -444,7 +444,6 @@ impl Display for SourceCodeError {
 }
 
 pub fn dummy() {
-    _tokenizer::names::match_reserved_word("");
     if let Some(
         (
             _tokenizer::punctuators::Punctuator::Other(_tokenizer::punctuators::OtherPunctuator::And),
