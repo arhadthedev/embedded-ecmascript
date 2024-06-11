@@ -56,6 +56,21 @@ mod tests {
     }
 
     #[rstest]
+    fn testreserved_word(
+        #[values(
+            "await", "break", "case", "catch", "class", "const", "continue",
+            "debugger", "default", "delete", "do", "else", "enum", "export",
+            "extends", "false", "finally", "for", "function", "if", "import",
+            "in", "instanceof", "new", "null", "return", "super", "switch",
+            "this", "throw", "true", "try", "typeof", "var", "void", "while",
+            "with", "yield",
+        )]
+        tested: &str,
+    ) {
+        assert_matches!(get_next_token(tested), Ok((Token::ReservedWord(_), "")));
+    }
+
+    #[rstest]
     fn match_decimal_digit(
         #[values("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")]
         tested: &str,

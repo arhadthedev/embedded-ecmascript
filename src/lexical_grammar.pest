@@ -80,9 +80,11 @@ DecimalDigit = { Digit }
 ///     DivPunctuator
 ///     RightBracePunctuator
 /// ```
+///
+/// We also add `ReservedWord` here to recognize and return it preparsed.
 InputElementDiv = {
     SOI ~
-    ( WhiteSpace | LineTerminator | CommonToken | DecimalDigit )
+    ( WhiteSpace | LineTerminator | ReservedWord | CommonToken | DecimalDigit )
 }
 
 /************************************************
@@ -377,3 +379,73 @@ UnicodeIDStart = { ID_START }
 ///
 /// Implements <https://262.ecma-international.org/14.0/#prod-UnicodeIDContinue>.
 UnicodeIDContinue = { ID_CONTINUE }
+
+/************************************************
+ *
+ * 12.7.2 Keywords and Reserved Words
+ *
+ ************************************************/
+
+Await = { "await" }
+Break = { "break" }
+Case = { "case" }
+Catch = { "catch" }
+Class = { "class" }
+Const = { "const" }
+Continue = { "continue" }
+Debugger = { "debugger" }
+Default = { "default" }
+Delete = { "delete" }
+Do = { "do" }
+Else = { "else" }
+Enum = { "enum" }
+Export = { "export" }
+Extends = { "extends" }
+False = { "false" }
+Finally = { "finally" }
+For = { "for" }
+Function = { "function" }
+If = { "if" }
+Import = { "import" }
+In = { "in" }
+Instanceof = { "instanceof" }
+New = { "new" }
+Null = { "null" }
+Return = { "return" }
+Super = { "super" }
+Switch = { "switch" }
+This = { "this" }
+Throw = { "throw" }
+True = { "true" }
+Try = { "try" }
+Typeof = { "typeof" }
+Var = { "var" }
+Void = { "void" }
+While = { "while" }
+With = { "with" }
+Yield = { "yield" }
+
+/// A match for `ReservedWord` production:
+///
+/// ```plain
+/// ReservedWord :: one of
+///     await break case catch class const continue debugger default delete do
+///     else enum export extends false finally for function if import in
+///     instanceof new null return super switch this throw true try typeof var
+///     void while with yield
+/// ```
+///
+/// We sort the right side so a few keywords forming prefixes of other keywords
+/// are checked after the longer keyword fails:
+///
+/// - `in`, `instanceof`
+/// - ``
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-ReservedWord>.
+ReservedWord = {
+    Await | Break | Case | Catch | Class | Const | Continue | Debugger |
+    Default | Delete | Do | Else | Enum | Export | Extends | False | Finally |
+    For | Function | If | Import | Instanceof | In | New | Null | Return |
+    Super | Switch | This | Throw | True | Try | Typeof | Var | Void | While |
+    With | Yield
+}
