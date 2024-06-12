@@ -86,6 +86,7 @@ mod tests {
         assert_matches!(get_next_token("+"), Ok((Token::Addition, "")));
         assert_matches!(get_next_token("-"), Ok((Token::Subtraction, "")));
         assert_matches!(get_next_token("*"), Ok((Token::Multiplication, "")));
+        assert_matches!(get_next_token("/"), Ok((Token::Division, "")));
         assert_matches!(get_next_token("%"), Ok((Token::Modulo, "")));
         assert_matches!(get_next_token("&"), Ok((Token::BitAnd, "")));
         assert_matches!(get_next_token("|"), Ok((Token::BitOr, "")));
@@ -115,6 +116,7 @@ mod tests {
         assert_matches!(get_next_token("+="), Ok((Token::AdditionAssignment, "")));
         assert_matches!(get_next_token("-="), Ok((Token::SubtractionAssignment, "")));
         assert_matches!(get_next_token("*="), Ok((Token::MultiplicationAssignment, "")));
+        assert_matches!(get_next_token("/="), Ok((Token::DivisionAssignment, "")));
         assert_matches!(get_next_token("%="), Ok((Token::ModuloAssignment, "")));
         assert_matches!(get_next_token("&="), Ok((Token::BitAndAssignment, "")));
         assert_matches!(get_next_token("|="), Ok((Token::BitOrAssignment, "")));

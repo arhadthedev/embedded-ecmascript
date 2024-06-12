@@ -86,6 +86,8 @@ pub enum Token {
     Colon,
     Comma,
     Decrement,
+    Division,
+    DivisionAssignment,
     Dot,
     Ellipsis,
     Exponentiation,
@@ -651,11 +653,27 @@ enum ReservedWord {
 struct RightBracePunctuator;
 
 #[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::DivisionAssignment))]
+struct DivisionAssignment;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::Division))]
+struct Division;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::DivPunctuator))]
+enum DivPunctuator {
+    DivisionAssignment(DivisionAssignment),
+    Division(Division),
+}
+
+#[derive(Debug, FromPest)]
 #[pest_ast(rule(lexical::Rule::InputElementDiv))]
 enum InputElementDiv {
     WhiteSpace(WhiteSpace),
     LineTerminator(LineTerminator),
     CommonToken(CommonToken),
+    DivPunctuator(DivPunctuator),
     ReservedWord(ReservedWord),
     RightBracePunctuator(RightBracePunctuator),
     DecimalDigit(DecimalDigit),
@@ -758,6 +776,12 @@ fn extract_token(symbol_tree: InputElementDiv) -> Token {
                         }
                     }
                 }
+            }
+        },
+        InputElementDiv::DivPunctuator(punctuator) => {
+            match punctuator {
+                DivPunctuator::DivisionAssignment(_) => Token::DivisionAssignment,
+                DivPunctuator::Division(_) => Token::Division,
             }
         },
         InputElementDiv::ReservedWord(keyword) => {
