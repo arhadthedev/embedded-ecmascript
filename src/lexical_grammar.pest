@@ -89,6 +89,7 @@ InputElementDiv = {
         LineTerminator |
         ReservedWord |
         CommonToken |
+        DivPunctuator |
         RightBracePunctuator |
         DecimalDigit
     )
@@ -565,6 +566,24 @@ OtherPunctuator = {
     BitOrAssignment | BitOr | BitXorAssignment | BitXor | BitNot |
     NullishCoalescenceAssignment | NullishCoalescence | QuestionMark | Colon
 }
+
+DivisionAssignment = { "/=" }
+Division = { "/" }
+
+/// A match for `DivPunctuator` production:
+///
+/// ```plain
+/// DivPunctuator ::
+///     `/`
+///     `/=`
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-DivPunctuator>.
+///
+/// Note: if  one punctuator is the same as a start of other punctuator
+/// (like `/=` and `/`), check the longer one first to not prematurely bail out
+/// on the shorter one leaving an undermatched tail.
+DivPunctuator = { DivisionAssignment | Division }
 
 ///A match for `RightBracePunctuator` production:
 ///
