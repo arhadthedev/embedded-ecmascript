@@ -839,8 +839,6 @@ fn get_unprocessed_tail<'src>(
     &whole_source[processed_substring.end()..]
 }
 
-mod _tokenizer;
-
 use std::cmp::{Eq, PartialEq};
 use std::error::Error;
 use std::fmt::{Debug, Display, Formatter, Result as _Result};
@@ -874,17 +872,4 @@ impl Display for SourceCodeError {
             &self.message
         )
     }
-}
-
-pub fn dummy() {
-    if let Some(
-        (
-            _tokenizer::punctuators::Punctuator::Other(_tokenizer::punctuators::OtherPunctuator::And),
-            _
-        )
-    ) = _tokenizer::punctuators::match_punctuator("") {
-        print!("");
-    }
-    _tokenizer::punctuators::match_div_punctuator("");
-    _tokenizer::punctuators::match_right_brace_punctuator("");
 }
