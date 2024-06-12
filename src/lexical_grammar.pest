@@ -84,7 +84,14 @@ DecimalDigit = { Digit }
 /// We also add `ReservedWord` here to recognize and return it preparsed.
 InputElementDiv = {
     SOI ~
-    ( WhiteSpace | LineTerminator | ReservedWord | CommonToken | DecimalDigit )
+    (
+        WhiteSpace |
+        LineTerminator |
+        ReservedWord |
+        CommonToken |
+        RightBracePunctuator |
+        DecimalDigit
+    )
 }
 
 /************************************************
@@ -558,3 +565,13 @@ OtherPunctuator = {
     BitOrAssignment | BitOr | BitXorAssignment | BitXor | BitNot |
     NullishCoalescenceAssignment | NullishCoalescence | QuestionMark | Colon
 }
+
+///A match for `RightBracePunctuator` production:
+///
+/// ```plain
+/// RightBracePunctuator ::
+///     `}`
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-RightBracePunctuator>.
+RightBracePunctuator = { "}" }
