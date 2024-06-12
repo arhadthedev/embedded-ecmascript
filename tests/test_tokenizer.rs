@@ -73,6 +73,7 @@ mod tests {
     #[test]
     fn test_onechar_punctuators() {
         assert_matches!(get_next_token("{"), Ok((Token::OpeningBrace, "")));
+        assert_matches!(get_next_token("}"), Ok((Token::ClosingBrace, "")));
         assert_matches!(get_next_token("("), Ok((Token::OpeningParenthesis, "")));
         assert_matches!(get_next_token(")"), Ok((Token::ClosingParenthesis, "")));
         assert_matches!(get_next_token("["), Ok((Token::OpeningBracket, "")));

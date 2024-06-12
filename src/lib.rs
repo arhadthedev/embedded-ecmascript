@@ -80,6 +80,7 @@ pub enum Token {
     BitOrAssignment,
     BitXor,
     BitXorAssignment,
+    ClosingBrace,
     ClosingBracket,
     ClosingParenthesis,
     Colon,
@@ -646,12 +647,17 @@ enum ReservedWord {
 }
 
 #[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::RightBracePunctuator))]
+struct RightBracePunctuator;
+
+#[derive(Debug, FromPest)]
 #[pest_ast(rule(lexical::Rule::InputElementDiv))]
 enum InputElementDiv {
     WhiteSpace(WhiteSpace),
     LineTerminator(LineTerminator),
     CommonToken(CommonToken),
     ReservedWord(ReservedWord),
+    RightBracePunctuator(RightBracePunctuator),
     DecimalDigit(DecimalDigit),
 }
 
@@ -796,6 +802,7 @@ fn extract_token(symbol_tree: InputElementDiv) -> Token {
                 ReservedWord::Yield(_) => Token::ReservedWord(Keyword::Yield),
             }
         },
+        InputElementDiv::RightBracePunctuator(_) => Token::ClosingBrace,
         InputElementDiv::LineTerminator(_) => Token::LineTerminator,
     }
 }
