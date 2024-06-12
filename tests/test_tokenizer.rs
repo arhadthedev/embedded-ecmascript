@@ -71,61 +71,73 @@ mod tests {
     }
 
     #[test]
-    fn test_punctuator() {
-        assert_matches!(get_next_token("?."), Ok((Token::OptionalChaining, "")));
+    fn test_onechar_punctuators() {
         assert_matches!(get_next_token("{"), Ok((Token::OpeningBrace, "")));
         assert_matches!(get_next_token("("), Ok((Token::OpeningParenthesis, "")));
         assert_matches!(get_next_token(")"), Ok((Token::ClosingParenthesis, "")));
         assert_matches!(get_next_token("["), Ok((Token::OpeningBracket, "")));
         assert_matches!(get_next_token("]"), Ok((Token::ClosingBracket, "")));
         assert_matches!(get_next_token("."), Ok((Token::Dot, "")));
-        assert_matches!(get_next_token("..."), Ok((Token::Ellipsis, "")));
         assert_matches!(get_next_token(";"), Ok((Token::Semicolon, "")));
         assert_matches!(get_next_token(","), Ok((Token::Comma, "")));
         assert_matches!(get_next_token("<"), Ok((Token::Less, "")));
         assert_matches!(get_next_token(">"), Ok((Token::More, "")));
-        assert_matches!(get_next_token("<="), Ok((Token::LessOrEqual, "")));
-        assert_matches!(get_next_token(">="), Ok((Token::MoreOrEqual, "")));
-        assert_matches!(get_next_token("=="), Ok((Token::LooseEquality, "")));
-        assert_matches!(get_next_token("!="), Ok((Token::LooseInequality, "")));
-        assert_matches!(get_next_token("==="), Ok((Token::StrictEquality, "")));
-        assert_matches!(get_next_token("!=="), Ok((Token::StrictInequality, "")));
         assert_matches!(get_next_token("+"), Ok((Token::Addition, "")));
         assert_matches!(get_next_token("-"), Ok((Token::Subtraction, "")));
         assert_matches!(get_next_token("*"), Ok((Token::Multiplication, "")));
         assert_matches!(get_next_token("%"), Ok((Token::Modulo, "")));
-        assert_matches!(get_next_token("**"), Ok((Token::Exponentiation, "")));
-        assert_matches!(get_next_token("++"), Ok((Token::Increment, "")));
-        assert_matches!(get_next_token("--"), Ok((Token::Decrement, "")));
-        assert_matches!(get_next_token("<<"), Ok((Token::LeftShift, "")));
-        assert_matches!(get_next_token(">>"), Ok((Token::RightShift, "")));
-        assert_matches!(get_next_token(">>>"), Ok((Token::UnsignedRightShift, "")));
         assert_matches!(get_next_token("&"), Ok((Token::BitAnd, "")));
         assert_matches!(get_next_token("|"), Ok((Token::BitOr, "")));
         assert_matches!(get_next_token("^"), Ok((Token::BitXor, "")));
         assert_matches!(get_next_token("!"), Ok((Token::Not, "")));
         assert_matches!(get_next_token("~"), Ok((Token::BitNot, "")));
-        assert_matches!(get_next_token("&&"), Ok((Token::And, "")));
-        assert_matches!(get_next_token("||"), Ok((Token::Or, "")));
-        assert_matches!(get_next_token("??"), Ok((Token::NullishCoalescence, "")));
         assert_matches!(get_next_token("?"), Ok((Token::QuestionMark, "")));
         assert_matches!(get_next_token(":"), Ok((Token::Colon, "")));
         assert_matches!(get_next_token("="), Ok((Token::Assignment, "")));
+    }
+
+    #[test]
+    fn test_twochar_punctuators() {
+        assert_matches!(get_next_token("?."), Ok((Token::OptionalChaining, "")));
+        assert_matches!(get_next_token("<="), Ok((Token::LessOrEqual, "")));
+        assert_matches!(get_next_token(">="), Ok((Token::MoreOrEqual, "")));
+        assert_matches!(get_next_token("=="), Ok((Token::LooseEquality, "")));
+        assert_matches!(get_next_token("!="), Ok((Token::LooseInequality, "")));
+        assert_matches!(get_next_token("**"), Ok((Token::Exponentiation, "")));
+        assert_matches!(get_next_token("++"), Ok((Token::Increment, "")));
+        assert_matches!(get_next_token("--"), Ok((Token::Decrement, "")));
+        assert_matches!(get_next_token("<<"), Ok((Token::LeftShift, "")));
+        assert_matches!(get_next_token(">>"), Ok((Token::RightShift, "")));
+        assert_matches!(get_next_token("&&"), Ok((Token::And, "")));
+        assert_matches!(get_next_token("||"), Ok((Token::Or, "")));
+        assert_matches!(get_next_token("??"), Ok((Token::NullishCoalescence, "")));
         assert_matches!(get_next_token("+="), Ok((Token::AdditionAssignment, "")));
         assert_matches!(get_next_token("-="), Ok((Token::SubtractionAssignment, "")));
         assert_matches!(get_next_token("*="), Ok((Token::MultiplicationAssignment, "")));
         assert_matches!(get_next_token("%="), Ok((Token::ModuloAssignment, "")));
-        assert_matches!(get_next_token("**="), Ok((Token::ExponentiationAssignment, "")));
-        assert_matches!(get_next_token("<<="), Ok((Token::LeftShiftAssignment, "")));
-        assert_matches!(get_next_token(">>="), Ok((Token::RightShiftAssignment, "")));
-        assert_matches!(get_next_token(">>>="), Ok((Token::UnsignedRightShiftAssignment, "")));
         assert_matches!(get_next_token("&="), Ok((Token::BitAndAssignment, "")));
         assert_matches!(get_next_token("|="), Ok((Token::BitOrAssignment, "")));
         assert_matches!(get_next_token("^="), Ok((Token::BitXorAssignment, "")));
+        assert_matches!(get_next_token("=>"), Ok((Token::FunctionArrow, "")));
+    }
+
+    #[test]
+    fn test_threechar_punctuators() {
+        assert_matches!(get_next_token("..."), Ok((Token::Ellipsis, "")));
+        assert_matches!(get_next_token("==="), Ok((Token::StrictEquality, "")));
+        assert_matches!(get_next_token("!=="), Ok((Token::StrictInequality, "")));
+        assert_matches!(get_next_token(">>>"), Ok((Token::UnsignedRightShift, "")));
+        assert_matches!(get_next_token("**="), Ok((Token::ExponentiationAssignment, "")));
+        assert_matches!(get_next_token("<<="), Ok((Token::LeftShiftAssignment, "")));
+        assert_matches!(get_next_token(">>="), Ok((Token::RightShiftAssignment, "")));
         assert_matches!(get_next_token("&&="), Ok((Token::AndAssignment, "")));
         assert_matches!(get_next_token("||="), Ok((Token::OrAssignment, "")));
         assert_matches!(get_next_token("??="), Ok((Token::NullishCoalescenceAssignment, "")));
-        assert_matches!(get_next_token("=>"), Ok((Token::FunctionArrow, "")));
+    }
+
+    #[test]
+    fn test_fourchar_punctuators() {
+        assert_matches!(get_next_token(">>>="), Ok((Token::UnsignedRightShiftAssignment, "")));
     }
 
     #[rstest]
