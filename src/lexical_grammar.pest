@@ -283,7 +283,7 @@ LineTerminatorSequence = @{ LF | CR ~ !LF | LS | PS | CR ~ LF }
 /// ```
 ///
 /// Implements <https://262.ecma-international.org/14.0/#prod-CommonToken>.
-CommonToken = { IdentifierName }
+CommonToken = { IdentifierName | Punctuator }
 
 /************************************************
  *
@@ -435,10 +435,9 @@ Yield = { "yield" }
 ///     void while with yield
 /// ```
 ///
-/// We sort the right side so a few keywords forming prefixes of other keywords
-/// are checked after the longer keyword fails:
-///
-/// - `in`, `instanceof`
+/// Note: if  one punctuator is the same as a start of other punctuator
+/// (here `in` and `instanceof`), check the longer one first to not prematurely
+/// bail out on the shorter one leaving an undermatched tail.
 ///
 /// Implements <https://262.ecma-international.org/14.0/#prod-ReservedWord>.
 ReservedWord = {
@@ -447,4 +446,115 @@ ReservedWord = {
     For | Function | If | Import | Instanceof | In | New | Null | Return |
     Super | Switch | This | Throw | True | Try | Typeof | Var | Void | While |
     With | Yield
+}
+
+/************************************************
+ *
+ * 12.8 Punctuators
+ *
+ ************************************************/
+
+/// A match for `Punctuator` production:
+///
+/// ```plain
+/// Punctuator ::
+///     OptionalChainingPunctuator
+///     OtherPunctuator
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-Punctuator>.
+Punctuator = { OptionalChainingPunctuator | OtherPunctuator }
+
+/// A match for `OptionalChainingPunctuator` production:
+///
+/// ```plain
+/// OptionalChainingPunctuator ::
+///     `?.` [lookahead ∉ `DecimalDigit`]
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-OptionalChainingPunctuator>.
+OptionalChainingPunctuator = { "?." ~ !DecimalDigit }
+
+OpeningBrace = { "{" }
+OpeningParenthesis = { "(" }
+ClosingParenthesis = { ")" }
+OpeningBracket = { "[" }
+ClosingBracket = { "]" }
+Ellipsis = { "..." }
+Dot = { "." }
+Semicolon = { ";" }
+Comma = { "," }
+StrictEquality = { "===" }
+FunctionArrow = { "=>" }
+LooseEquality = { "==" }
+Assignment = { "=" }
+StrictInequality = { "!==" }
+LooseInequality = { "!=" }
+Not = { "!" }
+Increment = { "++" }
+AdditionAssignment = { "+=" }
+Addition = { "+" }
+Decrement = { "--" }
+SubtractionAssignment = { "-=" }
+Subtraction = { "-" }
+ModuloAssignment = { "%=" }
+Modulo = { "%" }
+ExponentiationAssignment = { "**=" }
+Exponentiation = { "**" }
+MultiplicationAssignment = { "*=" }
+Multiplication = { "*" }
+UnsignedRightShiftAssignment = { ">>>=" }
+UnsignedRightShift = { ">>>" }
+RightShiftAssignment = { ">>=" }
+RightShift = { ">>" }
+MoreOrEqual = { ">=" }
+More = { ">" }
+LeftShiftAssignment = { "<<=" }
+LeftShift = { "<<" }
+LessOrEqual = { "<=" }
+Less = { "<" }
+AndAssignment = { "&&=" }
+And = { "&&" }
+BitAndAssignment = { "&=" }
+BitAnd = { "&" }
+OrAssignment = { "||=" }
+Or = { "||" }
+BitOrAssignment = { "|=" }
+BitOr = { "|" }
+BitXorAssignment = { "^=" }
+BitXor = { "^" }
+BitNot = { "~" }
+NullishCoalescenceAssignment = { "??=" }
+NullishCoalescence = { "??" }
+QuestionMark = { "?" }
+Colon = { ":" }
+
+/// A match for `OtherPunctuator` production:
+///
+/// ```plain
+/// OtherPunctuator ::
+///     `{` `(` `)` `[` `]` `.` `...` `;` `,` `<` `>` `<=` `>=` `==` `!=` `===`
+///     `!==` `+` `-` `*` `%` `**` `++` `--` `<<` `>>` `>>>` `&` `|` `^` `!` `~`
+///     `&&` `||` `??` `?` `:` `=` `+=` `-=` `*=` `%=` `**=` `<<=` `>>=` `>>>=`
+///     `&=` `|=` `^=` `&&=` `||=` `??=` `=>`
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-OtherPunctuator>.
+///
+/// Note: if  one punctuator is the same as a start of other punctuator
+/// (like `+=` and `+`), check the longer one first to not prematurely bail out
+/// on the shorter one leaving an undermatched tail.
+OtherPunctuator = {
+    OpeningBrace | OpeningParenthesis | ClosingParenthesis | OpeningBracket |
+    ClosingBracket | Ellipsis | Dot | Semicolon | Comma | StrictEquality |
+    FunctionArrow | LooseEquality | Assignment | StrictInequality |
+    LooseInequality | Not | Increment | AdditionAssignment | Addition |
+    Decrement | SubtractionAssignment | Subtraction | ModuloAssignment |
+    Modulo | ExponentiationAssignment | Exponentiation |
+    MultiplicationAssignment | Multiplication | UnsignedRightShiftAssignment |
+    UnsignedRightShift | RightShiftAssignment | RightShift | MoreOrEqual |
+    More | LeftShiftAssignment | LeftShift | LessOrEqual | Less |
+    AndAssignment | And | BitAndAssignment | BitAnd | OrAssignment | Or |
+    BitOrAssignment | BitOr | BitXorAssignment | BitXor | BitNot |
+    NullishCoalescenceAssignment | NullishCoalescence | QuestionMark | Colon
 }
