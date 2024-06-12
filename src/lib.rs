@@ -67,6 +67,62 @@ pub enum Keyword {
 pub enum Token {
     WhiteSpace,
     LineTerminator,
+
+    Addition,
+    AdditionAssignment,
+    And,
+    AndAssignment,
+    Assignment,
+    BitAnd,
+    BitAndAssignment,
+    BitNot,
+    BitOr,
+    BitOrAssignment,
+    BitXor,
+    BitXorAssignment,
+    ClosingBracket,
+    ClosingParenthesis,
+    Colon,
+    Comma,
+    Decrement,
+    Dot,
+    Ellipsis,
+    Exponentiation,
+    ExponentiationAssignment,
+    FunctionArrow,
+    Increment,
+    LeftShift,
+    LeftShiftAssignment,
+    Less,
+    LessOrEqual,
+    LooseEquality,
+    LooseInequality,
+    Modulo,
+    ModuloAssignment,
+    More,
+    MoreOrEqual,
+    Multiplication,
+    MultiplicationAssignment,
+    Not,
+    NullishCoalescence,
+    NullishCoalescenceAssignment,
+    OpeningBrace,
+    OpeningBracket,
+    OpeningParenthesis,
+    OptionalChaining,
+    Or,
+    OrAssignment,
+    QuestionMark,
+    RightShift,
+    RightShiftAssignment,
+    Semicolon,
+    StrictEquality,
+    StrictInequality,
+    Subtraction,
+    SubtractionAssignment,
+    UnsignedRightShift,
+    UnsignedRightShiftAssignment,
+
     IdentifierName(String),
     NumericLiteral(f64),
     ReservedWord(Keyword),
@@ -105,11 +161,295 @@ struct IdentifierName {
     pub decoded: String
 }
 
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::OptionalChainingPunctuator))]
+struct OptionalChainingPunctuator;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::Addition))]
+struct Addition;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::AdditionAssignment))]
+struct AdditionAssignment;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::And))]
+struct And;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::AndAssignment))]
+struct AndAssignment;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::Assignment))]
+struct Assignment;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::BitAnd))]
+struct BitAnd;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::BitAndAssignment))]
+struct BitAndAssignment;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::BitNot))]
+struct BitNot;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::BitOr))]
+struct BitOr;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::BitOrAssignment))]
+struct BitOrAssignment;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::BitXor))]
+struct BitXor;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::BitXorAssignment))]
+struct BitXorAssignment;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::ClosingBracket))]
+struct ClosingBracket;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::ClosingParenthesis))]
+struct ClosingParenthesis;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::Colon))]
+struct Colon;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::Comma))]
+struct Comma;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::Decrement))]
+struct Decrement;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::Dot))]
+struct Dot;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::Ellipsis))]
+struct Ellipsis;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::Exponentiation))]
+struct Exponentiation;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::ExponentiationAssignment))]
+struct ExponentiationAssignment;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::FunctionArrow))]
+struct FunctionArrow;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::Increment))]
+struct Increment;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::LeftShift))]
+struct LeftShift;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::LeftShiftAssignment))]
+struct LeftShiftAssignment;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::Less))]
+struct Less;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::LessOrEqual))]
+struct LessOrEqual;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::LooseEquality))]
+struct LooseEquality;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::LooseInequality))]
+struct LooseInequality;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::Modulo))]
+struct Modulo;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::ModuloAssignment))]
+struct ModuloAssignment;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::More))]
+struct More;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::MoreOrEqual))]
+struct MoreOrEqual;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::Multiplication))]
+struct Multiplication;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::MultiplicationAssignment))]
+struct MultiplicationAssignment;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::Not))]
+struct Not;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::NullishCoalescence))]
+struct NullishCoalescence;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::NullishCoalescenceAssignment))]
+struct NullishCoalescenceAssignment;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::OpeningBrace))]
+struct OpeningBrace;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::OpeningBracket))]
+struct OpeningBracket;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::OpeningParenthesis))]
+struct OpeningParenthesis;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::Or))]
+struct Or;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::OrAssignment))]
+struct OrAssignment;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::QuestionMark))]
+struct QuestionMark;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::RightShift))]
+struct RightShift;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::RightShiftAssignment))]
+struct RightShiftAssignment;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::Semicolon))]
+struct Semicolon;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::StrictEquality))]
+struct StrictEquality;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::StrictInequality))]
+struct StrictInequality;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::Subtraction))]
+struct Subtraction;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::SubtractionAssignment))]
+struct SubtractionAssignment;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::UnsignedRightShift))]
+struct UnsignedRightShift;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::UnsignedRightShiftAssignment))]
+struct UnsignedRightShiftAssignment;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::OtherPunctuator))]
+enum OtherPunctuator {
+    Addition(Addition),
+    AdditionAssignment(AdditionAssignment),
+    And(And),
+    AndAssignment(AndAssignment),
+    Assignment(Assignment),
+    BitAnd(BitAnd),
+    BitAndAssignment(BitAndAssignment),
+    BitNot(BitNot),
+    BitOr(BitOr),
+    BitOrAssignment(BitOrAssignment),
+    BitXor(BitXor),
+    BitXorAssignment(BitXorAssignment),
+    ClosingBracket(ClosingBracket),
+    ClosingParenthesis(ClosingParenthesis),
+    Colon(Colon),
+    Comma(Comma),
+    Decrement(Decrement),
+    Dot(Dot),
+    Ellipsis(Ellipsis),
+    Exponentiation(Exponentiation),
+    ExponentiationAssignment(ExponentiationAssignment),
+    FunctionArrow(FunctionArrow),
+    Increment(Increment),
+    LeftShift(LeftShift),
+    LeftShiftAssignment(LeftShiftAssignment),
+    Less(Less),
+    LessOrEqual(LessOrEqual),
+    LooseEquality(LooseEquality),
+    LooseInequality(LooseInequality),
+    Modulo(Modulo),
+    ModuloAssignment(ModuloAssignment),
+    More(More),
+    MoreOrEqual(MoreOrEqual),
+    Multiplication(Multiplication),
+    MultiplicationAssignment(MultiplicationAssignment),
+    Not(Not),
+    NullishCoalescence(NullishCoalescence),
+    NullishCoalescenceAssignment(NullishCoalescenceAssignment),
+    OpeningBrace(OpeningBrace),
+    OpeningBracket(OpeningBracket),
+    OpeningParenthesis(OpeningParenthesis),
+    Or(Or),
+    OrAssignment(OrAssignment),
+    QuestionMark(QuestionMark),
+    RightShift(RightShift),
+    RightShiftAssignment(RightShiftAssignment),
+    Semicolon(Semicolon),
+    StrictEquality(StrictEquality),
+    StrictInequality(StrictInequality),
+    Subtraction(Subtraction),
+    SubtractionAssignment(SubtractionAssignment),
+    UnsignedRightShift(UnsignedRightShift),
+    UnsignedRightShiftAssignment(UnsignedRightShiftAssignment),
+}
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::Punctuator))]
+enum Punctuator {
+    OptionalChainingPunctuator(OptionalChainingPunctuator),
+    OtherPunctuator(OtherPunctuator),
+}
+
 #[derive(Debug, FromPest)]
 #[pest_ast(rule(lexical::Rule::CommonToken))]
 enum CommonToken {
     IdentifierName(IdentifierName),
+    Punctuator(Punctuator),
 }
+
 #[derive(Debug, FromPest)]
 #[pest_ast(rule(lexical::Rule::Await))]
 struct Await;
@@ -350,6 +690,68 @@ fn extract_token(symbol_tree: InputElementDiv) -> Token {
         InputElementDiv::CommonToken(token) => {
             match token {
                 CommonToken::IdentifierName(name) => Token::IdentifierName(name.decoded),
+                CommonToken::Punctuator(punctuator) => {
+                    match punctuator {
+                        Punctuator::OptionalChainingPunctuator(_) => Token::OptionalChaining,
+                        Punctuator::OtherPunctuator(symbol) => {
+                            match symbol  {
+                                OtherPunctuator::Addition(_) => Token::Addition,
+                                OtherPunctuator::AdditionAssignment(_) => Token::AdditionAssignment,
+                                OtherPunctuator::And(_) => Token::And,
+                                OtherPunctuator::AndAssignment(_) => Token::AndAssignment,
+                                OtherPunctuator::Assignment(_) => Token::Assignment,
+                                OtherPunctuator::BitAnd(_) => Token::BitAnd,
+                                OtherPunctuator::BitAndAssignment(_) => Token::BitAndAssignment,
+                                OtherPunctuator::BitNot(_) => Token::BitNot,
+                                OtherPunctuator::BitOr(_) => Token::BitOr,
+                                OtherPunctuator::BitOrAssignment(_) => Token::BitOrAssignment,
+                                OtherPunctuator::BitXor(_) => Token::BitXor,
+                                OtherPunctuator::BitXorAssignment(_) => Token::BitXorAssignment,
+                                OtherPunctuator::ClosingBracket(_) => Token::ClosingBracket,
+                                OtherPunctuator::ClosingParenthesis(_) => Token::ClosingParenthesis,
+                                OtherPunctuator::Colon(_) => Token::Colon,
+                                OtherPunctuator::Comma(_) => Token::Comma,
+                                OtherPunctuator::Decrement(_) => Token::Decrement,
+                                OtherPunctuator::Dot(_) => Token::Dot,
+                                OtherPunctuator::Ellipsis(_) => Token::Ellipsis,
+                                OtherPunctuator::Exponentiation(_) => Token::Exponentiation,
+                                OtherPunctuator::ExponentiationAssignment(_) => Token::ExponentiationAssignment,
+                                OtherPunctuator::FunctionArrow(_) => Token::FunctionArrow,
+                                OtherPunctuator::Increment(_) => Token::Increment,
+                                OtherPunctuator::LeftShift(_) => Token::LeftShift,
+                                OtherPunctuator::LeftShiftAssignment(_) => Token::LeftShiftAssignment,
+                                OtherPunctuator::Less(_) => Token::Less,
+                                OtherPunctuator::LessOrEqual(_) => Token::LessOrEqual,
+                                OtherPunctuator::LooseEquality(_) => Token::LooseEquality,
+                                OtherPunctuator::LooseInequality(_) => Token::LooseInequality,
+                                OtherPunctuator::Modulo(_) => Token::Modulo,
+                                OtherPunctuator::ModuloAssignment(_) => Token::ModuloAssignment,
+                                OtherPunctuator::More(_) => Token::More,
+                                OtherPunctuator::MoreOrEqual(_) => Token::MoreOrEqual,
+                                OtherPunctuator::Multiplication(_) => Token::Multiplication,
+                                OtherPunctuator::MultiplicationAssignment(_) => Token::MultiplicationAssignment,
+                                OtherPunctuator::Not(_) => Token::Not,
+                                OtherPunctuator::NullishCoalescence(_) => Token::NullishCoalescence,
+                                OtherPunctuator::NullishCoalescenceAssignment(_) => Token::NullishCoalescenceAssignment,
+                                OtherPunctuator::OpeningBrace(_) => Token::OpeningBrace,
+                                OtherPunctuator::OpeningBracket(_) => Token::OpeningBracket,
+                                OtherPunctuator::OpeningParenthesis(_) => Token::OpeningParenthesis,
+                                OtherPunctuator::Or(_) => Token::Or,
+                                OtherPunctuator::OrAssignment(_) => Token::OrAssignment,
+                                OtherPunctuator::QuestionMark(_) => Token::QuestionMark,
+                                OtherPunctuator::RightShift(_) => Token::RightShift,
+                                OtherPunctuator::RightShiftAssignment(_) => Token::RightShiftAssignment,
+                                OtherPunctuator::Semicolon(_) => Token::Semicolon,
+                                OtherPunctuator::StrictEquality(_) => Token::StrictEquality,
+                                OtherPunctuator::StrictInequality(_) => Token::StrictInequality,
+                                OtherPunctuator::Subtraction(_) => Token::Subtraction,
+                                OtherPunctuator::SubtractionAssignment(_) => Token::SubtractionAssignment,
+                                OtherPunctuator::UnsignedRightShift(_) => Token::UnsignedRightShift,
+                                OtherPunctuator::UnsignedRightShiftAssignment(_) => Token::UnsignedRightShiftAssignment,
+                            }
+                        }
+                    }
+                }
             }
         },
         InputElementDiv::ReservedWord(keyword) => {
