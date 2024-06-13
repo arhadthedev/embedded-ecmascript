@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use claims::assert_matches;
+    use claims::{assert_err, assert_matches, assert_ok_eq};
     use embedded_ecmascript::{get_next_token, Token};
     use rstest::rstest;
 
