@@ -21,4 +21,3 @@ pest = "2.7.10"
 pest-ast = { git = "https://github.com/pest-parser/ast.git", rev = "09255d74" }
 pest_derive = "2.7.10"
 rstest = "0.18.2"
-unicode-ident = "1.0.12"

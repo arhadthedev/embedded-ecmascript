@@ -69,6 +69,12 @@ Digit = { ASCII_DIGIT }
 /// ```
 DecimalDigit = { Digit }
 
+/************************************************
+ *
+ * 12 ECMAScript Language: Lexical Grammar
+ *
+ ************************************************/
+
 /// A match for <https://262.ecma-international.org/14.0/#prod-InputElementDiv>.
 ///
 /// ```plain
@@ -80,7 +86,21 @@ DecimalDigit = { Digit }
 ///     DivPunctuator
 ///     RightBracePunctuator
 /// ```
-InputElementDiv = { SOI ~ (Comment | DecimalDigit) }
+///
+/// We also add `ReservedWord` here to recognize and return it preparsed.
+InputElementDiv = {
+    SOI ~
+    (
+        WhiteSpace |
+        LineTerminator |
+        Comment |
+        ReservedWord |
+        CommonToken |
+        DivPunctuator |
+        RightBracePunctuator |
+        DecimalDigit
+    )
+}
 
 /************************************************
  *
@@ -144,3 +164,514 @@ MultiLineNotAsteriskChar = { !"*" }
 ///     SourceCharacter but not one of `/` or `*`
 /// ```
 MultiLineNotForwardSlashOrAsteriskChar = { !( "/" | "*" ) }
+
+/************************************************
+ *
+ * 12.1 Unicode Format-Control Characters
+ *
+ ************************************************/
+
+/// A match for `<ZWNJ>` entry of Table 34: Format-Control Code Point Usage:
+///
+/// > | Code Point | Name                      | Abbreviation |
+/// > |------------|---------------------------|--------------|
+/// > | U+200C     | ZERO WIDTH NON-JOINER     | <ZWNJ>       |
+///
+/// Implements <https://262.ecma-international.org/14.0/#sec-unicode-format-control-characters>.
+ZWNJ = { "\u{200C}" }
+
+/// A match for `<ZWJ>` entry of Table 34: Format-Control Code Point Usage:
+///
+/// > | Code Point | Name                      | Abbreviation |
+/// > |------------|---------------------------|--------------|
+/// > | U+200D     | ZERO WIDTH JOINER         | <ZWJ>        |
+///
+/// Implements <https://262.ecma-international.org/14.0/#sec-unicode-format-control-characters>.
+ZWJ = { "\u{200D}" }
+
+/************************************************
+ *
+ * 12.2 White Space
+ *
+ ************************************************/
+
+/// A match for `<ZWNBSP>` entry of Table 34: Format-Control Code Point Usage:
+///
+/// > | Code Point | Name                      | Abbreviation |
+/// > |------------|---------------------------|--------------|
+/// > | U+FEFF     | ZERO WIDTH NO-BREAK SPACE | <ZWNBSP>     |
+///
+/// Implements <https://262.ecma-international.org/14.0/#sec-unicode-format-control-characters>.
+ZWNBSP = { "\u{FEFF}" }
+
+/// A match for `<TAB>` entry of Table 35: White Space Code Points:
+///
+/// > | Code Point | Name                      | Abbreviation |
+/// > |------------|---------------------------|--------------|
+/// > | U+0009     | CHARACTER TABULATION      | <TAB>        |
+///
+/// Implements <https://262.ecma-international.org/14.0/#sec-white-space>.
+TAB = { "\u{0009}" }
+
+/// A match for `<VT>` entry of Table 35: White Space Code Points:
+///
+/// > | Code Point | Name                      | Abbreviation |
+/// > |------------|---------------------------|--------------|
+/// > | U+000B     | LINE TABULATION           | <VT>         |
+///
+/// Implements <https://262.ecma-international.org/14.0/#sec-white-space>.
+VT = { "\u{000B}" }
+
+/// A match for `<FF>` entry of Table 35: White Space Code Points:
+///
+/// > | Code Point | Name                      | Abbreviation |
+/// > |------------|---------------------------|--------------|
+/// > | U+000C     | FORM FEED (FF)            | <FF>         |
+///
+/// Implements <https://262.ecma-international.org/14.0/#sec-white-space>.
+FF = { "\u{000C}" }
+
+/// A match for `<USP>` entry of Table 35: White Space Code Points:
+///
+/// > | Code Point | Name                      | Abbreviation |
+/// > |------------|---------------------------|--------------|
+/// > | any code point in general category     | <USP>        |
+/// > | `Space_Separator`                      |              | 
+///
+/// `Space_Separator` (Zs) contains the following:
+///
+/// - U+0020 SPACE
+/// - U+00A0 NO-BREAK SPACE
+/// - U+1680 OHGRAM SPACE MARK
+/// - U+2000 EN QUAD
+/// - U+2001 EM QUAD
+/// - U+2002 EN SPACE
+/// - U+2003 EM SPACE
+/// - U+2004 THREE-PER-EM SPACE
+/// - U+2005 FOUR-PER-EM SPACE
+/// - U+2006 SIX-PER-EM SPACE
+/// - U+2007 FIGURE SPACE
+/// - U+2008 PUNCTUATION SPACE
+/// - U+2009 THIN SPACE
+/// - U+200A HAIR SPACE
+/// - U+202F NARROW NO-BREAK SPACE
+/// - U+205F MEDIUM MATHEMATICAL SPACE
+/// - U+3000 IDEOGRAPHIC SPACE
+///
+/// Implements <https://262.ecma-international.org/14.0/#sec-white-space>.
+USP = { SPACE_SEPARATOR }
+
+/// A match for <https://262.ecma-international.org/14.0/#prod-WhiteSpace>.
+///
+/// ```plain
+/// WhiteSpace ::
+///     <TAB>
+///     <VT>
+///     <FF>
+///     <ZWNBSP>
+///     <USP>
+/// ```
+WhiteSpace = @{ TAB | VT | FF | ZWNBSP | USP }
+
+/************************************************
+ *
+ * 12.3 Line Terminators
+ *
+ ************************************************/
+
+/// A match for the `<LF>` entry of Table 36: Line Terminator Code Points:
+///
+/// > | Code Point | Name                      | Abbreviation |
+/// > |------------|---------------------------|--------------|
+/// > | U+000A     | LINE FEED (LF)            | <LF>         |
+///
+/// Implements <https://262.ecma-international.org/14.0/#table-line-terminator-code-points>.
+LF = { "\u{000A}" }
+
+/// A match for the `<CR>` entry of Table 36: Line Terminator Code Points:
+///
+/// > | Code Point | Name                      | Abbreviation |
+/// > |------------|---------------------------|--------------|
+/// > | U+000D     | CARRIAGE RETURN (CR)      | <CR>         |
+///
+/// Implements <https://262.ecma-international.org/14.0/#table-line-terminator-code-points>.
+CR = { "\u{000D}" }
+
+/// A match for the `<LS>` entry of Table 36: Line Terminator Code Points:
+///
+/// > | Code Point | Name                      | Abbreviation |
+/// > |------------|---------------------------|--------------|
+/// > | U+2028     | LINE SEPARATOR            | <LS>         |
+///
+/// Implements <https://262.ecma-international.org/14.0/#table-line-terminator-code-points>.
+LS = { "\u{2028}" }
+
+/// A match for the `<PS>` entry of Table 36: Line Terminator Code Points:
+///
+/// > | Code Point | Name                      | Abbreviation |
+/// > |------------|---------------------------|--------------|
+/// > | U+2029     | PARAGRAPH SEPARATOR       | <PS>         |
+///
+/// Implements <https://262.ecma-international.org/14.0/#table-line-terminator-code-points>.
+PS = { "\u{2029}" }
+
+/// A match for `LineTerminator` production:
+///
+/// ```plain
+/// LineTerminator ::
+///     <LF>
+///     <CR>
+///     <LS>
+///     <PS>
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-LineTerminator>.
+LineTerminator = @{ LF | CR | LS | PS }
+
+/// A match for `LineTerminatorSequence` production:
+///
+/// ```plain
+/// LineTerminatorSequence ::
+///     <LF>
+///     <CR> [lookahead ≠ <LF>]
+///     <LS>
+///     <PS>
+//      <CR> <LF>
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-LineTerminatorSequence>.
+LineTerminatorSequence = @{ LF | CR ~ !LF | LS | PS | CR ~ LF }
+
+/************************************************
+ *
+ * 12.6 Tokens
+ *
+ ************************************************/
+
+/// A match for `CommonToken` production:
+///
+/// ```plain
+/// CommonToken ::
+///     IdentifierName
+///     PrivateIdentifier
+///     Punctuator
+///     NumericLiteral
+///     StringLiteral
+///     Template
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-CommonToken>.
+CommonToken = { IdentifierName | PrivateIdentifier | Punctuator }
+
+/************************************************
+ *
+ * 12.7 Names and Keywords
+ *
+ ************************************************/
+
+/// A match for `PrivateIdentifier` production:
+///
+/// ```plain
+/// PrivateIdentifier ::
+///     `#` IdentifierName
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-PrivateIdentifier>.
+PrivateIdentifier = { "#" ~ IdentifierName }
+
+/// A match for `IdentifierName` production:
+///
+/// ```plain
+/// IdentifierName ::
+///     IdentifierStart
+///     IdentifierName IdentifierPart
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-IdentifierName>.
+IdentifierName = @{ IdentifierStart ~ IdentifierPart* }
+
+/// A match for `IdentifierStart` production:
+///
+/// ```plain
+/// IdentifierStart ::
+///     IdentifierStartChar
+///     `\` UnicodeEscapeSequence
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-IdentifierStart>.
+IdentifierStart = { IdentifierStartChar }
+
+/// A match for `IdentifierPart` production:
+///
+/// ```plain
+/// IdentifierPart ::
+///     IdentifierPartChar
+///     `\` UnicodeEscapeSequence
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-IdentifierPart>.
+IdentifierPart = { IdentifierPartChar }
+
+/// A match for `IdentifierStartChar` production:
+///
+/// ```plain
+/// IdentifierStartChar ::
+///     UnicodeIDStart
+///     $
+///     _
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-IdentifierStartChar>.
+IdentifierStartChar = { UnicodeIDStart | "$" | "_" }
+
+/// A match for `IdentifierPartChar` production:
+///
+/// ```plain
+/// IdentifierPartChar ::
+///     UnicodeIDContinue
+///     $
+///     <ZWNJ>
+///     <ZWJ>
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-IdentifierPartChar>.
+IdentifierPartChar = { UnicodeIDContinue | "$" | ZWNJ | ZWJ }
+
+/// A match for `AsciiLetter` production:
+///
+/// ```plain
+/// AsciiLetter :: one of
+///     a b c d e f g h i j k l m n o p q r s t u v w x y z
+///     A B C D E F G H I J K L M N O P Q R S T U V W X Y Z
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-AsciiLetter>.
+AsciiLetter = { ASCII_ALPHA }
+
+/// A match for `UnicodeIDStart` production:
+///
+/// ```plain
+/// UnicodeIDStart ::
+///     any Unicode code point with the Unicode property “ID_Start”
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-UnicodeIDStart>.
+UnicodeIDStart = { ID_START }
+
+/// A match for `UnicodeIDContinue` production:
+///
+/// ```plain
+/// UnicodeIDContinue ::
+///     any Unicode code point with the Unicode property “ID_Continue”
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-UnicodeIDContinue>.
+UnicodeIDContinue = { ID_CONTINUE }
+
+/************************************************
+ *
+ * 12.7.2 Keywords and Reserved Words
+ *
+ ************************************************/
+
+Await = { "await" }
+Break = { "break" }
+Case = { "case" }
+Catch = { "catch" }
+Class = { "class" }
+Const = { "const" }
+Continue = { "continue" }
+Debugger = { "debugger" }
+Default = { "default" }
+Delete = { "delete" }
+Do = { "do" }
+Else = { "else" }
+Enum = { "enum" }
+Export = { "export" }
+Extends = { "extends" }
+False = { "false" }
+Finally = { "finally" }
+For = { "for" }
+Function = { "function" }
+If = { "if" }
+Import = { "import" }
+In = { "in" }
+Instanceof = { "instanceof" }
+New = { "new" }
+Null = { "null" }
+Return = { "return" }
+Super = { "super" }
+Switch = { "switch" }
+This = { "this" }
+Throw = { "throw" }
+True = { "true" }
+Try = { "try" }
+Typeof = { "typeof" }
+Var = { "var" }
+Void = { "void" }
+While = { "while" }
+With = { "with" }
+Yield = { "yield" }
+
+/// A match for `ReservedWord` production:
+///
+/// ```plain
+/// ReservedWord :: one of
+///     await break case catch class const continue debugger default delete do
+///     else enum export extends false finally for function if import in
+///     instanceof new null return super switch this throw true try typeof var
+///     void while with yield
+/// ```
+///
+/// Note: if  one punctuator is the same as a start of other punctuator
+/// (here `in` and `instanceof`), check the longer one first to not prematurely
+/// bail out on the shorter one leaving an undermatched tail.
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-ReservedWord>.
+ReservedWord = {
+    Await | Break | Case | Catch | Class | Const | Continue | Debugger |
+    Default | Delete | Do | Else | Enum | Export | Extends | False | Finally |
+    For | Function | If | Import | Instanceof | In | New | Null | Return |
+    Super | Switch | This | Throw | True | Try | Typeof | Var | Void | While |
+    With | Yield
+}
+
+/************************************************
+ *
+ * 12.8 Punctuators
+ *
+ ************************************************/
+
+/// A match for `Punctuator` production:
+///
+/// ```plain
+/// Punctuator ::
+///     OptionalChainingPunctuator
+///     OtherPunctuator
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-Punctuator>.
+Punctuator = { OptionalChainingPunctuator | OtherPunctuator }
+
+/// A match for `OptionalChainingPunctuator` production:
+///
+/// ```plain
+/// OptionalChainingPunctuator ::
+///     `?.` [lookahead ∉ `DecimalDigit`]
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-OptionalChainingPunctuator>.
+OptionalChainingPunctuator = { "?." ~ !DecimalDigit }
+
+OpeningBrace = { "{" }
+OpeningParenthesis = { "(" }
+ClosingParenthesis = { ")" }
+OpeningBracket = { "[" }
+ClosingBracket = { "]" }
+Ellipsis = { "..." }
+Dot = { "." }
+Semicolon = { ";" }
+Comma = { "," }
+StrictEquality = { "===" }
+FunctionArrow = { "=>" }
+LooseEquality = { "==" }
+Assignment = { "=" }
+StrictInequality = { "!==" }
+LooseInequality = { "!=" }
+Not = { "!" }
+Increment = { "++" }
+AdditionAssignment = { "+=" }
+Addition = { "+" }
+Decrement = { "--" }
+SubtractionAssignment = { "-=" }
+Subtraction = { "-" }
+ModuloAssignment = { "%=" }
+Modulo = { "%" }
+ExponentiationAssignment = { "**=" }
+Exponentiation = { "**" }
+MultiplicationAssignment = { "*=" }
+Multiplication = { "*" }
+UnsignedRightShiftAssignment = { ">>>=" }
+UnsignedRightShift = { ">>>" }
+RightShiftAssignment = { ">>=" }
+RightShift = { ">>" }
+MoreOrEqual = { ">=" }
+More = { ">" }
+LeftShiftAssignment = { "<<=" }
+LeftShift = { "<<" }
+LessOrEqual = { "<=" }
+Less = { "<" }
+AndAssignment = { "&&=" }
+And = { "&&" }
+BitAndAssignment = { "&=" }
+BitAnd = { "&" }
+OrAssignment = { "||=" }
+Or = { "||" }
+BitOrAssignment = { "|=" }
+BitOr = { "|" }
+BitXorAssignment = { "^=" }
+BitXor = { "^" }
+BitNot = { "~" }
+NullishCoalescenceAssignment = { "??=" }
+NullishCoalescence = { "??" }
+QuestionMark = { "?" }
+Colon = { ":" }
+
+/// A match for `OtherPunctuator` production:
+///
+/// ```plain
+/// OtherPunctuator ::
+///     `{` `(` `)` `[` `]` `.` `...` `;` `,` `<` `>` `<=` `>=` `==` `!=` `===`
+///     `!==` `+` `-` `*` `%` `**` `++` `--` `<<` `>>` `>>>` `&` `|` `^` `!` `~`
+///     `&&` `||` `??` `?` `:` `=` `+=` `-=` `*=` `%=` `**=` `<<=` `>>=` `>>>=`
+///     `&=` `|=` `^=` `&&=` `||=` `??=` `=>`
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-OtherPunctuator>.
+///
+/// Note: if  one punctuator is the same as a start of other punctuator
+/// (like `+=` and `+`), check the longer one first to not prematurely bail out
+/// on the shorter one leaving an undermatched tail.
+OtherPunctuator = {
+    OpeningBrace | OpeningParenthesis | ClosingParenthesis | OpeningBracket |
+    ClosingBracket | Ellipsis | Dot | Semicolon | Comma | StrictEquality |
+    FunctionArrow | LooseEquality | Assignment | StrictInequality |
+    LooseInequality | Not | Increment | AdditionAssignment | Addition |
+    Decrement | SubtractionAssignment | Subtraction | ModuloAssignment |
+    Modulo | ExponentiationAssignment | Exponentiation |
+    MultiplicationAssignment | Multiplication | UnsignedRightShiftAssignment |
+    UnsignedRightShift | RightShiftAssignment | RightShift | MoreOrEqual |
+    More | LeftShiftAssignment | LeftShift | LessOrEqual | Less |
+    AndAssignment | And | BitAndAssignment | BitAnd | OrAssignment | Or |
+    BitOrAssignment | BitOr | BitXorAssignment | BitXor | BitNot |
+    NullishCoalescenceAssignment | NullishCoalescence | QuestionMark | Colon
+}
+
+DivisionAssignment = { "/=" }
+Division = { "/" }
+
+/// A match for `DivPunctuator` production:
+///
+/// ```plain
+/// DivPunctuator ::
+///     `/`
+///     `/=`
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-DivPunctuator>.
+///
+/// Note: if  one punctuator is the same as a start of other punctuator
+/// (like `/=` and `/`), check the longer one first to not prematurely bail out
+/// on the shorter one leaving an undermatched tail.
+DivPunctuator = { DivisionAssignment | Division }
+
+///A match for `RightBracePunctuator` production:
+///
+/// ```plain
+/// RightBracePunctuator ::
+///     `}`
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-RightBracePunctuator>.
+RightBracePunctuator = { "}" }
+>>>>>>> main

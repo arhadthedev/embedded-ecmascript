@@ -87,7 +87,6 @@ dependencies = [
  "pest-ast",
  "pest_derive",
  "rstest",
- "unicode-ident",
 ]
 
 [[package]]
