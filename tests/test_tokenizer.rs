@@ -62,7 +62,7 @@ mod tests {
         let doubled_private = private + tested;
         assert_eq!(
             get_next_token(&doubled_private),
-            Ok((Token::PrivateIdentifier(doubled.clone()), ""))
+            Ok((Token::PrivateIdentifier(doubled), ""))
         );
     }
 
