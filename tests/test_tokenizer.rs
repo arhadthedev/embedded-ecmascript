@@ -53,6 +53,17 @@ mod tests {
             get_next_token(&doubled),
             Ok((Token::IdentifierName(doubled.clone()), ""))
         );
+
+        let private = "#".to_owned() + tested;
+        assert_eq!(
+            get_next_token(&private),
+            Ok((Token::PrivateIdentifier(tested.to_owned()), ""))
+        );
+        let doubled_private = private + tested;
+        assert_eq!(
+            get_next_token(&doubled_private),
+            Ok((Token::PrivateIdentifier(doubled.clone()), ""))
+        );
     }
 
     #[rstest]

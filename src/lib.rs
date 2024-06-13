@@ -128,6 +128,7 @@ pub enum Token {
 
     IdentifierName(String),
     NumericLiteral(f64),
+    PrivateIdentifier(String),
     ReservedWord(Keyword),
 }
 
@@ -155,6 +156,12 @@ struct WhiteSpace;
 #[derive(Debug, FromPest)]
 #[pest_ast(rule(lexical::Rule::LineTerminator))]
 struct LineTerminator;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::PrivateIdentifier))]
+struct PrivateIdentifier {
+    pub payload: IdentifierName
+}
 
 #[derive(Debug, FromPest)]
 #[pest_ast(rule(lexical::Rule::IdentifierName))]
@@ -450,6 +457,7 @@ enum Punctuator {
 #[pest_ast(rule(lexical::Rule::CommonToken))]
 enum CommonToken {
     IdentifierName(IdentifierName),
+    PrivateIdentifier(PrivateIdentifier),
     Punctuator(Punctuator),
 }
 
@@ -714,6 +722,7 @@ fn extract_token(symbol_tree: InputElementDiv) -> Token {
         InputElementDiv::CommonToken(token) => {
             match token {
                 CommonToken::IdentifierName(name) => Token::IdentifierName(name.decoded),
+                CommonToken::PrivateIdentifier(name) => Token::PrivateIdentifier(name.payload.decoded),
                 CommonToken::Punctuator(punctuator) => {
                     match punctuator {
                         Punctuator::OptionalChainingPunctuator(_) => Token::OptionalChaining,
