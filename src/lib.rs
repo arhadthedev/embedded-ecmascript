@@ -129,6 +129,9 @@ pub enum Token<'src> {
     UnsignedRightShiftAssignment,
 
     IdentifierName(String),
+    NumericLiteral(f64),
+    PrivateIdentifier(String),
+    ReservedWord(Keyword),
 }
 
 fn span_into_str(span: Span) -> &str {
@@ -700,6 +703,8 @@ impl<'src> CommentStaticSemantics<'src> for MultiLineComment<'src> {
     }
 }
 
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::InputElementDiv))]
 enum InputElementDiv<'src> {
     WhiteSpace(WhiteSpace),
     LineTerminator(LineTerminator),
