@@ -291,13 +291,23 @@ LineTerminatorSequence = @{ LF | CR ~ !LF | LS | PS | CR ~ LF }
 /// ```
 ///
 /// Implements <https://262.ecma-international.org/14.0/#prod-CommonToken>.
-CommonToken = { IdentifierName | Punctuator }
+CommonToken = { IdentifierName | PrivateIdentifier | Punctuator }
 
 /************************************************
  *
  * 12.7 Names and Keywords
  *
  ************************************************/
+
+/// A match for `PrivateIdentifier` production:
+///
+/// ```plain
+/// PrivateIdentifier ::
+///     `#` IdentifierName
+/// ```
+///
+/// Implements <https://262.ecma-international.org/14.0/#prod-PrivateIdentifier>.
+PrivateIdentifier = { "#" ~ IdentifierName }
 
 /// A match for `IdentifierName` production:
 ///
