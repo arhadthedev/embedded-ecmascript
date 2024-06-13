@@ -674,8 +674,6 @@ enum DivPunctuator {
     Division(Division),
 }
 
-#[derive(Debug, FromPest)]
-#[pest_ast(rule(lexical::Rule::InputElementDiv))]
 #[enum_dispatch]
 trait CommentStaticSemantics<'src> {
     fn content(&self) -> &'src str;
