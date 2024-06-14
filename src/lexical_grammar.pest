@@ -155,7 +155,7 @@ PostAsteriskCommentChars = {
 /// MultiLineNotAsteriskChar ::
 ///     SourceCharacter but not `*`
 /// ```
-MultiLineNotAsteriskChar = { !"*" }
+MultiLineNotAsteriskChar = { !"*" ~ ANY }
 
 /// A match for <https://262.ecma-international.org/14.0/#prod-MultiLineNotForwardSlashOrAsteriskChar>.
 ///
@@ -163,7 +163,7 @@ MultiLineNotAsteriskChar = { !"*" }
 /// MultiLineNotForwardSlashOrAsteriskChar ::
 ///     SourceCharacter but not one of `/` or `*`
 /// ```
-MultiLineNotForwardSlashOrAsteriskChar = { !( "/" | "*" ) }
+MultiLineNotForwardSlashOrAsteriskChar = { !( "/" | "*" ) ~ ANY }
 
 /************************************************
  *
