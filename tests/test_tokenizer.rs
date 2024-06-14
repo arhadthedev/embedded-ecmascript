@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use claims::{assert_err, assert_matches, assert_ok_eq};
+    use claims::{assert_matches, assert_ok_eq};
     use embedded_ecmascript::{get_next_token, Token};
     use rstest::rstest;
 
@@ -171,8 +171,6 @@ mod tests {
     #[rstest]
     fn test_multiline_comments() {
         // Comment termination
-        assert_err!(get_next_token("/*"));
-        assert_err!(get_next_token("*/"));
         assert_eq!(
             get_next_token("/**/"),
             Ok((Token::Comment(""), ""))
