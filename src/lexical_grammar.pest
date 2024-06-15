@@ -140,7 +140,7 @@ Comment = { MultiLineComment }
 ///
 /// Such a complexity would be required if we captured comment content. Since we
 /// do not, all these rules collapse to a single non-greedy `"/*" ~ ANY ~ "*/"`.
-MultiLineComment = { "/*" ~ ANY* ~ "*/" }
+MultiLineComment = { "/*" ~ (!"*" ~ ANY)* ~ "*/" }
 
 /************************************************
  *
