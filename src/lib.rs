@@ -691,9 +691,6 @@ struct MultiLineComment;
 #[pest_ast(rule(lexical::Rule::SingleLineComment))]
 struct SingleLineComment;
 
-// `#[warn(dead_code)]` is for Pest-generated Comment empty class (we need
-// non-atomic rules for clear non-terminal names in error messages).
-#[warn(dead_code)]
 #[derive(Debug, FromPest)]
 #[pest_ast(rule(lexical::Rule::InputElementDiv))]
 enum InputElementDiv {
@@ -741,7 +738,7 @@ fn extract_token(symbol_tree: InputElementDiv) -> Token {
         InputElementDiv::WhiteSpace(_) => Token::WhiteSpace,
         InputElementDiv::Comment(kind) => {
             match kind {
-                Comment::MultiLineComment(_) => Token::Comment
+                Comment::MultiLineComment(_), Comment::SingleLineComment(_) => Token::Comment
             }
         },
         InputElementDiv::CommonToken(token) => {
