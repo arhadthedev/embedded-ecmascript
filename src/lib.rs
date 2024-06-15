@@ -731,8 +731,10 @@ fn extract_token(symbol_tree: InputElementDiv) -> Token {
     match symbol_tree {
         InputElementDiv::DecimalDigit(value) => Token::NumericLiteral(value.digit.value),
         InputElementDiv::WhiteSpace(_) => Token::WhiteSpace,
-        InputElementDiv::Comment(_) => {
-            Comment::MultiLineComment(_) => Token::Comment
+        InputElementDiv::Comment(kind) => {
+            match kind {
+                Comment::MultiLineComment(_) => Token::Comment
+            }
         },
         InputElementDiv::CommonToken(token) => {
             match token {
