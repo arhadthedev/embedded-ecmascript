@@ -680,11 +680,16 @@ enum DivPunctuator {
 #[pest_ast(rule(lexical::Rule::Comment))]
 enum Comment {
     MultiLineComment(MultiLineComment),
+    SingleLineComment(SingleLineComment),
 }
 
 #[derive(Debug, FromPest)]
 #[pest_ast(rule(lexical::Rule::MultiLineComment))]
 struct MultiLineComment;
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::SingleLineComment))]
+struct SingleLineComment;
 
 #[derive(Debug, FromPest)]
 #[pest_ast(rule(lexical::Rule::InputElementDiv))]
@@ -733,7 +738,7 @@ fn extract_token(symbol_tree: InputElementDiv) -> Token {
         InputElementDiv::WhiteSpace(_) => Token::WhiteSpace,
         InputElementDiv::Comment(kind) => {
             match kind {
-                Comment::MultiLineComment(_) => Token::Comment
+                Comment::MultiLineComment(_) | Comment::SingleLineComment(_) => Token::Comment
             }
         },
         InputElementDiv::CommonToken(token) => {

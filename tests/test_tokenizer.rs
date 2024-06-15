@@ -176,4 +176,11 @@ mod tests {
         assert_ok_eq!(get_next_token("/*/**/"), (Token::Comment, ""));
         assert_ok_eq!(get_next_token("/*\n/*\n*/"), (Token::Comment, ""));
     }
+
+    #[test]
+    fn test_single_line_comments() {
+        assert_ok_eq!(get_next_token("//a b"), (Token::Comment, ""));
+        assert_ok_eq!(get_next_token("//a b\n"), (Token::Comment, "\n"));
+        assert_ok_eq!(get_next_token("//a b\n//c"), (Token::Comment, "\n//c"));
+    }
 }
