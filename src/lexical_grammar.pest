@@ -104,62 +104,6 @@ InputElementDiv = {
 
 /************************************************
  *
- * 12.4 Comments
- *
- ************************************************/
-
-/// A match for <https://262.ecma-international.org/14.0/#prod-Comment>.
-///
-/// ```plain
-/// Comment ::
-///     MultiLineComment
-///     SingleLineComment
-/// ```
-Comment = { MultiLineComment | SingleLineComment }
-
-/// A match for <https://262.ecma-international.org/14.0/#prod-MultiLineComment>.
-///
-/// ```plain
-/// MultiLineComment ::
-///     `/*` MultiLineCommentChars_opt `*/`
-///
-/// MultiLineCommentChars ::
-///     MultiLineNotAsteriskChar MultiLineCommentChars_opt
-///     `*` PostAsteriskCommentChars_opt
-///
-/// PostAsteriskCommentChars ::
-///     MultiLineNotForwardSlashOrAsteriskChar MultiLineCommentChars_opt
-///     `*` PostAsteriskCommentChars_opt
-///
-/// MultiLineNotAsteriskChar ::
-///     SourceCharacter but not `*`
-///
-/// MultiLineNotForwardSlashOrAsteriskChar ::
-///     SourceCharacter but not one of `/` or `*`
-/// ```
-///
-/// Such a complexity would be required if we captured comment content. Since we
-/// do not, all these rules collapse to a single non-greedy `"/*" ~ ANY ~ "*/"`.
-MultiLineComment = { "/*" ~ (!"*/" ~ ANY)* ~ "*/" }
-
-/// A match for <https://262.ecma-international.org/14.0/#prod-SingleLineComment>.
-///
-/// SingleLineComment ::
-///     `//` SingleLineCommentChars_opt
-///
-/// SingleLineCommentChars ::
-///     SingleLineCommentChar SingleLineCommentChars_opt
-///
-/// SingleLineCommentChar ::
-///     SourceCharacter but not LineTerminator
-///
-/// Such a complexity would be required if we captured comment content. Since we
-/// do not, all these rules collapse to a single non-greedy
-/// `"//" ~ ANY ~ LineTerminator`.
-SingleLineComment = { "//" ~ (!LineTerminator ~ ANY)* }
-
-/************************************************
- *
  * 12.1 Unicode Format-Control Characters
  *
  ************************************************/
@@ -334,6 +278,64 @@ LineTerminator = @{ LF | CR | LS | PS }
 ///
 /// Implements <https://262.ecma-international.org/14.0/#prod-LineTerminatorSequence>.
 LineTerminatorSequence = @{ LF | CR ~ !LF | LS | PS | CR ~ LF }
+
+
+
+/************************************************
+ *
+ * 12.4 Comments
+ *
+ ************************************************/
+
+/// A match for <https://262.ecma-international.org/14.0/#prod-Comment>.
+///
+/// ```plain
+/// Comment ::
+///     MultiLineComment
+///     SingleLineComment
+/// ```
+Comment = { MultiLineComment | SingleLineComment }
+
+/// A match for <https://262.ecma-international.org/14.0/#prod-MultiLineComment>.
+///
+/// ```plain
+/// MultiLineComment ::
+///     `/*` MultiLineCommentChars_opt `*/`
+///
+/// MultiLineCommentChars ::
+///     MultiLineNotAsteriskChar MultiLineCommentChars_opt
+///     `*` PostAsteriskCommentChars_opt
+///
+/// PostAsteriskCommentChars ::
+///     MultiLineNotForwardSlashOrAsteriskChar MultiLineCommentChars_opt
+///     `*` PostAsteriskCommentChars_opt
+///
+/// MultiLineNotAsteriskChar ::
+///     SourceCharacter but not `*`
+///
+/// MultiLineNotForwardSlashOrAsteriskChar ::
+///     SourceCharacter but not one of `/` or `*`
+/// ```
+///
+/// Such a complexity would be required if we captured comment content. Since we
+/// do not, all these rules collapse to a single non-greedy `"/*" ~ ANY ~ "*/"`.
+MultiLineComment = { "/*" ~ (!"*/" ~ ANY)* ~ "*/" }
+
+/// A match for <https://262.ecma-international.org/14.0/#prod-SingleLineComment>.
+///
+/// SingleLineComment ::
+///     `//` SingleLineCommentChars_opt
+///
+/// SingleLineCommentChars ::
+///     SingleLineCommentChar SingleLineCommentChars_opt
+///
+/// SingleLineCommentChar ::
+///     SourceCharacter but not LineTerminator
+///
+/// Such a complexity would be required if we captured comment content. Since we
+/// do not, all these rules collapse to a single non-greedy
+/// `"//" ~ ANY ~ LineTerminator`.
+SingleLineComment = { "//" ~ (!LineTerminator ~ ANY)* }
 
 /************************************************
  *
