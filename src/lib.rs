@@ -67,6 +67,7 @@ pub enum Keyword {
 pub enum Token {
     WhiteSpace,
     LineTerminator,
+    Comment,
 
     Addition,
     AdditionAssignment,
@@ -676,10 +677,21 @@ enum DivPunctuator {
 }
 
 #[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::Comment))]
+enum Comment {
+    MultiLineComment(MultiLineComment),
+}
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::MultiLineComment))]
+struct MultiLineComment;
+
+#[derive(Debug, FromPest)]
 #[pest_ast(rule(lexical::Rule::InputElementDiv))]
 enum InputElementDiv {
     WhiteSpace(WhiteSpace),
     LineTerminator(LineTerminator),
+    Comment(Comment),
     CommonToken(CommonToken),
     DivPunctuator(DivPunctuator),
     ReservedWord(ReservedWord),
@@ -719,6 +731,7 @@ fn extract_token(symbol_tree: InputElementDiv) -> Token {
     match symbol_tree {
         InputElementDiv::DecimalDigit(value) => Token::NumericLiteral(value.digit.value),
         InputElementDiv::WhiteSpace(_) => Token::WhiteSpace,
+        InputElementDiv::Comment(_) => Token::Comment,
         InputElementDiv::CommonToken(token) => {
             match token {
                 CommonToken::IdentifierName(name) => Token::IdentifierName(name.decoded),

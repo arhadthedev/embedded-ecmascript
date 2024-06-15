@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use claims::assert_matches;
+    use claims::{assert_matches, assert_ok_eq};
     use embedded_ecmascript::{get_next_token, Token};
     use rstest::rstest;
 
@@ -166,5 +166,14 @@ mod tests {
         let tail = " ".to_owned() + tested;
         let with_tail = tested.to_owned() + &tail;
         assert_eq!(get_next_token(&with_tail), Ok((parsed, tail.as_str())));
+    }
+
+    #[rstest]
+    fn test_multiline_comments() {
+        assert_eq!(get_next_token("/**/"), Ok((Token::Comment, "")));
+        assert_eq!(get_next_token("/* */"), Ok((Token::Comment, "")));
+        assert_ok_eq!(get_next_token("/*foo*/"), (Token::Comment, ""));
+        assert_ok_eq!(get_next_token("/*/**/"), (Token::Comment, ""));
+        assert_ok_eq!(get_next_token("/*\n/*\n*/"), (Token::Comment, ""));
     }
 }

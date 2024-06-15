@@ -55,6 +55,12 @@
 
 Digit = { ASCII_DIGIT }
 
+/************************************************
+ *
+ * 12 ECMAScript Language: Lexical Grammar
+ *
+ ************************************************/
+
 /// A match for <https://262.ecma-international.org/14.0/#prod-DecimalDigit>
 ///
 /// ```plain
@@ -87,6 +93,7 @@ InputElementDiv = {
     (
         WhiteSpace |
         LineTerminator |
+        Comment |
         ReservedWord |
         CommonToken |
         DivPunctuator |
@@ -94,6 +101,46 @@ InputElementDiv = {
         DecimalDigit
     )
 }
+
+/************************************************
+ *
+ * 12.4 Comments
+ *
+ ************************************************/
+
+/// A match for <https://262.ecma-international.org/14.0/#prod-Comment>.
+///
+/// ```plain
+/// Comment ::
+///     MultiLineComment
+///     SingleLineComment
+/// ```
+Comment = { MultiLineComment }
+
+/// A match for <https://262.ecma-international.org/14.0/#prod-MultiLineComment>.
+///
+/// ```plain
+/// MultiLineComment ::
+///     `/*` MultiLineCommentChars_opt `*/`
+///
+/// MultiLineCommentChars ::
+///     MultiLineNotAsteriskChar MultiLineCommentChars_opt
+///     `*` PostAsteriskCommentChars_opt
+///
+/// PostAsteriskCommentChars ::
+///     MultiLineNotForwardSlashOrAsteriskChar MultiLineCommentChars_opt
+///     `*` PostAsteriskCommentChars_opt
+///
+/// MultiLineNotAsteriskChar ::
+///     SourceCharacter but not `*`
+///
+/// MultiLineNotForwardSlashOrAsteriskChar ::
+///     SourceCharacter but not one of `/` or `*`
+/// ```
+///
+/// Such a complexity would be required if we captured comment content. Since we
+/// do not, all these rules collapse to a single non-greedy `"/*" ~ ANY ~ "*/"`.
+MultiLineComment = { "/*" ~ (!"*/" ~ ANY)* ~ "*/" }
 
 /************************************************
  *
