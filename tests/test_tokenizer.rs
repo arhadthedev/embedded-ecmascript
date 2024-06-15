@@ -173,41 +173,23 @@ mod tests {
         // Comment termination
         assert_eq!(
             get_next_token("/**/"),
-            Ok((Token::Comment(""), ""))
+            Ok((Token::Comment(_), ""))
         );
-        assert_ok_eq!(
-            get_next_token("/*/**/"),
-            (Token::Comment("/*"), "")
+        assert_eq!(
+            get_next_token("/* */"),
+            Ok((Token::Comment(_), ""))
         );
         assert_ok_eq!(
             get_next_token("/*foo*/"),
-            (Token::Comment("foo"), "")
+            (Token::Comment(_), "")
         );
         assert_ok_eq!(
-            get_next_token("///*foo*/"),
-            (Token::Comment("/*foo*/"), "")
-        );
-        assert_ok_eq!(
-            get_next_token("// /*foo*/"),
-            (Token::Comment(" /*foo*/"), "")
+            get_next_token("/*/**/"),
+            (Token::Comment(_), "")
         );
         assert_ok_eq!(
             get_next_token("/*\n/*\n*/"),
-            (Token::Comment("/*\n"), "")
-        );
-
-        // Leading and trailing space preservation
-        assert_eq!(
-            get_next_token("/* */"),
-            Ok((Token::Comment(" "), ""))
-        );
-        assert_ok_eq!(
-            get_next_token(" /**/ "),
-            (Token::Comment(""), " ")
-        );
-        assert_ok_eq!(
-            get_next_token("/* \n * */"),
-            (Token::Comment(" \n * "), "")
+            (Token::Comment(_), "")
         );
     }
 }

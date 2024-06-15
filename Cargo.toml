@@ -12,7 +12,6 @@ categories = ["compilers", "parser-implementations"]
 
 [dependencies]
 claims = "0.7.1"
-enum_dispatch = "0.3.13"
 # We need <https://github.com/pest-parser/ast/pull/27> fix not available
 # in crates.io yet.
 from-pest = { git = "https://github.com/pest-parser/ast.git", rev = "09255d74" }
