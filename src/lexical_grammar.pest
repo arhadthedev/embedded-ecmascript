@@ -122,25 +122,48 @@ Comment = { MultiLineComment }
 /// ```plain
 /// MultiLineComment ::
 ///     `/*` MultiLineCommentChars_opt `*/`
+/// ```
+MultiLineComment = { "/*" ~ MultiLineCommentChars? ~ "*/" }
+
+/// A match for <https://262.ecma-international.org/14.0/#prod-MultiLineCommentChars>.
 ///
+/// ```plain
 /// MultiLineCommentChars ::
 ///     MultiLineNotAsteriskChar MultiLineCommentChars_opt
 ///     `*` PostAsteriskCommentChars_opt
+/// ```
+MultiLineCommentChars = {
+    ( MultiLineNotAsteriskChar ~ MultiLineCommentChars? ) |
+    ( "*" ~ PostAsteriskCommentChars? )
+}
+
+/// A match for <https://262.ecma-international.org/14.0/#prod-PostAsteriskCommentChars>.
 ///
+/// ```plain
 /// PostAsteriskCommentChars ::
 ///     MultiLineNotForwardSlashOrAsteriskChar MultiLineCommentChars_opt
 ///     `*` PostAsteriskCommentChars_opt
+/// ```
+PostAsteriskCommentChars = {
+    ( MultiLineNotForwardSlashOrAsteriskChar ~ MultiLineCommentChars? ) |
+    ( "*" ~ PostAsteriskCommentChars? )
+}
+
+/// A match for <https://262.ecma-international.org/14.0/#prod-MultiLineNotAsteriskChar>.
 ///
+/// ```plain
 /// MultiLineNotAsteriskChar ::
 ///     SourceCharacter but not `*`
+/// ```
+MultiLineNotAsteriskChar = { !"*" ~ ANY }
+
+/// A match for <https://262.ecma-international.org/14.0/#prod-MultiLineNotForwardSlashOrAsteriskChar>.
 ///
+/// ```plain
 /// MultiLineNotForwardSlashOrAsteriskChar ::
 ///     SourceCharacter but not one of `/` or `*`
 /// ```
-///
-/// Such a complexity would be required if we captured comment content. Since we
-/// do not, all these rules collapse to a single non-greedy `"/*" ~ ANY ~ "*/"`.
-MultiLineComment = { "/*" ~ ANY* ~ "*/" }
+MultiLineNotForwardSlashOrAsteriskChar = { !( "/" | "*" ) ~ ANY }
 
 /************************************************
  *

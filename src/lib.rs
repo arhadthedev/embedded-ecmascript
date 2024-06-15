@@ -15,6 +15,7 @@ mod lexical {
     pub struct Ecma262Parser;
 }
 
+use enum_dispatch::enum_dispatch;
 use from_pest::FromPest;
 use pest::{iterators::Pairs, Parser, Span};
 use pest_ast::FromPest;
@@ -64,10 +65,10 @@ pub enum Keyword {
 
 /// An output of the tokenization step
 #[derive(Clone, Debug, PartialEq)]
-pub enum Token {
+pub enum Token<'src> {
     WhiteSpace,
     LineTerminator,
-    Comment,
+    Comment(&'src str),
 
     Addition,
     AdditionAssignment,
@@ -676,16 +677,38 @@ enum DivPunctuator {
     Division(Division),
 }
 
+#[enum_dispatch]
+trait CommentStaticSemantics<'src> {
+    fn content(&self) -> &'src str;
+}
+
 #[derive(Debug, FromPest)]
 #[pest_ast(rule(lexical::Rule::Comment))]
-struct Comment;
+#[enum_dispatch(CommentStaticSemantics)]
+enum Comment<'src> {
+    MultiLineComment(MultiLineComment<'src>),
+}
+
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::MultiLineComment))]
+struct MultiLineComment<'src> {
+    #[pest_ast(outer(with(span_into_str)))]
+    content: &'src str,
+}
+
+impl<'src> CommentStaticSemantics<'src> for MultiLineComment<'src> {
+    fn content(&self) -> &'src str {
+        self.content
+    }
+}
 
 #[derive(Debug, FromPest)]
 #[pest_ast(rule(lexical::Rule::InputElementDiv))]
-enum InputElementDiv {
+enum InputElementDiv<'src> {
     WhiteSpace(WhiteSpace),
     LineTerminator(LineTerminator),
-    Comment(Comment),
+    Comment(Comment<'src>),
     CommonToken(CommonToken),
     DivPunctuator(DivPunctuator),
     ReservedWord(ReservedWord),
@@ -725,7 +748,7 @@ fn extract_token(symbol_tree: InputElementDiv) -> Token {
     match symbol_tree {
         InputElementDiv::DecimalDigit(value) => Token::NumericLiteral(value.digit.value),
         InputElementDiv::WhiteSpace(_) => Token::WhiteSpace,
-        InputElementDiv::Comment(_) => Token::Comment,
+        InputElementDiv::Comment(text) => Token::Comment(text.content()),
         InputElementDiv::CommonToken(token) => {
             match token {
                 CommonToken::IdentifierName(name) => Token::IdentifierName(name.decoded),

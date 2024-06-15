@@ -170,10 +170,44 @@ mod tests {
 
     #[rstest]
     fn test_multiline_comments() {
-        assert_eq!(get_next_token("/**/"), Ok((Token::Comment, "")));
-        assert_eq!(get_next_token("/* */"), Ok((Token::Comment, "")));
-        assert_ok_eq!(get_next_token("/*foo*/"), (Token::Comment, ""));
-        assert_ok_eq!(get_next_token("/*/**/"), (Token::Comment, ""));
-        assert_ok_eq!(get_next_token("/*\n/*\n*/"), (Token::Comment, ""));
+        // Comment termination
+        assert_eq!(
+            get_next_token("/**/"),
+            Ok((Token::Comment(""), ""))
+        );
+        assert_ok_eq!(
+            get_next_token("/*/**/"),
+            (Token::Comment("/*"), "")
+        );
+        assert_ok_eq!(
+            get_next_token("/*foo*/"),
+            (Token::Comment("foo"), "")
+        );
+        assert_ok_eq!(
+            get_next_token("///*foo*/"),
+            (Token::Comment("/*foo*/"), "")
+        );
+        assert_ok_eq!(
+            get_next_token("// /*foo*/"),
+            (Token::Comment(" /*foo*/"), "")
+        );
+        assert_ok_eq!(
+            get_next_token("/*\n/*\n*/"),
+            (Token::Comment("/*\n"), "")
+        );
+
+        // Leading and trailing space preservation
+        assert_eq!(
+            get_next_token("/* */"),
+            Ok((Token::Comment(" "), ""))
+        );
+        assert_ok_eq!(
+            get_next_token(" /**/ "),
+            (Token::Comment(""), " ")
+        );
+        assert_ok_eq!(
+            get_next_token("/* \n * */"),
+            (Token::Comment(" \n * "), "")
+        );
     }
 }
