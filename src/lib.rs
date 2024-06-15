@@ -680,12 +680,20 @@ enum DivPunctuator {
 #[pest_ast(rule(lexical::Rule::Comment))]
 enum Comment {
     MultiLineComment(MultiLineComment),
+    SingleLineComment(SingleLineComment),
 }
 
 #[derive(Debug, FromPest)]
 #[pest_ast(rule(lexical::Rule::MultiLineComment))]
 struct MultiLineComment;
 
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::SingleLineComment))]
+struct SingleLineComment;
+
+// `#[warn(dead_code)]` is for Pest-generated Comment empty class (we need
+// non-atomic rules for clear non-terminal names in error messages).
+#[warn(dead_code)]
 #[derive(Debug, FromPest)]
 #[pest_ast(rule(lexical::Rule::InputElementDiv))]
 enum InputElementDiv {

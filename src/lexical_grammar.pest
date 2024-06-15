@@ -115,7 +115,7 @@ InputElementDiv = {
 ///     MultiLineComment
 ///     SingleLineComment
 /// ```
-Comment = { MultiLineComment }
+Comment = { MultiLineComment | SingleLineComment }
 
 /// A match for <https://262.ecma-international.org/14.0/#prod-MultiLineComment>.
 ///
@@ -141,6 +141,22 @@ Comment = { MultiLineComment }
 /// Such a complexity would be required if we captured comment content. Since we
 /// do not, all these rules collapse to a single non-greedy `"/*" ~ ANY ~ "*/"`.
 MultiLineComment = { "/*" ~ (!"*/" ~ ANY)* ~ "*/" }
+
+/// A match for <https://262.ecma-international.org/14.0/#prod-SingleLineComment>.
+///
+/// SingleLineComment ::
+///     `//` SingleLineCommentChars_opt
+///
+/// SingleLineCommentChars ::
+///     SingleLineCommentChar SingleLineCommentChars_opt
+///
+/// SingleLineCommentChar ::
+///     SourceCharacter but not LineTerminator
+///
+/// Such a complexity would be required if we captured comment content. Since we
+/// do not, all these rules collapse to a single non-greedy
+/// `"//" ~ ANY ~ LineTerminator`.
+SingleLineComment = { "//" ~ (!LineTerminator ~ ANY)* }
 
 /************************************************
  *
