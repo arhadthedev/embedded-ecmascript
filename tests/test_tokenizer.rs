@@ -170,26 +170,10 @@ mod tests {
 
     #[rstest]
     fn test_multiline_comments() {
-        // Comment termination
-        assert_eq!(
-            get_next_token("/**/"),
-            Ok((Token::Comment(_), ""))
-        );
-        assert_eq!(
-            get_next_token("/* */"),
-            Ok((Token::Comment(_), ""))
-        );
-        assert_ok_eq!(
-            get_next_token("/*foo*/"),
-            (Token::Comment(_), "")
-        );
-        assert_ok_eq!(
-            get_next_token("/*/**/"),
-            (Token::Comment(_), "")
-        );
-        assert_ok_eq!(
-            get_next_token("/*\n/*\n*/"),
-            (Token::Comment(_), "")
-        );
+        assert_eq!(get_next_token("/**/"), Ok((Token::Comment, "")));
+        assert_eq!(get_next_token("/* */"), Ok((Token::Comment, "")));
+        assert_ok_eq!(get_next_token("/*foo*/"), (Token::Comment, ""));
+        assert_ok_eq!(get_next_token("/*/**/"), (Token::Comment, ""));
+        assert_ok_eq!(get_next_token("/*\n/*\n*/"), (Token::Comment, ""));
     }
 }
