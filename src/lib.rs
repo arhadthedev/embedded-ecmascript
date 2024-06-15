@@ -678,7 +678,13 @@ enum DivPunctuator {
 
 #[derive(Debug, FromPest)]
 #[pest_ast(rule(lexical::Rule::Comment))]
-struct Comment;
+enum Comment {
+    MultiLineComment(MultiLineComment),
+}
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::MultiLineComment))]
+struct MultiLineComment;
 
 #[derive(Debug, FromPest)]
 #[pest_ast(rule(lexical::Rule::InputElementDiv))]
