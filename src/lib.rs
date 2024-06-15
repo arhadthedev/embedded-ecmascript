@@ -738,7 +738,7 @@ fn extract_token(symbol_tree: InputElementDiv) -> Token {
         InputElementDiv::WhiteSpace(_) => Token::WhiteSpace,
         InputElementDiv::Comment(kind) => {
             match kind {
-                Comment::MultiLineComment(_), Comment::SingleLineComment(_) => Token::Comment
+                Comment::MultiLineComment(_) | Comment::SingleLineComment(_) => Token::Comment
             }
         },
         InputElementDiv::CommonToken(token) => {
