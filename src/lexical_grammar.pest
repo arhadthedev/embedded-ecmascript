@@ -115,7 +115,7 @@ InputElementDiv = {
 ///     MultiLineComment
 ///     SingleLineComment
 /// ```
-Comment = @{ MultiLineComment }
+Comment = { MultiLineComment }
 
 /// A match for <https://262.ecma-international.org/14.0/#prod-MultiLineComment>.
 ///
