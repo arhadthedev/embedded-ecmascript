@@ -704,6 +704,52 @@ enum InputElementDiv {
     DecimalDigit(DecimalDigit),
 }
 
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::InputElementRegExp))]
+enum InputElementRegExp {
+    WhiteSpace(WhiteSpace),
+    LineTerminator(LineTerminator),
+    Comment(Comment),
+    CommonToken(CommonToken),
+    RightBracePunctuator(RightBracePunctuator),
+}
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::InputElementRegExpOrTemplateTail))]
+enum InputElementRegExpOrTemplateTail {
+    WhiteSpace(WhiteSpace),
+    LineTerminator(LineTerminator),
+    Comment(Comment),
+    CommonToken(CommonToken),
+    DivPunctuator(DivPunctuator),
+}
+
+#[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::InputElementHashbangOrRegExp))]
+enum InputElementHashbangOrRegExp {
+    WhiteSpace(WhiteSpace),
+    LineTerminator(LineTerminator),
+    Comment(Comment),
+}
+
+enum PackedToken {
+    InputElementDiv(InputElementDiv),
+    InputElementHashbangOrRegExp(InputElementHashbangOrRegExp),
+    InputElementRegExp(InputElementRegExp),
+    InputElementRegExpOrTemplateTail(InputElementRegExpOrTemplateTail),
+}
+
+enum UnpackedToken {
+    Comment(Comment),
+    CommonToken(CommonToken),
+    DecimalDigit(DecimalDigit),
+    DivPunctuator(DivPunctuator),
+    LineTerminator(LineTerminator),
+    ReservedWord(ReservedWord),
+    RightBracePunctuator(RightBracePunctuator),
+    WhiteSpace(WhiteSpace),
+}
+
 /// Extract a first token from a `.js`/`.mjs` text.
 ///
 /// Returns a tuple of the token and an unprocessed input tail.
@@ -726,22 +772,65 @@ pub fn get_next_token(input: &str) -> Result<(Token, &str), String> {
         Ok(mut tokens) => {
             let tail = get_unprocessed_tail(tokens.clone(), input);
             let parsed = InputElementDiv::from_pest(&mut tokens).unwrap();
-            Ok((extract_token(parsed), tail))
+            let plain = unpack_token(PackedToken::InputElementDiv(parsed));
+            Ok((flatten_token(plain), tail))
         },
         Err(error) => Err(error.to_string())
     }
 }
 
-fn extract_token(symbol_tree: InputElementDiv) -> Token {
+fn unpack_token(input: PackedToken) -> UnpackedToken {
+    match input {
+        PackedToken::InputElementDiv(root) => {
+            match root {
+                InputElementDiv::WhiteSpace(item) => UnpackedToken::WhiteSpace(item),
+                InputElementDiv::LineTerminator(item) => UnpackedToken::LineTerminator(item),
+                InputElementDiv::Comment(item) => UnpackedToken::Comment(item),
+                InputElementDiv::CommonToken(item) => UnpackedToken::CommonToken(item),
+                InputElementDiv::DivPunctuator(item) => UnpackedToken::DivPunctuator(item),
+                InputElementDiv::ReservedWord(item) => UnpackedToken::ReservedWord(item),
+                InputElementDiv::RightBracePunctuator(item) => UnpackedToken::RightBracePunctuator(item),
+                InputElementDiv::DecimalDigit(item) => UnpackedToken::DecimalDigit(item),
+            }
+        },
+        PackedToken::InputElementHashbangOrRegExp(root) => {
+            match root {
+                InputElementHashbangOrRegExp::WhiteSpace(item) => UnpackedToken::WhiteSpace(item),
+                InputElementHashbangOrRegExp::LineTerminator(item) => UnpackedToken::LineTerminator(item),
+                InputElementHashbangOrRegExp::Comment(item) => UnpackedToken::Comment(item),
+            }
+        },
+        PackedToken::InputElementRegExp(root) => {
+            match root {
+                InputElementRegExp::WhiteSpace(item) => UnpackedToken::WhiteSpace(item),
+                InputElementRegExp::LineTerminator(item) => UnpackedToken::LineTerminator(item),
+                InputElementRegExp::Comment(item) => UnpackedToken::Comment(item),
+                InputElementRegExp::CommonToken(item) => UnpackedToken::CommonToken(item),
+                InputElementRegExp::RightBracePunctuator(item) => UnpackedToken::RightBracePunctuator(item),
+            }
+        },
+        PackedToken::InputElementRegExpOrTemplateTail(root) => {
+            match root {
+                InputElementRegExpOrTemplateTail::WhiteSpace(item) => UnpackedToken::WhiteSpace(item),
+                InputElementRegExpOrTemplateTail::LineTerminator(item) => UnpackedToken::LineTerminator(item),
+                InputElementRegExpOrTemplateTail::Comment(item) => UnpackedToken::Comment(item),
+                InputElementRegExpOrTemplateTail::CommonToken(item) => UnpackedToken::CommonToken(item),
+                InputElementRegExpOrTemplateTail::DivPunctuator(item) => UnpackedToken::DivPunctuator(item),
+            }
+        },
+    }
+}
+
+fn flatten_token(symbol_tree: UnpackedToken) -> Token {
     match symbol_tree {
-        InputElementDiv::DecimalDigit(value) => Token::NumericLiteral(value.digit.value),
-        InputElementDiv::WhiteSpace(_) => Token::WhiteSpace,
-        InputElementDiv::Comment(kind) => {
+        UnpackedToken::DecimalDigit(value) => Token::NumericLiteral(value.digit.value),
+        UnpackedToken::WhiteSpace(_) => Token::WhiteSpace,
+        UnpackedToken::Comment(kind) => {
             match kind {
                 Comment::MultiLineComment(_) | Comment::SingleLineComment(_) => Token::Comment
             }
         },
-        InputElementDiv::CommonToken(token) => {
+        UnpackedToken::CommonToken(token) => {
             match token {
                 CommonToken::IdentifierName(name) => Token::IdentifierName(name.decoded),
                 CommonToken::PrivateIdentifier(name) => Token::PrivateIdentifier(name.payload.decoded),
@@ -809,13 +898,13 @@ fn extract_token(symbol_tree: InputElementDiv) -> Token {
                 }
             }
         },
-        InputElementDiv::DivPunctuator(punctuator) => {
+        UnpackedToken::DivPunctuator(punctuator) => {
             match punctuator {
                 DivPunctuator::DivisionAssignment(_) => Token::DivisionAssignment,
                 DivPunctuator::Division(_) => Token::Division,
             }
         },
-        InputElementDiv::ReservedWord(keyword) => {
+        UnpackedToken::ReservedWord(keyword) => {
             match keyword {
                 ReservedWord::Await(_) => Token::ReservedWord(Keyword::Await),
                 ReservedWord::Break(_) => Token::ReservedWord(Keyword::Break),
@@ -857,8 +946,8 @@ fn extract_token(symbol_tree: InputElementDiv) -> Token {
                 ReservedWord::Yield(_) => Token::ReservedWord(Keyword::Yield),
             }
         },
-        InputElementDiv::RightBracePunctuator(_) => Token::ClosingBrace,
-        InputElementDiv::LineTerminator(_) => Token::LineTerminator,
+        UnpackedToken::RightBracePunctuator(_) => Token::ClosingBrace,
+        UnpackedToken::LineTerminator(_) => Token::LineTerminator,
     }
 }
 

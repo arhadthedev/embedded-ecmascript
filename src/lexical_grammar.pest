@@ -102,6 +102,92 @@ InputElementDiv = {
     )
 }
 
+/// A match for <https://262.ecma-international.org/14.0/#prod-InputElementRegExp>.
+///
+/// ```plain
+/// InputElementRegExp ::
+///     WhiteSpace
+///     LineTerminator
+///     Comment
+///     CommonToken
+///     RightBracePunctuator
+///     RegularExpressionLiteral
+/// ```
+InputElementRegExp = {
+    SOI ~
+    (
+        WhiteSpace |
+        LineTerminator |
+        Comment |
+        CommonToken |
+        RightBracePunctuator
+    )
+}
+
+/// A match for <https://262.ecma-international.org/14.0/#prod-InputElementRegExpOrTemplateTail>.
+///
+/// ```plain
+/// InputElementRegExpOrTemplateTail ::
+///     WhiteSpace
+///     LineTerminator
+///     Comment
+///     3
+///     RegularExpressionLiteral
+///     TemplateSubstitutionTail
+/// ```
+InputElementRegExpOrTemplateTail = {
+    SOI ~
+    (
+        WhiteSpace |
+        LineTerminator |
+        Comment |
+        CommonToken
+    )
+}
+
+/// A match for <https://262.ecma-international.org/14.0/#prod-InputElementTemplateTail>.
+///
+/// ```plain
+/// InputElementTemplateTail ::
+///     WhiteSpace
+///     LineTerminator
+///     Comment
+///     CommonToken
+///     DivPunctuator
+///     TemplateSubstitutionTail
+/// ```
+InputElementTemplateTail = {
+    SOI ~
+    (
+        WhiteSpace |
+        LineTerminator |
+        Comment |
+        CommonToken |
+        DivPunctuator
+    )
+}
+
+/// A match for <https://262.ecma-international.org/14.0/#prod-InputElementHashbangOrRegExp>.
+///
+/// ```plain
+/// InputElementHashbangOrRegExp ::
+///     WhiteSpace
+///     LineTerminator
+///     Comment
+///     CommonToken
+///     HashbangComment
+///     RegularExpressionLiteral
+///     InputElementDiv
+/// ```
+InputElementHashbangOrRegExp = {
+    SOI ~
+    (
+        WhiteSpace |
+        LineTerminator |
+        Comment
+    )
+}
+
 /************************************************
  *
  * 12.1 Unicode Format-Control Characters
