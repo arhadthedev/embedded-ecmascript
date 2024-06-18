@@ -736,10 +736,10 @@ enum InputElementHashbangOrRegExp {
 // InputElementRegExp, and InputElementRegExpOrTemplateTail
 #[allow(dead_code)]
 enum PackedToken {
-    InputElementDiv(InputElementDiv),
-    InputElementHashbangOrRegExp(InputElementHashbangOrRegExp),
-    InputElementRegExp(InputElementRegExp),
-    InputElementRegExpOrTemplateTail(InputElementRegExpOrTemplateTail),
+    Div(InputElementDiv),
+    HashbangOrRegExp(InputElementHashbangOrRegExp),
+    RegExp(InputElementRegExp),
+    RegExpOrTemplateTail(InputElementRegExpOrTemplateTail),
 }
 
 enum UnpackedToken {
@@ -775,7 +775,7 @@ pub fn get_next_token(input: &str) -> Result<(Token, &str), String> {
         Ok(mut tokens) => {
             let tail = get_unprocessed_tail(tokens.clone(), input);
             let parsed = InputElementDiv::from_pest(&mut tokens).unwrap();
-            let plain = unpack_token(PackedToken::InputElementDiv(parsed));
+            let plain = unpack_token(PackedToken::Div(parsed));
             Ok((flatten_token(plain), tail))
         },
         Err(error) => Err(error.to_string())
@@ -784,7 +784,7 @@ pub fn get_next_token(input: &str) -> Result<(Token, &str), String> {
 
 fn unpack_token(input: PackedToken) -> UnpackedToken {
     match input {
-        PackedToken::InputElementDiv(root) => {
+        PackedToken::Div(root) => {
             match root {
                 InputElementDiv::WhiteSpace(item) => UnpackedToken::WhiteSpace(item),
                 InputElementDiv::LineTerminator(item) => UnpackedToken::LineTerminator(item),
@@ -796,14 +796,14 @@ fn unpack_token(input: PackedToken) -> UnpackedToken {
                 InputElementDiv::DecimalDigit(item) => UnpackedToken::DecimalDigit(item),
             }
         },
-        PackedToken::InputElementHashbangOrRegExp(root) => {
+        PackedToken::HashbangOrRegExp(root) => {
             match root {
                 InputElementHashbangOrRegExp::WhiteSpace(item) => UnpackedToken::WhiteSpace(item),
                 InputElementHashbangOrRegExp::LineTerminator(item) => UnpackedToken::LineTerminator(item),
                 InputElementHashbangOrRegExp::Comment(item) => UnpackedToken::Comment(item),
             }
         },
-        PackedToken::InputElementRegExp(root) => {
+        PackedToken::RegExp(root) => {
             match root {
                 InputElementRegExp::WhiteSpace(item) => UnpackedToken::WhiteSpace(item),
                 InputElementRegExp::LineTerminator(item) => UnpackedToken::LineTerminator(item),
@@ -812,7 +812,7 @@ fn unpack_token(input: PackedToken) -> UnpackedToken {
                 InputElementRegExp::RightBracePunctuator(item) => UnpackedToken::RightBracePunctuator(item),
             }
         },
-        PackedToken::InputElementRegExpOrTemplateTail(root) => {
+        PackedToken::RegExpOrTemplateTail(root) => {
             match root {
                 InputElementRegExpOrTemplateTail::WhiteSpace(item) => UnpackedToken::WhiteSpace(item),
                 InputElementRegExpOrTemplateTail::LineTerminator(item) => UnpackedToken::LineTerminator(item),
