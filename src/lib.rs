@@ -732,6 +732,9 @@ enum InputElementHashbangOrRegExp {
     Comment(Comment),
 }
 
+// Remove after we start processing InputElementHashbangOrRegExp,
+// InputElementRegExp, and InputElementRegExpOrTemplateTail
+#[allow(dead_code)]
 enum PackedToken {
     InputElementDiv(InputElementDiv),
     InputElementHashbangOrRegExp(InputElementHashbangOrRegExp),
