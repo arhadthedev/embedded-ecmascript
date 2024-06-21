@@ -94,8 +94,11 @@ InputElementDiv = {
         WhiteSpace |
         LineTerminator |
         Comment |
-        ReservedWord |
-        CommonToken |
+        // <https://262.ecma-international.org/14.0/#sec-names-and-keywords>:
+        //
+        // > The syntactic grammar defines Identifier as an IdentifierName that
+        // > is not a ReservedWord.
+        ReservedWord | CommonToken |
         DivPunctuator |
         RightBracePunctuator |
         DecimalDigit
@@ -119,7 +122,11 @@ InputElementRegExp = {
         WhiteSpace |
         LineTerminator |
         Comment |
-        CommonToken |
+        // <https://262.ecma-international.org/14.0/#sec-names-and-keywords>:
+        //
+        // > The syntactic grammar defines Identifier as an IdentifierName that
+        // > is not a ReservedWord.
+        ReservedWord | CommonToken |
         RightBracePunctuator
     )
 }
@@ -131,7 +138,7 @@ InputElementRegExp = {
 ///     WhiteSpace
 ///     LineTerminator
 ///     Comment
-///     3
+///     CommonToken
 ///     RegularExpressionLiteral
 ///     TemplateSubstitutionTail
 /// ```
@@ -141,7 +148,11 @@ InputElementRegExpOrTemplateTail = {
         WhiteSpace |
         LineTerminator |
         Comment |
-        CommonToken
+        // <https://262.ecma-international.org/14.0/#sec-names-and-keywords>:
+        //
+        // > The syntactic grammar defines Identifier as an IdentifierName that
+        // > is not a ReservedWord.
+        ReservedWord | CommonToken
     )
 }
 
@@ -162,7 +173,11 @@ InputElementTemplateTail = {
         WhiteSpace |
         LineTerminator |
         Comment |
-        CommonToken |
+        // <https://262.ecma-international.org/14.0/#sec-names-and-keywords>:
+        //
+        // > The syntactic grammar defines Identifier as an IdentifierName that
+        // > is not a ReservedWord.
+        ReservedWord | CommonToken |
         DivPunctuator
     )
 }
@@ -184,7 +199,12 @@ InputElementHashbangOrRegExp = {
     (
         WhiteSpace |
         LineTerminator |
-        Comment
+        Comment |
+        // <https://262.ecma-international.org/14.0/#sec-names-and-keywords>:
+        //
+        // > The syntactic grammar defines Identifier as an IdentifierName that
+        // > is not a ReservedWord.
+        ReservedWord | CommonToken
     )
 }
 

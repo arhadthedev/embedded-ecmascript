@@ -711,6 +711,7 @@ enum InputElementRegExp {
     LineTerminator(LineTerminator),
     Comment(Comment),
     CommonToken(CommonToken),
+    ReservedWord(ReservedWord),
     RightBracePunctuator(RightBracePunctuator),
 }
 
@@ -722,6 +723,7 @@ enum InputElementRegExpOrTemplateTail {
     Comment(Comment),
     CommonToken(CommonToken),
     DivPunctuator(DivPunctuator),
+    ReservedWord(ReservedWord),
 }
 
 #[derive(Debug, FromPest)]
@@ -730,6 +732,8 @@ enum InputElementHashbangOrRegExp {
     WhiteSpace(WhiteSpace),
     LineTerminator(LineTerminator),
     Comment(Comment),
+    CommonToken(CommonToken),
+    ReservedWord(ReservedWord),
 }
 
 // Remove after we start processing InputElementHashbangOrRegExp,
@@ -801,6 +805,8 @@ fn unpack_token(input: PackedToken) -> UnpackedToken {
                 InputElementHashbangOrRegExp::WhiteSpace(item) => UnpackedToken::WhiteSpace(item),
                 InputElementHashbangOrRegExp::LineTerminator(item) => UnpackedToken::LineTerminator(item),
                 InputElementHashbangOrRegExp::Comment(item) => UnpackedToken::Comment(item),
+                InputElementHashbangOrRegExp::CommonToken(item) => UnpackedToken::CommonToken(item),
+                InputElementHashbangOrRegExp::ReservedWord(item) => UnpackedToken::ReservedWord(item),
             }
         },
         PackedToken::RegExp(root) => {
@@ -809,6 +815,7 @@ fn unpack_token(input: PackedToken) -> UnpackedToken {
                 InputElementRegExp::LineTerminator(item) => UnpackedToken::LineTerminator(item),
                 InputElementRegExp::Comment(item) => UnpackedToken::Comment(item),
                 InputElementRegExp::CommonToken(item) => UnpackedToken::CommonToken(item),
+                InputElementRegExp::ReservedWord(item) => UnpackedToken::ReservedWord(item),
                 InputElementRegExp::RightBracePunctuator(item) => UnpackedToken::RightBracePunctuator(item),
             }
         },
@@ -819,6 +826,7 @@ fn unpack_token(input: PackedToken) -> UnpackedToken {
                 InputElementRegExpOrTemplateTail::Comment(item) => UnpackedToken::Comment(item),
                 InputElementRegExpOrTemplateTail::CommonToken(item) => UnpackedToken::CommonToken(item),
                 InputElementRegExpOrTemplateTail::DivPunctuator(item) => UnpackedToken::DivPunctuator(item),
+                InputElementRegExpOrTemplateTail::ReservedWord(item) => UnpackedToken::ReservedWord(item),
             }
         },
     }
