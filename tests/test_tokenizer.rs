@@ -1,12 +1,21 @@
 #[cfg(test)]
 mod tests {
     use claims::{assert_matches, assert_ok_eq};
-    use embedded_ecmascript::{get_next_token, Token};
+    use embedded_ecmascript::{get_next_token, GoalSymbols, Token};
     use rstest::rstest;
 
-    #[test]
-    fn test_error_infrastructure() {
-        assert_matches!(get_next_token("`"), Err(message) if !message.is_empty());
+    #[rstest]
+    fn test_error_infrastructure(
+        #[values(
+            GoalSymbols::InputElementHashbangOrRegExp,
+            GoalSymbols::InputElementRegExpOrTemplateTail,
+            GoalSymbols::InputElementRegExp,
+            GoalSymbols::InputElementTemplateTail,
+            GoalSymbols::InputElementDiv,
+        )]
+        mode: GoalSymbols,
+    ) {
+        assert_matches!(get_next_token("`", mode), Err(message) if !message.is_empty());
     }
 
     #[rstest]
@@ -19,50 +28,83 @@ mod tests {
             "\u{3000}",
         )]
         tested: &str,
+        #[values(
+            GoalSymbols::InputElementHashbangOrRegExp,
+            GoalSymbols::InputElementRegExpOrTemplateTail,
+            GoalSymbols::InputElementRegExp,
+            GoalSymbols::InputElementTemplateTail,
+            GoalSymbols::InputElementDiv,
+        )]
+        mode: GoalSymbols,
     ) {
-        assert_matches!(get_next_token(tested), Ok((Token::WhiteSpace, "")));
+        assert_ok_eq!(get_next_token(tested, mode), (Token::WhiteSpace, ""));
     }
 
     #[rstest]
     fn test_line_terminator(
         #[values("\r", "\n", "\u{2028}", "\u{2029}")]
         tested: &str,
+        #[values(
+            GoalSymbols::InputElementHashbangOrRegExp,
+            GoalSymbols::InputElementRegExpOrTemplateTail,
+            GoalSymbols::InputElementRegExp,
+            GoalSymbols::InputElementTemplateTail,
+            GoalSymbols::InputElementDiv,
+        )]
+        mode: GoalSymbols,
     ) {
-        assert_matches!(get_next_token(tested), Ok((Token::LineTerminator, "")));
+        assert_ok_eq!(get_next_token(tested, mode), (Token::LineTerminator, ""));
     }
 
     #[rstest]
-    fn test_line_terminator_special() {
+    fn test_line_terminator_special(
+        #[values(
+            GoalSymbols::InputElementHashbangOrRegExp,
+            GoalSymbols::InputElementRegExpOrTemplateTail,
+            GoalSymbols::InputElementRegExp,
+            GoalSymbols::InputElementTemplateTail,
+            GoalSymbols::InputElementDiv,
+        )]
+        mode: GoalSymbols,
+    ) {
         // The parser consumes `\r\n` as string literal line continuation only.
         // See how `LineTerminator` and `LineTerminatorSequence` grammar rules
         // are defined and used in ECMA-262.
-        assert_matches!(get_next_token("\r\n"), Ok((Token::LineTerminator, "\n")));
+        assert_ok_eq!(get_next_token("\r\n", mode), (Token::LineTerminator, "\n"));
     }
 
     #[rstest]
     fn test_identifier_name(
         #[values("X", "d", "д", "大", "$")]
         tested: &str,
+        #[values(
+            GoalSymbols::InputElementHashbangOrRegExp,
+            GoalSymbols::InputElementRegExpOrTemplateTail,
+            GoalSymbols::InputElementRegExp,
+            GoalSymbols::InputElementTemplateTail,
+            GoalSymbols::InputElementDiv,
+        )]
+        mode: GoalSymbols,
     ) {
-        assert_eq!(
-            get_next_token(tested),
-            Ok((Token::IdentifierName(tested.to_owned()), ""))
+        assert_ok_eq!(
+            get_next_token(tested, mode),
+            (Token::IdentifierName(tested.to_owned()), "")
         );
         let doubled = tested.to_owned() + tested;
-        assert_eq!(
-            get_next_token(&doubled),
-            Ok((Token::IdentifierName(doubled.clone()), ""))
+        assert_ok_eq!(
+            get_next_token(&doubled, mode),
+            (Token::IdentifierName(doubled.clone()), "")
         );
 
         let private = "#".to_owned() + tested;
-        assert_eq!(
-            get_next_token(&private),
-            Ok((Token::PrivateIdentifier(tested.to_owned()), ""))
+        assert_ok_eq!(
+            get_next_token(&private, mode),
+            (Token::PrivateIdentifier(tested.to_owned()), "")
         );
         let doubled_private = private + tested;
-        assert_eq!(
-            get_next_token(&doubled_private),
-            Ok((Token::PrivateIdentifier(doubled), ""))
+        assert_ok_eq!(
+            get_next_token(&doubled_private, mode),
+            (Token::PrivateIdentifier(doubled), "")
         );
     }
 
@@ -77,81 +119,178 @@ mod tests {
             "with", "yield",
         )]
         tested: &str,
+        #[values(
+            GoalSymbols::InputElementHashbangOrRegExp,
+            GoalSymbols::InputElementRegExpOrTemplateTail,
+            GoalSymbols::InputElementRegExp,
+            GoalSymbols::InputElementTemplateTail,
+            GoalSymbols::InputElementDiv,
+        )]
+        mode: GoalSymbols,
     ) {
-        assert_matches!(get_next_token(tested), Ok((Token::ReservedWord(_), "")));
+        assert_matches!(
+            get_next_token(tested, mode),
+            Ok((Token::ReservedWord(_), ""))
+        );
     }
 
-    #[test]
-    fn test_onechar_punctuators() {
-        assert_matches!(get_next_token("{"), Ok((Token::OpeningBrace, "")));
-        assert_matches!(get_next_token("}"), Ok((Token::ClosingBrace, "")));
-        assert_matches!(get_next_token("("), Ok((Token::OpeningParenthesis, "")));
-        assert_matches!(get_next_token(")"), Ok((Token::ClosingParenthesis, "")));
-        assert_matches!(get_next_token("["), Ok((Token::OpeningBracket, "")));
-        assert_matches!(get_next_token("]"), Ok((Token::ClosingBracket, "")));
-        assert_matches!(get_next_token("."), Ok((Token::Dot, "")));
-        assert_matches!(get_next_token(";"), Ok((Token::Semicolon, "")));
-        assert_matches!(get_next_token(","), Ok((Token::Comma, "")));
-        assert_matches!(get_next_token("<"), Ok((Token::Less, "")));
-        assert_matches!(get_next_token(">"), Ok((Token::More, "")));
-        assert_matches!(get_next_token("+"), Ok((Token::Addition, "")));
-        assert_matches!(get_next_token("-"), Ok((Token::Subtraction, "")));
-        assert_matches!(get_next_token("*"), Ok((Token::Multiplication, "")));
-        assert_matches!(get_next_token("/"), Ok((Token::Division, "")));
-        assert_matches!(get_next_token("%"), Ok((Token::Modulo, "")));
-        assert_matches!(get_next_token("&"), Ok((Token::BitAnd, "")));
-        assert_matches!(get_next_token("|"), Ok((Token::BitOr, "")));
-        assert_matches!(get_next_token("^"), Ok((Token::BitXor, "")));
-        assert_matches!(get_next_token("!"), Ok((Token::Not, "")));
-        assert_matches!(get_next_token("~"), Ok((Token::BitNot, "")));
-        assert_matches!(get_next_token("?"), Ok((Token::QuestionMark, "")));
-        assert_matches!(get_next_token(":"), Ok((Token::Colon, "")));
-        assert_matches!(get_next_token("="), Ok((Token::Assignment, "")));
+    #[rstest]
+    fn test_common_onechar_punctuators(
+        #[values(
+            GoalSymbols::InputElementHashbangOrRegExp,
+            GoalSymbols::InputElementRegExpOrTemplateTail,
+            GoalSymbols::InputElementRegExp,
+            GoalSymbols::InputElementTemplateTail,
+            GoalSymbols::InputElementDiv,
+        )]
+        mode: GoalSymbols,
+    ) {
+        assert_ok_eq!(get_next_token("{", mode), (Token::OpeningBrace, ""));
+        assert_ok_eq!(get_next_token("(", mode), (Token::OpeningParenthesis, ""));
+        assert_ok_eq!(get_next_token(")", mode), (Token::ClosingParenthesis, ""));
+        assert_ok_eq!(get_next_token("[", mode), (Token::OpeningBracket, ""));
+        assert_ok_eq!(get_next_token("]", mode), (Token::ClosingBracket, ""));
+        assert_ok_eq!(get_next_token(".", mode), (Token::Dot, ""));
+        assert_ok_eq!(get_next_token(";", mode), (Token::Semicolon, ""));
+        assert_ok_eq!(get_next_token(",", mode), (Token::Comma, ""));
+        assert_ok_eq!(get_next_token("<", mode), (Token::Less, ""));
+        assert_ok_eq!(get_next_token(">", mode), (Token::More, ""));
+        assert_ok_eq!(get_next_token("+", mode), (Token::Addition, ""));
+        assert_ok_eq!(get_next_token("-", mode), (Token::Subtraction, ""));
+        assert_ok_eq!(get_next_token("*", mode), (Token::Multiplication, ""));
+        assert_ok_eq!(get_next_token("%", mode), (Token::Modulo, ""));
+        assert_ok_eq!(get_next_token("&", mode), (Token::BitAnd, ""));
+        assert_ok_eq!(get_next_token("|", mode), (Token::BitOr, ""));
+        assert_ok_eq!(get_next_token("^", mode), (Token::BitXor, ""));
+        assert_ok_eq!(get_next_token("!", mode), (Token::Not, ""));
+        assert_ok_eq!(get_next_token("~", mode), (Token::BitNot, ""));
+        assert_ok_eq!(get_next_token("?", mode), (Token::QuestionMark, ""));
+        assert_ok_eq!(get_next_token(":", mode), (Token::Colon, ""));
+        assert_ok_eq!(get_next_token("=", mode), (Token::Assignment, ""));
     }
 
-    #[test]
-    fn test_twochar_punctuators() {
-        assert_matches!(get_next_token("?."), Ok((Token::OptionalChaining, "")));
-        assert_matches!(get_next_token("<="), Ok((Token::LessOrEqual, "")));
-        assert_matches!(get_next_token(">="), Ok((Token::MoreOrEqual, "")));
-        assert_matches!(get_next_token("=="), Ok((Token::LooseEquality, "")));
-        assert_matches!(get_next_token("!="), Ok((Token::LooseInequality, "")));
-        assert_matches!(get_next_token("**"), Ok((Token::Exponentiation, "")));
-        assert_matches!(get_next_token("++"), Ok((Token::Increment, "")));
-        assert_matches!(get_next_token("--"), Ok((Token::Decrement, "")));
-        assert_matches!(get_next_token("<<"), Ok((Token::LeftShift, "")));
-        assert_matches!(get_next_token(">>"), Ok((Token::RightShift, "")));
-        assert_matches!(get_next_token("&&"), Ok((Token::And, "")));
-        assert_matches!(get_next_token("||"), Ok((Token::Or, "")));
-        assert_matches!(get_next_token("??"), Ok((Token::NullishCoalescence, "")));
-        assert_matches!(get_next_token("+="), Ok((Token::AdditionAssignment, "")));
-        assert_matches!(get_next_token("-="), Ok((Token::SubtractionAssignment, "")));
-        assert_matches!(get_next_token("*="), Ok((Token::MultiplicationAssignment, "")));
-        assert_matches!(get_next_token("/="), Ok((Token::DivisionAssignment, "")));
-        assert_matches!(get_next_token("%="), Ok((Token::ModuloAssignment, "")));
-        assert_matches!(get_next_token("&="), Ok((Token::BitAndAssignment, "")));
-        assert_matches!(get_next_token("|="), Ok((Token::BitOrAssignment, "")));
-        assert_matches!(get_next_token("^="), Ok((Token::BitXorAssignment, "")));
-        assert_matches!(get_next_token("=>"), Ok((Token::FunctionArrow, "")));
+    #[rstest]
+    fn test_input_element_div_onechar_punctuators() {
+        assert_ok_eq!(
+            get_next_token("/", GoalSymbols::InputElementDiv),
+            (Token::Division, "")
+        );
+        assert_ok_eq!(
+            get_next_token("}", GoalSymbols::InputElementDiv),
+            (Token::ClosingBrace, "")
+        );
     }
 
-    #[test]
-    fn test_threechar_punctuators() {
-        assert_matches!(get_next_token("..."), Ok((Token::Ellipsis, "")));
-        assert_matches!(get_next_token("==="), Ok((Token::StrictEquality, "")));
-        assert_matches!(get_next_token("!=="), Ok((Token::StrictInequality, "")));
-        assert_matches!(get_next_token(">>>"), Ok((Token::UnsignedRightShift, "")));
-        assert_matches!(get_next_token("**="), Ok((Token::ExponentiationAssignment, "")));
-        assert_matches!(get_next_token("<<="), Ok((Token::LeftShiftAssignment, "")));
-        assert_matches!(get_next_token(">>="), Ok((Token::RightShiftAssignment, "")));
-        assert_matches!(get_next_token("&&="), Ok((Token::AndAssignment, "")));
-        assert_matches!(get_next_token("||="), Ok((Token::OrAssignment, "")));
-        assert_matches!(get_next_token("??="), Ok((Token::NullishCoalescenceAssignment, "")));
+    #[rstest]
+    fn test_common_twochar_punctuators(
+        #[values(
+            GoalSymbols::InputElementHashbangOrRegExp,
+            GoalSymbols::InputElementRegExpOrTemplateTail,
+            GoalSymbols::InputElementRegExp,
+            GoalSymbols::InputElementTemplateTail,
+            GoalSymbols::InputElementDiv,
+        )]
+        mode: GoalSymbols,
+    ) {
+        assert_ok_eq!(get_next_token("?.", mode), (Token::OptionalChaining, ""));
+        assert_ok_eq!(get_next_token("<=", mode), (Token::LessOrEqual, ""));
+        assert_ok_eq!(get_next_token(">=", mode), (Token::MoreOrEqual, ""));
+        assert_ok_eq!(get_next_token("==", mode), (Token::LooseEquality, ""));
+        assert_ok_eq!(get_next_token("!=", mode), (Token::LooseInequality, ""));
+        assert_ok_eq!(get_next_token("**", mode), (Token::Exponentiation, ""));
+        assert_ok_eq!(get_next_token("++", mode), (Token::Increment, ""));
+        assert_ok_eq!(get_next_token("--", mode), (Token::Decrement, ""));
+        assert_ok_eq!(get_next_token("<<", mode), (Token::LeftShift, ""));
+        assert_ok_eq!(get_next_token(">>", mode), (Token::RightShift, ""));
+        assert_ok_eq!(get_next_token("&&", mode), (Token::And, ""));
+        assert_ok_eq!(get_next_token("||", mode), (Token::Or, ""));
+        assert_ok_eq!(
+            get_next_token("??", mode),
+            (Token::NullishCoalescence, "")
+        );
+        assert_ok_eq!(
+            get_next_token("+=", mode),
+            (Token::AdditionAssignment, "")
+        );
+        assert_ok_eq!(
+            get_next_token("-=", mode),
+            (Token::SubtractionAssignment, "")
+        );
+        assert_ok_eq!(
+            get_next_token("*=", mode),
+            (Token::MultiplicationAssignment, "")
+        );
+        assert_ok_eq!(get_next_token("%=", mode), (Token::ModuloAssignment, ""));
+        assert_ok_eq!(get_next_token("&=", mode), (Token::BitAndAssignment, ""));
+        assert_ok_eq!(get_next_token("|=", mode), (Token::BitOrAssignment, ""));
+        assert_ok_eq!(get_next_token("^=", mode), (Token::BitXorAssignment, ""));
+        assert_ok_eq!(get_next_token("=>", mode), (Token::FunctionArrow, ""));
     }
 
-    #[test]
-    fn test_fourchar_punctuators() {
-        assert_matches!(get_next_token(">>>="), Ok((Token::UnsignedRightShiftAssignment, "")));
+    #[rstest]
+    fn test_input_element_div_twochar_punctuators() {
+        assert_ok_eq!(
+            get_next_token("/=", GoalSymbols::InputElementDiv),
+            (Token::DivisionAssignment, "")
+        );
+    }
+
+    #[rstest]
+    fn test_threechar_punctuators(
+        #[values(
+            GoalSymbols::InputElementHashbangOrRegExp,
+            GoalSymbols::InputElementRegExpOrTemplateTail,
+            GoalSymbols::InputElementRegExp,
+            GoalSymbols::InputElementTemplateTail,
+            GoalSymbols::InputElementDiv,
+        )]
+        mode: GoalSymbols,
+    ) {
+        assert_ok_eq!(get_next_token("...", mode), (Token::Ellipsis, ""));
+        assert_ok_eq!(get_next_token("===", mode), (Token::StrictEquality, ""));
+        assert_ok_eq!(
+            get_next_token("!==", mode),
+            (Token::StrictInequality, "")
+        );
+        assert_ok_eq!(
+            get_next_token(">>>", mode),
+            (Token::UnsignedRightShift, "")
+        );
+        assert_ok_eq!(
+            get_next_token("**=", mode),
+            (Token::ExponentiationAssignment, "")
+        );
+        assert_ok_eq!(
+            get_next_token("<<=", mode),
+            (Token::LeftShiftAssignment, "")
+        );
+        assert_ok_eq!(
+            get_next_token(">>=", mode),
+            (Token::RightShiftAssignment, "")
+        );
+        assert_ok_eq!(get_next_token("&&=", mode), (Token::AndAssignment, ""));
+        assert_ok_eq!(get_next_token("||=", mode), (Token::OrAssignment, ""));
+        assert_ok_eq!(
+            get_next_token("??=", mode),
+            (Token::NullishCoalescenceAssignment, "")
+        );
+    }
+
+    #[rstest]
+    fn test_fourchar_punctuators(
+        #[values(
+            GoalSymbols::InputElementHashbangOrRegExp,
+            GoalSymbols::InputElementRegExpOrTemplateTail,
+            GoalSymbols::InputElementRegExp,
+            GoalSymbols::InputElementTemplateTail,
+            GoalSymbols::InputElementDiv,
+        )]
+        mode: GoalSymbols,
+    ) {
+        assert_ok_eq!(
+            get_next_token(">>>=", mode),
+            (Token::UnsignedRightShiftAssignment, "")
+        );
     }
 
     #[rstest]
@@ -161,26 +300,53 @@ mod tests {
     ) {
         let parsed = Token::NumericLiteral(tested.parse().unwrap());
 
-        assert_eq!(get_next_token(tested), Ok((parsed.clone(), "")));
+        assert_ok_eq!(
+            get_next_token(tested, GoalSymbols::InputElementDiv),
+            (parsed.clone(), "")
+        );
 
         let tail = " ".to_owned() + tested;
         let with_tail = tested.to_owned() + &tail;
-        assert_eq!(get_next_token(&with_tail), Ok((parsed, tail.as_str())));
+        assert_ok_eq!(
+            get_next_token(&with_tail, GoalSymbols::InputElementDiv),
+            (parsed, tail.as_str())
+        );
     }
 
     #[rstest]
-    fn test_multiline_comments() {
-        assert_eq!(get_next_token("/**/"), Ok((Token::Comment, "")));
-        assert_eq!(get_next_token("/* */"), Ok((Token::Comment, "")));
-        assert_ok_eq!(get_next_token("/*foo*/"), (Token::Comment, ""));
-        assert_ok_eq!(get_next_token("/*/**/"), (Token::Comment, ""));
-        assert_ok_eq!(get_next_token("/*\n/*\n*/"), (Token::Comment, ""));
+    fn test_multiline_comments(
+        #[values(
+            GoalSymbols::InputElementHashbangOrRegExp,
+            GoalSymbols::InputElementRegExpOrTemplateTail,
+            GoalSymbols::InputElementRegExp,
+            GoalSymbols::InputElementTemplateTail,
+            GoalSymbols::InputElementDiv,
+        )]
+        mode: GoalSymbols,
+    ) {
+        assert_ok_eq!(get_next_token("/**/", mode), (Token::Comment, ""));
+        assert_ok_eq!(get_next_token("/* */", mode), (Token::Comment, ""));
+        assert_ok_eq!(get_next_token("/*foo*/", mode), (Token::Comment, ""));
+        assert_ok_eq!(get_next_token("/*/**/", mode), (Token::Comment, ""));
+        assert_ok_eq!(get_next_token("/*\n/*\n*/", mode), (Token::Comment, ""));
     }
 
-    #[test]
-    fn test_single_line_comments() {
-        assert_ok_eq!(get_next_token("//a b"), (Token::Comment, ""));
-        assert_ok_eq!(get_next_token("//a b\n"), (Token::Comment, "\n"));
-        assert_ok_eq!(get_next_token("//a b\n//c"), (Token::Comment, "\n//c"));
+    #[rstest]
+    fn test_single_line_comments(
+        #[values(
+            GoalSymbols::InputElementHashbangOrRegExp,
+            GoalSymbols::InputElementRegExpOrTemplateTail,
+            GoalSymbols::InputElementRegExp,
+            GoalSymbols::InputElementTemplateTail,
+            GoalSymbols::InputElementDiv,
+        )]
+        mode: GoalSymbols,
+    ) {
+        assert_ok_eq!(get_next_token("//a b", mode), (Token::Comment, ""));
+        assert_ok_eq!(get_next_token("//a b\n", mode), (Token::Comment, "\n"));
+        assert_ok_eq!(
+            get_next_token("//a b\n//c", mode),
+            (Token::Comment, "\n//c")
+        );
     }
 }
