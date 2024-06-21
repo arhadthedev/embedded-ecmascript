@@ -133,6 +133,40 @@ pub enum Token {
     ReservedWord(Keyword),
 }
 
+/// Kind of a grammar used for tokenization.
+///
+/// From <https://262.ecma-international.org/14.0/#sec-ecmascript-language-lexical-grammar>:
+///
+/// > There are several situations where the identification of lexical input
+/// > elements is sensitive to the syntactic grammar context that is consuming
+/// > the input elements. This requires multiple goal symbols for the lexical
+/// > grammar.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum GoalSymbols {
+    /// > The *InputElementHashbangOrRegExp* goal is used at the start of
+    /// > a *Script* or *Module*.
+    InputElementHashbangOrRegExp,
+
+    /// > The *InputElementRegExpOrTemplateTail* goal is used in syntactic
+    /// > grammar contexts where a *RegularExpressionLiteral*,
+    /// > a *TemplateMiddle*, or a *TemplateTail* is permitted.
+    InputElementRegExpOrTemplateTail,
+
+    /// > The *InputElementRegExp* goal symbol is used in all syntactic grammar
+    /// > contexts where a *RegularExpressionLiteral* is permitted but neither
+    /// > a *TemplateMiddle*, nor a *TemplateTail* is permitted.
+    InputElementRegExp,
+
+    /// > The *InputElementTemplateTail* goal is used in all syntactic grammar
+    /// > contexts where a *TemplateMiddle* or a *TemplateTail* is permitted
+    /// > but a *RegularExpressionLiteral* is not permitted.
+    InputElementTemplateTail,
+
+    /// > In all other contexts, *InputElementDiv* is used as the lexical goal
+    /// > symbol.
+    InputElementDiv
+}
+
 fn span_into_str(span: Span) -> &str {
     span.as_str()
 }
@@ -747,9 +781,6 @@ enum InputElementHashbangOrRegExp {
     ReservedWord(ReservedWord),
 }
 
-// Remove after we start processing InputElementHashbangOrRegExp,
-// InputElementRegExp, and InputElementRegExpOrTemplateTail
-#[allow(dead_code)]
 enum PackedToken {
     Div(InputElementDiv),
     HashbangOrRegExp(InputElementHashbangOrRegExp),
@@ -785,14 +816,41 @@ enum UnpackedToken {
 ///
 /// Will panic if the root grammar errorneously defines an empty goal symbol.
 /// This means a broken grammar file used by developers to build the parser.
-pub fn get_next_token(input: &str) -> Result<(Token, &str), String> {
-    let result = lexical::Ecma262Parser::parse(lexical::Rule::InputElementDiv, input);
+pub fn get_next_token(input: &str, mode: GoalSymbols) -> Result<(Token, &str), String> {
+    let goal = match mode {
+        GoalSymbols::InputElementHashbangOrRegExp => lexical::Rule::InputElementHashbangOrRegExp,
+        GoalSymbols::InputElementRegExpOrTemplateTail => lexical::Rule::InputElementRegExpOrTemplateTail,
+        GoalSymbols::InputElementRegExp => lexical::Rule::InputElementRegExp,
+        GoalSymbols::InputElementTemplateTail => lexical::Rule::InputElementTemplateTail,
+        GoalSymbols::InputElementDiv => lexical::Rule::InputElementDiv
+    };
+    let result = lexical::Ecma262Parser::parse(goal, input);
     match result {
         Ok(mut tokens) => {
             let tail = get_unprocessed_tail(tokens.clone(), input);
-            let parsed = InputElementDiv::from_pest(&mut tokens).unwrap();
-            let plain = unpack_token(PackedToken::Div(parsed));
-            Ok((flatten_token(plain), tail))
+            let typed_packed: PackedToken = match mode {
+                GoalSymbols::InputElementHashbangOrRegExp => {
+                    let typed = crate::InputElementHashbangOrRegExp::from_pest(&mut tokens);
+                    PackedToken::HashbangOrRegExp(typed.unwrap())
+                },
+                GoalSymbols::InputElementRegExpOrTemplateTail => {
+                    let typed = crate::InputElementRegExpOrTemplateTail::from_pest(&mut tokens);
+                    PackedToken::RegExpOrTemplateTail(typed.unwrap())
+                },
+                GoalSymbols::InputElementRegExp => {
+                    let typed = crate::InputElementRegExp::from_pest(&mut tokens);
+                    PackedToken::RegExp(typed.unwrap())
+                },
+                GoalSymbols::InputElementTemplateTail => {
+                    let typed = crate::InputElementTemplateTail::from_pest(&mut tokens);
+                    PackedToken::TemplateTail(typed.unwrap())
+                },
+                GoalSymbols::InputElementDiv => {
+                    let typed = crate::InputElementDiv::from_pest(&mut tokens);
+                    PackedToken::Div(typed.unwrap())
+                },
+            };
+            Ok((flatten_token(unpack_token(typed_packed)), tail))
         },
         Err(error) => Err(error.to_string())
     }
