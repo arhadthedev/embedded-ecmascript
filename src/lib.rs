@@ -727,6 +727,17 @@ enum InputElementRegExpOrTemplateTail {
 }
 
 #[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::InputElementTemplateTail))]
+enum InputElementTemplateTail {
+    WhiteSpace(WhiteSpace),
+    LineTerminator(LineTerminator),
+    Comment(Comment),
+    CommonToken(CommonToken),
+    DivPunctuator(DivPunctuator),
+    ReservedWord(ReservedWord),
+}
+
+#[derive(Debug, FromPest)]
 #[pest_ast(rule(lexical::Rule::InputElementHashbangOrRegExp))]
 enum InputElementHashbangOrRegExp {
     WhiteSpace(WhiteSpace),
@@ -744,6 +755,7 @@ enum PackedToken {
     HashbangOrRegExp(InputElementHashbangOrRegExp),
     RegExp(InputElementRegExp),
     RegExpOrTemplateTail(InputElementRegExpOrTemplateTail),
+    TemplateTail(InputElementTemplateTail),
 }
 
 enum UnpackedToken {
@@ -827,6 +839,16 @@ fn unpack_token(input: PackedToken) -> UnpackedToken {
                 InputElementRegExpOrTemplateTail::CommonToken(item) => UnpackedToken::CommonToken(item),
                 InputElementRegExpOrTemplateTail::DivPunctuator(item) => UnpackedToken::DivPunctuator(item),
                 InputElementRegExpOrTemplateTail::ReservedWord(item) => UnpackedToken::ReservedWord(item),
+            }
+        },
+        PackedToken::TemplateTail(root) => {
+            match root {
+                InputElementTemplateTail::WhiteSpace(item) => UnpackedToken::WhiteSpace(item),
+                InputElementTemplateTail::LineTerminator(item) => UnpackedToken::LineTerminator(item),
+                InputElementTemplateTail::Comment(item) => UnpackedToken::Comment(item),
+                InputElementTemplateTail::CommonToken(item) => UnpackedToken::CommonToken(item),
+                InputElementTemplateTail::DivPunctuator(item) => UnpackedToken::DivPunctuator(item),
+                InputElementTemplateTail::ReservedWord(item) => UnpackedToken::ReservedWord(item),
             }
         },
     }
