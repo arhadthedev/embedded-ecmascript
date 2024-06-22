@@ -1,6 +1,6 @@
 #[cfg(test)]
 mod tests {
-    use claims::{assert_matches, assert_ok_eq};
+    use claims::{assert_err, assert_matches, assert_ok_eq};
     use embedded_ecmascript::{get_next_token, GoalSymbols, Token};
     use rstest::rstest;
 
@@ -169,16 +169,32 @@ mod tests {
         assert_ok_eq!(get_next_token("=", mode), (Token::Assignment, ""));
     }
 
-    #[rstest]
+    #[test]
     fn test_input_element_div_onechar_punctuators() {
         assert_ok_eq!(
             get_next_token("/", GoalSymbols::InputElementDiv),
             (Token::Division, "")
         );
+        assert_err!(get_next_token("/", GoalSymbols::InputElementHashbangOrRegExp));
+        assert_err!(get_next_token("/", GoalSymbols::InputElementRegExpOrTemplateTail));
+        assert_err!(get_next_token("/", GoalSymbols::InputElementRegExp));
+        assert_ok_eq!(
+            get_next_token("/", GoalSymbols::InputElementTemplateTail),
+            (Token::Division, "")
+        );
+
         assert_ok_eq!(
             get_next_token("}", GoalSymbols::InputElementDiv),
             (Token::ClosingBrace, "")
         );
+        assert_err!(get_next_token("}", GoalSymbols::InputElementHashbangOrRegExp));
+        assert_err!(get_next_token("}", GoalSymbols::InputElementRegExpOrTemplateTail));
+        assert_ok_eq!(
+            get_next_token("}", GoalSymbols::InputElementRegExp),
+            (Token::ClosingBrace, "")
+        );
+        assert_err!(get_next_token("}", GoalSymbols::InputElementTemplateTail));
+
     }
 
     #[rstest]
@@ -227,10 +243,17 @@ mod tests {
         assert_ok_eq!(get_next_token("=>", mode), (Token::FunctionArrow, ""));
     }
 
-    #[rstest]
+    #[test]
     fn test_input_element_div_twochar_punctuators() {
         assert_ok_eq!(
             get_next_token("/=", GoalSymbols::InputElementDiv),
+            (Token::DivisionAssignment, "")
+        );
+        assert_err!(get_next_token("/=", GoalSymbols::InputElementHashbangOrRegExp));
+        assert_err!(get_next_token("/=", GoalSymbols::InputElementRegExpOrTemplateTail));
+        assert_err!(get_next_token("/=", GoalSymbols::InputElementRegExp));
+        assert_ok_eq!(
+            get_next_token("/=", GoalSymbols::InputElementTemplateTail),
             (Token::DivisionAssignment, "")
         );
     }
