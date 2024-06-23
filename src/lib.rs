@@ -866,7 +866,7 @@ pub fn get_next_token(input: &str, mode: GoalSymbols) -> Result<(Token, &str), S
     }
 }
 
-fn unpack_token<'src>(input: PackedToken<'src>) -> UnpackedToken<'src> {
+fn unpack_token(input: PackedToken<'_>) -> UnpackedToken<'_> {
     match input {
         PackedToken::Div(root) => {
             match root {
