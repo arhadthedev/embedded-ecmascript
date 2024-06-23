@@ -372,4 +372,35 @@ mod tests {
             (Token::Comment, "\n//c")
         );
     }
+
+    #[test]
+    fn test_hashbang_comments() {
+        fn get_token(input: &str) -> Result<(Token, &str), String> {
+            get_next_token(input, GoalSymbols::InputElementHashbangOrRegExp)
+        }
+
+        assert_ok_eq!(get_token("#!foo"), (Token::HashbangComment("foo".to_string()), ""));
+        assert_ok_eq!(get_token("#!foo\n"), (Token::HashbangComment("foo".to_string()), "\n"));
+        assert_ok_eq!(get_token("#!foo\r\n"), (Token::HashbangComment("foo".to_string()), "\r\n"));
+        assert_ok_eq!(get_token("#!foo\n\n"), (Token::HashbangComment("foo".to_string()), "\n\n"));
+        assert_ok_eq!(get_token("#!"), (Token::HashbangComment(String::new()), ""));
+        assert_ok_eq!(get_token("#!\n"), (Token::HashbangComment(String::new()), "\n"));
+        assert_ok_eq!(get_token("#!\n\n"), (Token::HashbangComment(String::new()), "\n\n"));
+    }
+
+    #[rstest]
+    fn test_hashbang_comments_errors(
+        #[values(
+            GoalSymbols::InputElementRegExpOrTemplateTail,
+            GoalSymbols::InputElementRegExp,
+            GoalSymbols::InputElementTemplateTail,
+            GoalSymbols::InputElementDiv,
+        )]
+        mode: GoalSymbols,
+    ) {
+        assert_err!(get_next_token("#!foo", mode));
+        assert_err!(get_next_token("#!foo\n", mode));
+        assert_err!(get_next_token("#!", mode));
+        assert_err!(get_next_token("#!\n", mode));
+    }
 }

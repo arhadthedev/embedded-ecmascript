@@ -68,6 +68,7 @@ pub enum Token {
     WhiteSpace,
     LineTerminator,
     Comment,
+    HashbangComment(String),
 
     Addition,
     AdditionAssignment,
@@ -726,6 +727,13 @@ struct MultiLineComment;
 struct SingleLineComment;
 
 #[derive(Debug, FromPest)]
+#[pest_ast(rule(lexical::Rule::HashbangComment))]
+struct HashbangComment<'src> {
+     #[pest_ast(outer(with(span_into_str)))]
+    pub content: &'src str,
+}
+
+#[derive(Debug, FromPest)]
 #[pest_ast(rule(lexical::Rule::InputElementDiv))]
 enum InputElementDiv {
     WhiteSpace(WhiteSpace),
@@ -773,27 +781,29 @@ enum InputElementTemplateTail {
 
 #[derive(Debug, FromPest)]
 #[pest_ast(rule(lexical::Rule::InputElementHashbangOrRegExp))]
-enum InputElementHashbangOrRegExp {
+enum InputElementHashbangOrRegExp<'src> {
     WhiteSpace(WhiteSpace),
     LineTerminator(LineTerminator),
     Comment(Comment),
     CommonToken(CommonToken),
+    HashbangComment(HashbangComment<'src>),
     ReservedWord(ReservedWord),
 }
 
-enum PackedToken {
+enum PackedToken<'src> {
     Div(InputElementDiv),
-    HashbangOrRegExp(InputElementHashbangOrRegExp),
+    HashbangOrRegExp(InputElementHashbangOrRegExp<'src>),
     RegExp(InputElementRegExp),
     RegExpOrTemplateTail(InputElementRegExpOrTemplateTail),
     TemplateTail(InputElementTemplateTail),
 }
 
-enum UnpackedToken {
+enum UnpackedToken<'src> {
     Comment(Comment),
     CommonToken(CommonToken),
     DecimalDigit(DecimalDigit),
     DivPunctuator(DivPunctuator),
+    HashbangComment(HashbangComment<'src>),
     LineTerminator(LineTerminator),
     ReservedWord(ReservedWord),
     RightBracePunctuator(RightBracePunctuator),
@@ -856,7 +866,7 @@ pub fn get_next_token(input: &str, mode: GoalSymbols) -> Result<(Token, &str), S
     }
 }
 
-fn unpack_token(input: PackedToken) -> UnpackedToken {
+fn unpack_token(input: PackedToken<'_>) -> UnpackedToken<'_> {
     match input {
         PackedToken::Div(root) => {
             match root {
@@ -876,6 +886,7 @@ fn unpack_token(input: PackedToken) -> UnpackedToken {
                 InputElementHashbangOrRegExp::LineTerminator(item) => UnpackedToken::LineTerminator(item),
                 InputElementHashbangOrRegExp::Comment(item) => UnpackedToken::Comment(item),
                 InputElementHashbangOrRegExp::CommonToken(item) => UnpackedToken::CommonToken(item),
+                InputElementHashbangOrRegExp::HashbangComment(item) => UnpackedToken::HashbangComment(item),
                 InputElementHashbangOrRegExp::ReservedWord(item) => UnpackedToken::ReservedWord(item),
             }
         },
@@ -920,6 +931,9 @@ fn flatten_token(symbol_tree: UnpackedToken) -> Token {
             match kind {
                 Comment::MultiLineComment(_) | Comment::SingleLineComment(_) => Token::Comment
             }
+        },
+        UnpackedToken::HashbangComment(line) => {
+            Token::HashbangComment(line.content[2..].to_string())
         },
         UnpackedToken::CommonToken(token) => {
             match token {
