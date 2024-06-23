@@ -383,9 +383,9 @@ mod tests {
         assert_ok_eq!(get_token("#!foo\n"), (Token::HashbangComment("foo".to_string()), "\n"));
         assert_ok_eq!(get_token("#!foo\r\n"), (Token::HashbangComment("foo".to_string()), "\r\n"));
         assert_ok_eq!(get_token("#!foo\n\n"), (Token::HashbangComment("foo".to_string()), "\n\n"));
-        assert_ok_eq!(get_token("#!"), (Token::HashbangComment("".to_string()), ""));
-        assert_ok_eq!(get_token("#!\n"), (Token::HashbangComment("".to_string()), "\n"));
-        assert_ok_eq!(get_token("#!\n\n"), (Token::HashbangComment("".to_string()), "\n\n"));
+        assert_ok_eq!(get_token("#!"), (Token::HashbangComment(String::new()), ""));
+        assert_ok_eq!(get_token("#!\n"), (Token::HashbangComment(String::new()), "\n"));
+        assert_ok_eq!(get_token("#!\n\n"), (Token::HashbangComment(String::new()), "\n\n"));
     }
 
     #[rstest]
