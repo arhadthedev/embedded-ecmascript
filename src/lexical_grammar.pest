@@ -53,22 +53,6 @@
 //! > prior permission. Title to copyright in this work will at all times remain
 //! > with copyright holders.
 
-Digit = { ASCII_DIGIT }
-
-/************************************************
- *
- * 12 ECMAScript Language: Lexical Grammar
- *
- ************************************************/
-
-/// A match for <https://262.ecma-international.org/14.0/#prod-DecimalDigit>
-///
-/// ```plain
-/// DecimalDigit ::
-///     `0` `1` `2` `3` `4` `5` `6` `7` `8` `9`
-/// ```
-DecimalDigit = { Digit }
-
 /************************************************
  *
  * 12 ECMAScript Language: Lexical Grammar
@@ -100,8 +84,7 @@ InputElementDiv = {
         // > is not a ReservedWord.
         ReservedWord | CommonToken |
         DivPunctuator |
-        RightBracePunctuator |
-        DecimalDigit
+        RightBracePunctuator
     )
 }
 
@@ -799,3 +782,17 @@ DivPunctuator = { DivisionAssignment | Division }
 ///
 /// Implements <https://262.ecma-international.org/14.0/#prod-RightBracePunctuator>.
 RightBracePunctuator = { "}" }
+
+/************************************************
+ *
+ * 12.9.3 Numeric Literals
+ *
+ ************************************************/
+
+/// A match for <https://262.ecma-international.org/14.0/#prod-DecimalDigit>
+///
+/// ```plain
+/// DecimalDigit ::
+///     `0` `1` `2` `3` `4` `5` `6` `7` `8` `9`
+/// ```
+DecimalDigit = { ASCII_DIGIT }
