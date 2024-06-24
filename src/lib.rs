@@ -63,7 +63,7 @@ pub enum Keyword {
 }
 
 /// An output of the tokenization step
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Token {
     WhiteSpace,
     LineTerminator,
