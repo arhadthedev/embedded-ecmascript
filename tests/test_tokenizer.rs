@@ -317,26 +317,6 @@ mod tests {
     }
 
     #[rstest]
-    fn match_decimal_digit(
-        #[values("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")]
-        tested: &str,
-    ) {
-        let parsed = Token::NumericLiteral(tested.parse().unwrap());
-
-        assert_ok_eq!(
-            get_next_token(tested, GoalSymbols::InputElementDiv),
-            (parsed.clone(), "")
-        );
-
-        let tail = " ".to_owned() + tested;
-        let with_tail = tested.to_owned() + &tail;
-        assert_ok_eq!(
-            get_next_token(&with_tail, GoalSymbols::InputElementDiv),
-            (parsed, tail.as_str())
-        );
-    }
-
-    #[rstest]
     fn test_multiline_comments(
         #[values(
             GoalSymbols::InputElementHashbangOrRegExp,

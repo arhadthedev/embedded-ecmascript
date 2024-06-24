@@ -129,7 +129,6 @@ pub enum Token {
     UnsignedRightShiftAssignment,
 
     IdentifierName(String),
-    NumericLiteral(f64),
     PrivateIdentifier(String),
     ReservedWord(Keyword),
 }
@@ -170,19 +169,6 @@ pub enum GoalSymbols {
 
 fn span_into_str(span: Span) -> &str {
     span.as_str()
-}
-
-#[derive(Debug, FromPest)]
-#[pest_ast(rule(lexical::Rule::Digit))]
-struct Digit {
-    #[pest_ast(outer(with(span_into_str), with(str::parse), with(Result::unwrap)))]
-    pub value: f64
-}
-
-#[derive(Debug, FromPest)]
-#[pest_ast(rule(lexical::Rule::DecimalDigit))]
-struct DecimalDigit {
-    pub digit: Digit,
 }
 
 #[derive(Debug, FromPest)]
@@ -743,7 +729,6 @@ enum InputElementDiv {
     DivPunctuator(DivPunctuator),
     ReservedWord(ReservedWord),
     RightBracePunctuator(RightBracePunctuator),
-    DecimalDigit(DecimalDigit),
 }
 
 #[derive(Debug, FromPest)]
@@ -801,7 +786,6 @@ enum PackedToken<'src> {
 enum UnpackedToken<'src> {
     Comment(Comment),
     CommonToken(CommonToken),
-    DecimalDigit(DecimalDigit),
     DivPunctuator(DivPunctuator),
     HashbangComment(HashbangComment<'src>),
     LineTerminator(LineTerminator),
@@ -877,7 +861,6 @@ fn unpack_token(input: PackedToken<'_>) -> UnpackedToken<'_> {
                 InputElementDiv::DivPunctuator(item) => UnpackedToken::DivPunctuator(item),
                 InputElementDiv::ReservedWord(item) => UnpackedToken::ReservedWord(item),
                 InputElementDiv::RightBracePunctuator(item) => UnpackedToken::RightBracePunctuator(item),
-                InputElementDiv::DecimalDigit(item) => UnpackedToken::DecimalDigit(item),
             }
         },
         PackedToken::HashbangOrRegExp(root) => {
@@ -925,7 +908,6 @@ fn unpack_token(input: PackedToken<'_>) -> UnpackedToken<'_> {
 
 fn flatten_token(symbol_tree: UnpackedToken) -> Token {
     match symbol_tree {
-        UnpackedToken::DecimalDigit(value) => Token::NumericLiteral(value.digit.value),
         UnpackedToken::WhiteSpace(_) => Token::WhiteSpace,
         UnpackedToken::Comment(kind) => {
             match kind {
