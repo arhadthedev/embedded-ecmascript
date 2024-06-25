@@ -626,18 +626,18 @@ pub enum DivPunctuator {
     Division(Division),
 }
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Comment))]
 pub enum Comment {
     MultiLineComment(MultiLineComment),
     SingleLineComment(SingleLineComment),
 }
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::MultiLineComment))]
 pub struct MultiLineComment;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::SingleLineComment))]
 pub struct SingleLineComment;
 

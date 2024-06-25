@@ -18,7 +18,7 @@ use pest::{iterators::Pairs, Parser};
 pub enum Token<'src> {
     WhiteSpace,
     LineTerminator,
-    Comment,
+    Comment(Comment),
     HashbangComment(HashbangComment<'src>),
 
     Addition,
@@ -252,11 +252,7 @@ fn unpack_token(input: PackedToken<'_>) -> UnpackedToken<'_> {
 fn flatten_token(symbol_tree: UnpackedToken) -> Token {
     match symbol_tree {
         UnpackedToken::WhiteSpace(_) => Token::WhiteSpace,
-        UnpackedToken::Comment(kind) => {
-            match kind {
-                Comment::MultiLineComment(_) | Comment::SingleLineComment(_) => Token::Comment
-            }
-        },
+        UnpackedToken::Comment(kind) => Token::Comment(kind),
         UnpackedToken::HashbangComment(line) => Token::HashbangComment(line),
         UnpackedToken::CommonToken(token) => {
             match token {
