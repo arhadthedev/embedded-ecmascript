@@ -13,49 +13,6 @@ use from_pest::FromPest;
 use lexical_grammar::{Comment, CommonToken, DivPunctuator, Ecma262Parser, HashbangComment, IdentifierName, InputElementDiv, InputElementHashbangOrRegExp, InputElementRegExp, InputElementRegExpOrTemplateTail, InputElementTemplateTail, LineTerminator, OtherPunctuator, PrivateIdentifier, Punctuator, ReservedWord, RightBracePunctuator, Rule, WhiteSpace};
 use pest::{iterators::Pairs, Parser};
 
-/// A keyword; may be used as a name in some cases.
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub enum Keyword {
-    Await,
-    Break,
-    Case,
-    Catch,
-    Class,
-    Const,
-    Continue,
-    Debugger,
-    Default,
-    Delete,
-    Do,
-    Else,
-    Enum,
-    Export,
-    Extends,
-    False,
-    Finally,
-    For,
-    Function,
-    If,
-    Import,
-    In,
-    Instanceof,
-    New,
-    Null,
-    Return,
-    Super,
-    Switch,
-    This,
-    Throw,
-    True,
-    Try,
-    Typeof,
-    Var,
-    Void,
-    While,
-    With,
-    Yield,
-}
-
 /// An output of the tokenization step
 #[derive(Debug, Eq, PartialEq)]
 pub enum Token {
@@ -124,7 +81,7 @@ pub enum Token {
 
     IdentifierName(IdentifierName),
     PrivateIdentifier(PrivateIdentifier),
-    ReservedWord(Keyword),
+    ReservedWord(ReservedWord),
 }
 
 /// Kind of a grammar used for tokenization.
@@ -377,48 +334,7 @@ fn flatten_token(symbol_tree: UnpackedToken) -> Token {
                 DivPunctuator::Division(_) => Token::Division,
             }
         },
-        UnpackedToken::ReservedWord(keyword) => {
-            match keyword {
-                ReservedWord::Await(_) => Token::ReservedWord(Keyword::Await),
-                ReservedWord::Break(_) => Token::ReservedWord(Keyword::Break),
-                ReservedWord::Case(_) => Token::ReservedWord(Keyword::Case),
-                ReservedWord::Catch(_) => Token::ReservedWord(Keyword::Catch),
-                ReservedWord::Class(_) => Token::ReservedWord(Keyword::Class),
-                ReservedWord::Const(_) => Token::ReservedWord(Keyword::Const),
-                ReservedWord::Continue(_) => Token::ReservedWord(Keyword::Continue),
-                ReservedWord::Debugger(_) => Token::ReservedWord(Keyword::Debugger),
-                ReservedWord::Default(_) => Token::ReservedWord(Keyword::Default),
-                ReservedWord::Delete(_) => Token::ReservedWord(Keyword::Delete),
-                ReservedWord::Do(_) => Token::ReservedWord(Keyword::Do),
-                ReservedWord::Else(_) => Token::ReservedWord(Keyword::Else),
-                ReservedWord::Enum(_) => Token::ReservedWord(Keyword::Enum),
-                ReservedWord::Export(_) => Token::ReservedWord(Keyword::Export),
-                ReservedWord::Extends(_) => Token::ReservedWord(Keyword::Extends),
-                ReservedWord::False(_) => Token::ReservedWord(Keyword::False),
-                ReservedWord::Finally(_) => Token::ReservedWord(Keyword::Finally),
-                ReservedWord::For(_) => Token::ReservedWord(Keyword::For),
-                ReservedWord::Function(_) => Token::ReservedWord(Keyword::Function),
-                ReservedWord::If(_) => Token::ReservedWord(Keyword::If),
-                ReservedWord::Import(_) => Token::ReservedWord(Keyword::Import),
-                ReservedWord::In(_) => Token::ReservedWord(Keyword::In),
-                ReservedWord::Instanceof(_) => Token::ReservedWord(Keyword::Instanceof),
-                ReservedWord::New(_) => Token::ReservedWord(Keyword::New),
-                ReservedWord::Null(_) => Token::ReservedWord(Keyword::Null),
-                ReservedWord::Return(_) => Token::ReservedWord(Keyword::Return),
-                ReservedWord::Super(_) => Token::ReservedWord(Keyword::Super),
-                ReservedWord::Switch(_) => Token::ReservedWord(Keyword::Switch),
-                ReservedWord::This(_) => Token::ReservedWord(Keyword::This),
-                ReservedWord::Throw(_) => Token::ReservedWord(Keyword::Throw),
-                ReservedWord::True(_) => Token::ReservedWord(Keyword::True),
-                ReservedWord::Try(_) => Token::ReservedWord(Keyword::Try),
-                ReservedWord::Typeof(_) => Token::ReservedWord(Keyword::Typeof),
-                ReservedWord::Var(_) => Token::ReservedWord(Keyword::Var),
-                ReservedWord::Void(_) => Token::ReservedWord(Keyword::Void),
-                ReservedWord::While(_) => Token::ReservedWord(Keyword::While),
-                ReservedWord::With(_) => Token::ReservedWord(Keyword::With),
-                ReservedWord::Yield(_) => Token::ReservedWord(Keyword::Yield),
-            }
-        },
+        UnpackedToken::ReservedWord(keyword) => Token::ReservedWord(keyword),
         UnpackedToken::RightBracePunctuator(_) => Token::ClosingBrace,
         UnpackedToken::LineTerminator(_) => Token::LineTerminator,
     }
