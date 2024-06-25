@@ -1,7 +1,7 @@
-//! ORM for tokenizer of `.js` and `.mjs files.
+//! ORM for tokenizer of `.js` and `.mjs` files.
 //!
 //! Supplements the weakly typed span-based tokenizer generated from
-//! lexical_grammar.pest with strongly typed tree of pub structs.
+//! `lexical_grammar.pest` with strongly typed tree of pub structs.
 //!
 //! Implements <https://262.ecma-international.org/14.0/#sec-ecmascript-language-lexical-grammar>.
 //!

@@ -10,7 +10,7 @@
 mod lexical_grammar;
 
 use from_pest::FromPest;
-use lexical_grammar::*;
+use lexical_grammar::{Comment, CommonToken, DivPunctuator, Ecma262Parser, HashbangComment, InputElementDiv, InputElementHashbangOrRegExp, InputElementRegExp, InputElementRegExpOrTemplateTail, InputElementTemplateTail, LineTerminator, OtherPunctuator, Punctuator, ReservedWord, RightBracePunctuator, Rule, WhiteSpace};
 use pest::{iterators::Pairs, Parser};
 
 /// A keyword; may be used as a name in some cases.
