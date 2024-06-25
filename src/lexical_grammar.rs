@@ -652,6 +652,7 @@ pub struct HashbangComment<'src> {
 
 impl HashbangComment<'_> {
     /// Vendor-specific static semantic declaration and definition
+    #[must_use]
     pub fn string_value(&self) -> &str {
         &self.content[2..]
     }
