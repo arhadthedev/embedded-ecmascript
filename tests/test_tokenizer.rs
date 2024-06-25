@@ -23,6 +23,9 @@ mod tests {
             Comma,
             CommonToken,
             Decrement,
+            Division,
+            DivisionAssignment,
+            DivPunctuator,
             Dot,
             Ellipsis,
             Exponentiation,
@@ -236,14 +239,14 @@ mod tests {
     fn test_input_element_div_onechar_punctuators() {
         assert_ok_eq!(
             get_next_token("/", GoalSymbols::InputElementDiv),
-            (Token::Division, "")
+            (Token::DivPunctuator(DivPunctuator::Division(Division)), "")
         );
         assert_err!(get_next_token("/", GoalSymbols::InputElementHashbangOrRegExp));
         assert_err!(get_next_token("/", GoalSymbols::InputElementRegExpOrTemplateTail));
         assert_err!(get_next_token("/", GoalSymbols::InputElementRegExp));
         assert_ok_eq!(
             get_next_token("/", GoalSymbols::InputElementTemplateTail),
-            (Token::Division, "")
+            (Token::DivPunctuator(DivPunctuator::Division(Division)), "")
         );
 
         assert_ok_eq!(
@@ -310,14 +313,14 @@ mod tests {
     fn test_input_element_div_twochar_punctuators() {
         assert_ok_eq!(
             get_next_token("/=", GoalSymbols::InputElementDiv),
-            (Token::DivisionAssignment, "")
+            (Token::DivPunctuator(DivPunctuator::DivisionAssignment(DivisionAssignment)), "")
         );
         assert_err!(get_next_token("/=", GoalSymbols::InputElementHashbangOrRegExp));
         assert_err!(get_next_token("/=", GoalSymbols::InputElementRegExpOrTemplateTail));
         assert_err!(get_next_token("/=", GoalSymbols::InputElementRegExp));
         assert_ok_eq!(
             get_next_token("/=", GoalSymbols::InputElementTemplateTail),
-            (Token::DivisionAssignment, "")
+            (Token::DivPunctuator(DivPunctuator::DivisionAssignment(DivisionAssignment)), "")
         );
     }
 

@@ -23,8 +23,7 @@ pub enum Token<'src> {
 
     CommonToken(CommonToken),
     ClosingBrace,
-    Division,
-    DivisionAssignment,
+    DivPunctuator(DivPunctuator),
 
     IdentifierName(IdentifierName),
     PrivateIdentifier(PrivateIdentifier),
@@ -202,12 +201,7 @@ fn flatten_token(symbol_tree: UnpackedToken) -> Token {
         UnpackedToken::Comment(kind) => Token::Comment(kind),
         UnpackedToken::HashbangComment(line) => Token::HashbangComment(line),
         UnpackedToken::CommonToken(token) => Token::CommonToken(token),
-        UnpackedToken::DivPunctuator(punctuator) => {
-            match punctuator {
-                DivPunctuator::DivisionAssignment(_) => Token::DivisionAssignment,
-                DivPunctuator::Division(_) => Token::Division,
-            }
-        },
+        UnpackedToken::DivPunctuator(punctuator) => Token::DivPunctuator(punctuator),
         UnpackedToken::ReservedWord(keyword) => Token::ReservedWord(keyword),
         UnpackedToken::RightBracePunctuator(_) => Token::ClosingBrace,
         UnpackedToken::LineTerminator(_) => Token::LineTerminator,
