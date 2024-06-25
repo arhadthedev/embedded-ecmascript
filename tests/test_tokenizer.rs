@@ -86,14 +86,14 @@ mod tests {
         )]
         mode: GoalSymbols,
     ) {
-        assert_ok_eq!(
+        assert_matches!(
             get_next_token(tested, mode),
-            (Token::IdentifierName(tested.to_owned()), "")
+            Ok((Token::IdentifierName(name), "")) if name.string_value() == tested
         );
         let doubled = tested.to_owned() + tested;
-        assert_ok_eq!(
+        assert_matches!(
             get_next_token(&doubled, mode),
-            (Token::IdentifierName(doubled.clone()), "")
+            Ok((Token::IdentifierName(name), "")) if name.string_value() == doubled
         );
 
         let private = "#".to_owned() + tested;
