@@ -10,12 +10,12 @@
 pub mod lexical_grammar;
 
 use from_pest::FromPest;
-use lexical_grammar::{Comment, CommonToken, DivPunctuator, Ecma262Parser, HashbangComment, IdentifierName, InputElementDiv, InputElementHashbangOrRegExp, InputElementRegExp, InputElementRegExpOrTemplateTail, InputElementTemplateTail, LineTerminator, PrivateIdentifier, ReservedWord, RightBracePunctuator, Rule, WhiteSpace};
+use lexical_grammar::{Comment, CommonToken, DivPunctuator, Ecma262Parser, HashbangComment, IdentifierName, InputElementDiv, InputElementHashbangOrRegExp, InputElementRegExp, InputElementRegExpOrTemplateTail, InputElementTemplateTail, PrivateIdentifier, ReservedWord, Rule};
 use pest::{iterators::Pairs, Parser};
 
 /// An output of the tokenization step
 #[derive(Debug, Eq, PartialEq)]
-pub enum Token<'src> {
+pub enum UnpackedToken<'src> {
     WhiteSpace,
     LineTerminator,
     Comment(Comment),
@@ -72,17 +72,6 @@ enum PackedToken<'src> {
     TemplateTail(InputElementTemplateTail),
 }
 
-enum UnpackedToken<'src> {
-    Comment(Comment),
-    CommonToken(CommonToken),
-    DivPunctuator(DivPunctuator),
-    HashbangComment(HashbangComment<'src>),
-    LineTerminator(LineTerminator),
-    ReservedWord(ReservedWord),
-    RightBracePunctuator(RightBracePunctuator),
-    WhiteSpace(WhiteSpace),
-}
-
 /// Extract a first token from a `.js`/`.mjs` text.
 ///
 /// Returns a tuple of the token and an unprocessed input tail.
@@ -99,7 +88,7 @@ enum UnpackedToken<'src> {
 ///
 /// Will panic if the root grammar errorneously defines an empty goal symbol.
 /// This means a broken grammar file used by developers to build the parser.
-pub fn get_next_token(input: &str, mode: GoalSymbols) -> Result<(Token, &str), String> {
+pub fn get_next_token(input: &str, mode: GoalSymbols) -> Result<(UnpackedToken, &str), String> {
     let goal = match mode {
         GoalSymbols::InputElementHashbangOrRegExp => Rule::InputElementHashbangOrRegExp,
         GoalSymbols::InputElementRegExpOrTemplateTail => Rule::InputElementRegExpOrTemplateTail,
@@ -133,7 +122,7 @@ pub fn get_next_token(input: &str, mode: GoalSymbols) -> Result<(Token, &str), S
                     PackedToken::Div(typed.unwrap())
                 },
             };
-            Ok((flatten_token(unpack_token(typed_packed)), tail))
+            Ok((unpack_token(typed_packed), tail))
         },
         Err(error) => Err(error.to_string())
     }
@@ -192,19 +181,6 @@ fn unpack_token(input: PackedToken<'_>) -> UnpackedToken<'_> {
                 InputElementTemplateTail::ReservedWord(item) => UnpackedToken::ReservedWord(item),
             }
         },
-    }
-}
-
-fn flatten_token(symbol_tree: UnpackedToken) -> Token {
-    match symbol_tree {
-        UnpackedToken::WhiteSpace(_) => Token::WhiteSpace,
-        UnpackedToken::Comment(kind) => Token::Comment(kind),
-        UnpackedToken::HashbangComment(line) => Token::HashbangComment(line),
-        UnpackedToken::CommonToken(token) => Token::CommonToken(token),
-        UnpackedToken::DivPunctuator(punctuator) => Token::DivPunctuator(punctuator),
-        UnpackedToken::ReservedWord(keyword) => Token::ReservedWord(keyword),
-        UnpackedToken::RightBracePunctuator(_) => Token::ClosingBrace,
-        UnpackedToken::LineTerminator(_) => Token::LineTerminator,
     }
 }
 
