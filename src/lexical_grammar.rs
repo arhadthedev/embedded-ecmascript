@@ -94,10 +94,19 @@ pub struct WhiteSpace;
 #[pest_ast(rule(Rule::LineTerminator))]
 pub struct LineTerminator;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::PrivateIdentifier))]
 pub struct PrivateIdentifier {
-    pub payload: IdentifierName
+    identifier_name: IdentifierName
+}
+
+impl PrivateIdentifier {
+    /// <https://262.ecma-international.org/14.0/#sec-static-semantics-stringvalue>
+    pub fn string_value(&self) -> String {
+        // 1. Return the string-concatenation of 0x0023 (NUMBER SIGN) and
+        //    the StringValue of IdentifierName.
+        "#".to_owned() + &self.identifier_name.string_value()
+    }
 }
 
 #[derive(Debug, Eq, FromPest, PartialEq)]
