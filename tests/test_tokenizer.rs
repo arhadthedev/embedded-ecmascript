@@ -327,11 +327,11 @@ mod tests {
         )]
         mode: GoalSymbols,
     ) {
-        assert_ok_eq!(get_next_token("/**/", mode), (Token::Comment, ""));
-        assert_ok_eq!(get_next_token("/* */", mode), (Token::Comment, ""));
-        assert_ok_eq!(get_next_token("/*foo*/", mode), (Token::Comment, ""));
-        assert_ok_eq!(get_next_token("/*/**/", mode), (Token::Comment, ""));
-        assert_ok_eq!(get_next_token("/*\n/*\n*/", mode), (Token::Comment, ""));
+        assert_matches!(get_next_token("/**/", mode), Ok((Token::Comment(_), "")));
+        assert_matches!(get_next_token("/* */", mode), Ok((Token::Comment(_), "")));
+        assert_matches!(get_next_token("/*foo*/", mode), Ok((Token::Comment(_), "")));
+        assert_matches!(get_next_token("/*/**/", mode), Ok((Token::Comment(_), "")));
+        assert_matches!(get_next_token("/*\n/*\n*/", mode), Ok((Token::Comment(_), "")));
     }
 
     #[rstest]
@@ -345,11 +345,11 @@ mod tests {
         )]
         mode: GoalSymbols,
     ) {
-        assert_ok_eq!(get_next_token("//a b", mode), (Token::Comment, ""));
-        assert_ok_eq!(get_next_token("//a b\n", mode), (Token::Comment, "\n"));
-        assert_ok_eq!(
+        assert_matches!(get_next_token("//a b", mode), Ok((Token::Comment(_), "")));
+        assert_matches!(get_next_token("//a b\n", mode), Ok((Token::Comment(_), "\n")));
+        assert_matches!(
             get_next_token("//a b\n//c", mode),
-            (Token::Comment, "\n//c")
+            Ok((Token::Comment(_), "\n//c"))
         );
     }
 
