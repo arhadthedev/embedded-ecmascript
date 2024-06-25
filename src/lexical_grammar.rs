@@ -1,7 +1,25 @@
 //! ORM for tokenizer of `.js` and `.mjs` files.
 //!
-//! Supplements the weakly typed span-based tokenizer generated from
-//! `lexical_grammar.pest` with strongly typed tree of pub structs.
+//! Supplements the tokenizer by repacking weakly typed span-based parse tree
+//! into the strongly typed struct-per-nonterminal parse tree.
+//!
+//! Each strongly typed parse tree node has a few methods specified by ECMA-262.
+//! These methods, called semantics, calculate values and perform checks. From
+//! <https://262.ecma-international.org/14.0/#sec-static-semantic-rules>:
+//!
+//! > Context-free grammars are not sufficiently powerful to express all
+//! > the rules that define whether a stream of input elements form a valid
+//! > ECMAScript Script or Module that may be evaluated. In some situations
+//! > additional rules are needed that may be expressed using either ECMAScript
+//! > algorithm conventions or prose requirements. Such rules are always
+//! > associated with a production of a grammar and are called the static
+//! > semantics of the production.
+//! >
+//! > Static Semantic Rules have names and typically are defined using
+//! > an algorithm. Named Static Semantic Rules are associated with grammar
+//! > productions and a production that has multiple alternative definitions
+//! > will typically have for each alternative a distinct algorithm for each
+//! > applicable named static semantic rule.
 //!
 //! Implements <https://262.ecma-international.org/14.0/#sec-ecmascript-language-lexical-grammar>.
 //!
@@ -82,12 +100,18 @@ pub struct PrivateIdentifier {
     pub payload: IdentifierName
 }
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, FromPest, Eq, PartialEq)]
 #[pest_ast(rule(Rule::IdentifierName))]
 pub struct IdentifierName {
     // Escape sequence decoding do not allow to use `&str`
     #[pest_ast(outer(with(span_into_str), with(str::to_string)))]
-    pub decoded: String
+    decoded: String
+}
+
+impl IdentifierName {
+    pub fn string_value(&self) -> String {
+        self.decoded.clone()
+    }
 }
 
 #[derive(Debug, FromPest)]
