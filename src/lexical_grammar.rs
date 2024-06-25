@@ -102,6 +102,7 @@ pub struct PrivateIdentifier {
 
 impl PrivateIdentifier {
     /// <https://262.ecma-international.org/14.0/#sec-static-semantics-stringvalue>
+    #[must_use]
     pub fn string_value(&self) -> String {
         // 1. Return the string-concatenation of 0x0023 (NUMBER SIGN) and
         //    the StringValue of IdentifierName.
@@ -118,6 +119,7 @@ pub struct IdentifierName {
 }
 
 impl IdentifierName {
+    #[must_use]
     pub fn string_value(&self) -> String {
         self.decoded.clone()
     }
@@ -650,6 +652,7 @@ pub struct HashbangComment<'src> {
 
 impl HashbangComment<'_> {
     /// Vendor-specific static semantic declaration and definition
+    #[must_use]
     pub fn string_value(&self) -> &str {
         &self.content[2..]
     }
