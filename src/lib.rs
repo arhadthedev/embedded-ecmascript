@@ -10,7 +10,7 @@
 mod lexical_grammar;
 
 use from_pest::FromPest;
-use lexical_grammar::{Comment, CommonToken, DivPunctuator, Ecma262Parser, HashbangComment, IdentifierName, InputElementDiv, InputElementHashbangOrRegExp, InputElementRegExp, InputElementRegExpOrTemplateTail, InputElementTemplateTail, LineTerminator, OtherPunctuator, Punctuator, ReservedWord, RightBracePunctuator, Rule, WhiteSpace};
+use lexical_grammar::{Comment, CommonToken, DivPunctuator, Ecma262Parser, HashbangComment, IdentifierName, InputElementDiv, InputElementHashbangOrRegExp, InputElementRegExp, InputElementRegExpOrTemplateTail, InputElementTemplateTail, LineTerminator, OtherPunctuator, PrivateIdentifier, Punctuator, ReservedWord, RightBracePunctuator, Rule, WhiteSpace};
 use pest::{iterators::Pairs, Parser};
 
 /// A keyword; may be used as a name in some cases.
@@ -123,7 +123,7 @@ pub enum Token {
     UnsignedRightShiftAssignment,
 
     IdentifierName(IdentifierName),
-    PrivateIdentifier(String),
+    PrivateIdentifier(PrivateIdentifier),
     ReservedWord(Keyword),
 }
 
@@ -306,7 +306,7 @@ fn flatten_token(symbol_tree: UnpackedToken) -> Token {
         UnpackedToken::CommonToken(token) => {
             match token {
                 CommonToken::IdentifierName(name) => Token::IdentifierName(name),
-                CommonToken::PrivateIdentifier(name) => Token::PrivateIdentifier(name.payload.string_value()),
+                CommonToken::PrivateIdentifier(name) => Token::PrivateIdentifier(name),
                 CommonToken::Punctuator(punctuator) => {
                     match punctuator {
                         Punctuator::OptionalChainingPunctuator(_) => Token::OptionalChaining,

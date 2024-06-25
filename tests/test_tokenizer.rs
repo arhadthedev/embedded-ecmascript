@@ -97,14 +97,14 @@ mod tests {
         );
 
         let private = "#".to_owned() + tested;
-        assert_ok_eq!(
+        assert_matches!(
             get_next_token(&private, mode),
-            (Token::PrivateIdentifier(tested.to_owned()), "")
+            Ok((Token::PrivateIdentifier(name), "")) if name.string_value() == private
         );
         let doubled_private = private + tested;
-        assert_ok_eq!(
+        assert_matches!(
             get_next_token(&doubled_private, mode),
-            (Token::PrivateIdentifier(doubled), "")
+            Ok((Token::PrivateIdentifier(name), "")) if name.string_value() == doubled_private
         );
     }
 
