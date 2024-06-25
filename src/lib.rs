@@ -15,11 +15,11 @@ use pest::{iterators::Pairs, Parser};
 
 /// An output of the tokenization step
 #[derive(Debug, Eq, PartialEq)]
-pub enum Token {
+pub enum Token<'src> {
     WhiteSpace,
     LineTerminator,
     Comment,
-    HashbangComment(String),
+    HashbangComment(HashbangComment<'src>),
 
     Addition,
     AdditionAssignment,
@@ -257,9 +257,7 @@ fn flatten_token(symbol_tree: UnpackedToken) -> Token {
                 Comment::MultiLineComment(_) | Comment::SingleLineComment(_) => Token::Comment
             }
         },
-        UnpackedToken::HashbangComment(line) => {
-            Token::HashbangComment(line.content[2..].to_string())
-        },
+        UnpackedToken::HashbangComment(line) => Token::HashbangComment(line),
         UnpackedToken::CommonToken(token) => {
             match token {
                 CommonToken::IdentifierName(name) => Token::IdentifierName(name),

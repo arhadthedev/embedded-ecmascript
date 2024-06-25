@@ -359,13 +359,34 @@ mod tests {
             get_next_token(input, GoalSymbols::InputElementHashbangOrRegExp)
         }
 
-        assert_ok_eq!(get_token("#!foo"), (Token::HashbangComment("foo".to_string()), ""));
-        assert_ok_eq!(get_token("#!foo\n"), (Token::HashbangComment("foo".to_string()), "\n"));
-        assert_ok_eq!(get_token("#!foo\r\n"), (Token::HashbangComment("foo".to_string()), "\r\n"));
-        assert_ok_eq!(get_token("#!foo\n\n"), (Token::HashbangComment("foo".to_string()), "\n\n"));
-        assert_ok_eq!(get_token("#!"), (Token::HashbangComment(String::new()), ""));
-        assert_ok_eq!(get_token("#!\n"), (Token::HashbangComment(String::new()), "\n"));
-        assert_ok_eq!(get_token("#!\n\n"), (Token::HashbangComment(String::new()), "\n\n"));
+        assert_matches!(
+            get_token("#!foo"),
+            Ok((Token::HashbangComment(body), "")) if body.string_value() == "foo"
+        );
+        assert_matches!(
+            get_token("#!foo\n"),
+            Ok((Token::HashbangComment(body), "\n")) if body.string_value() == "foo"
+        );
+        assert_matches!(
+            get_token("#!foo\r\n"),
+            Ok((Token::HashbangComment(body), "\r\n")) if body.string_value() == "foo"
+        );
+        assert_matches!(
+            get_token("#!foo\n\n"),
+            Ok((Token::HashbangComment(body), "\n\n")) if body.string_value() == "foo"
+        );
+        assert_matches!(
+            get_token("#!"),
+            Ok((Token::HashbangComment(body), "")) if body.string_value().is_empty()
+        );
+        assert_matches!(
+            get_token("#!\n"),
+            Ok((Token::HashbangComment(body), "\n")) if body.string_value().is_empty()
+        );
+        assert_matches!(
+            get_token("#!\n\n"),
+            Ok((Token::HashbangComment(body), "\n\n")) if body.string_value().is_empty()
+        );
     }
 
     #[rstest]

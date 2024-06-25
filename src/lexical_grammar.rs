@@ -641,11 +641,18 @@ pub struct MultiLineComment;
 #[pest_ast(rule(Rule::SingleLineComment))]
 pub struct SingleLineComment;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::HashbangComment))]
 pub struct HashbangComment<'src> {
      #[pest_ast(outer(with(span_into_str)))]
-    pub content: &'src str,
+    content: &'src str,
+}
+
+impl HashbangComment<'_> {
+    /// Vendor-specific static semantic declaration and definition
+    pub fn string_value(&self) -> &str {
+        &self.content[2..]
+    }
 }
 
 #[derive(Debug, FromPest)]
