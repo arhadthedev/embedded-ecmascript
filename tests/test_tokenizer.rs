@@ -1,7 +1,70 @@
 #[cfg(test)]
 mod tests {
     use claims::{assert_err, assert_matches, assert_ok_eq};
-    use embedded_ecmascript::{get_next_token, GoalSymbols, Token};
+    use embedded_ecmascript::{
+        get_next_token,
+        GoalSymbols,
+        lexical_grammar::{
+            Addition,
+            AdditionAssignment,
+            And,
+            AndAssignment,
+            Assignment,
+            BitAnd,
+            BitAndAssignment,
+            BitNot,
+            BitOr,
+            BitOrAssignment,
+            BitXor,
+            BitXorAssignment,
+            ClosingBracket,
+            ClosingParenthesis,
+            Colon,
+            Comma,
+            CommonToken,
+            Decrement,
+            Dot,
+            Ellipsis,
+            Exponentiation,
+            ExponentiationAssignment,
+            FunctionArrow,
+            Increment,
+            LeftShift,
+            LeftShiftAssignment,
+            Less,
+            LessOrEqual,
+            LooseEquality,
+            LooseInequality,
+            Modulo,
+            ModuloAssignment,
+            More,
+            MoreOrEqual,
+            Multiplication,
+            MultiplicationAssignment,
+            Not,
+            NullishCoalescence,
+            NullishCoalescenceAssignment,
+            OpeningBrace,
+            OpeningBracket,
+            OpeningParenthesis,
+            OptionalChainingPunctuator,
+            Or,
+            OrAssignment,
+            OtherPunctuator,
+            Punctuator,
+            RightShift,
+            RightShiftAssignment,
+            StrictEquality,
+            StrictInequality,
+            SubtractionAssignment,
+            QuestionMark,
+            Semicolon,
+            Subtraction,
+            UnsignedRightShift,
+            UnsignedRightShiftAssignment,
+        },
+        Token,
+    };
     use rstest::rstest;
 
     #[rstest]
@@ -88,23 +151,23 @@ mod tests {
     ) {
         assert_matches!(
             get_next_token(tested, mode),
-            Ok((Token::IdentifierName(name), "")) if name.string_value() == tested
+            Ok((Token::CommonToken(CommonToken::IdentifierName(name)), "")) if name.string_value() == tested
         );
         let doubled = tested.to_owned() + tested;
         assert_matches!(
             get_next_token(&doubled, mode),
-            Ok((Token::IdentifierName(name), "")) if name.string_value() == doubled
+            Ok((Token::CommonToken(CommonToken::IdentifierName(name)), "")) if name.string_value() == doubled
         );
 
         let private = "#".to_owned() + tested;
         assert_matches!(
             get_next_token(&private, mode),
-            Ok((Token::PrivateIdentifier(name), "")) if name.string_value() == private
+            Ok((Token::CommonToken(CommonToken::PrivateIdentifier(name)), "")) if name.string_value() == private
         );
         let doubled_private = private + tested;
         assert_matches!(
             get_next_token(&doubled_private, mode),
-            Ok((Token::PrivateIdentifier(name), "")) if name.string_value() == doubled_private
+            Ok((Token::CommonToken(CommonToken::PrivateIdentifier(name)), "")) if name.string_value() == doubled_private
         );
     }
 
@@ -145,28 +208,28 @@ mod tests {
         )]
         mode: GoalSymbols,
     ) {
-        assert_ok_eq!(get_next_token("{", mode), (Token::OpeningBrace, ""));
-        assert_ok_eq!(get_next_token("(", mode), (Token::OpeningParenthesis, ""));
-        assert_ok_eq!(get_next_token(")", mode), (Token::ClosingParenthesis, ""));
-        assert_ok_eq!(get_next_token("[", mode), (Token::OpeningBracket, ""));
-        assert_ok_eq!(get_next_token("]", mode), (Token::ClosingBracket, ""));
-        assert_ok_eq!(get_next_token(".", mode), (Token::Dot, ""));
-        assert_ok_eq!(get_next_token(";", mode), (Token::Semicolon, ""));
-        assert_ok_eq!(get_next_token(",", mode), (Token::Comma, ""));
-        assert_ok_eq!(get_next_token("<", mode), (Token::Less, ""));
-        assert_ok_eq!(get_next_token(">", mode), (Token::More, ""));
-        assert_ok_eq!(get_next_token("+", mode), (Token::Addition, ""));
-        assert_ok_eq!(get_next_token("-", mode), (Token::Subtraction, ""));
-        assert_ok_eq!(get_next_token("*", mode), (Token::Multiplication, ""));
-        assert_ok_eq!(get_next_token("%", mode), (Token::Modulo, ""));
-        assert_ok_eq!(get_next_token("&", mode), (Token::BitAnd, ""));
-        assert_ok_eq!(get_next_token("|", mode), (Token::BitOr, ""));
-        assert_ok_eq!(get_next_token("^", mode), (Token::BitXor, ""));
-        assert_ok_eq!(get_next_token("!", mode), (Token::Not, ""));
-        assert_ok_eq!(get_next_token("~", mode), (Token::BitNot, ""));
-        assert_ok_eq!(get_next_token("?", mode), (Token::QuestionMark, ""));
-        assert_ok_eq!(get_next_token(":", mode), (Token::Colon, ""));
-        assert_ok_eq!(get_next_token("=", mode), (Token::Assignment, ""));
+        assert_ok_eq!(get_next_token("{", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::OpeningBrace(OpeningBrace)))), ""));
+        assert_ok_eq!(get_next_token("(", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::OpeningParenthesis(OpeningParenthesis)))), ""));
+        assert_ok_eq!(get_next_token(")", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::ClosingParenthesis(ClosingParenthesis)))), ""));
+        assert_ok_eq!(get_next_token("[", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::OpeningBracket(OpeningBracket)))), ""));
+        assert_ok_eq!(get_next_token("]", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::ClosingBracket(ClosingBracket)))), ""));
+        assert_ok_eq!(get_next_token(".", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::Dot(Dot)))), ""));
+        assert_ok_eq!(get_next_token(";", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::Semicolon(Semicolon)))), ""));
+        assert_ok_eq!(get_next_token(",", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::Comma(Comma)))), ""));
+        assert_ok_eq!(get_next_token("<", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::Less(Less)))), ""));
+        assert_ok_eq!(get_next_token(">", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::More(More)))), ""));
+        assert_ok_eq!(get_next_token("+", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::Addition(Addition)))), ""));
+        assert_ok_eq!(get_next_token("-", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::Subtraction(Subtraction)))), ""));
+        assert_ok_eq!(get_next_token("*", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::Multiplication(Multiplication)))), ""));
+        assert_ok_eq!(get_next_token("%", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::Modulo(Modulo)))), ""));
+        assert_ok_eq!(get_next_token("&", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::BitAnd(BitAnd)))), ""));
+        assert_ok_eq!(get_next_token("|", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::BitOr(BitOr)))), ""));
+        assert_ok_eq!(get_next_token("^", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::BitXor(BitXor)))), ""));
+        assert_ok_eq!(get_next_token("!", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::Not(Not)))), ""));
+        assert_ok_eq!(get_next_token("~", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::BitNot(BitNot)))), ""));
+        assert_ok_eq!(get_next_token("?", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::QuestionMark(QuestionMark)))), ""));
+        assert_ok_eq!(get_next_token(":", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::Colon(Colon)))), ""));
+        assert_ok_eq!(get_next_token("=", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::Assignment(Assignment)))), ""));
     }
 
     #[test]
@@ -208,39 +271,39 @@ mod tests {
         )]
         mode: GoalSymbols,
     ) {
-        assert_ok_eq!(get_next_token("?.", mode), (Token::OptionalChaining, ""));
-        assert_ok_eq!(get_next_token("<=", mode), (Token::LessOrEqual, ""));
-        assert_ok_eq!(get_next_token(">=", mode), (Token::MoreOrEqual, ""));
-        assert_ok_eq!(get_next_token("==", mode), (Token::LooseEquality, ""));
-        assert_ok_eq!(get_next_token("!=", mode), (Token::LooseInequality, ""));
-        assert_ok_eq!(get_next_token("**", mode), (Token::Exponentiation, ""));
-        assert_ok_eq!(get_next_token("++", mode), (Token::Increment, ""));
-        assert_ok_eq!(get_next_token("--", mode), (Token::Decrement, ""));
-        assert_ok_eq!(get_next_token("<<", mode), (Token::LeftShift, ""));
-        assert_ok_eq!(get_next_token(">>", mode), (Token::RightShift, ""));
-        assert_ok_eq!(get_next_token("&&", mode), (Token::And, ""));
-        assert_ok_eq!(get_next_token("||", mode), (Token::Or, ""));
+        assert_ok_eq!(get_next_token("?.", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OptionalChainingPunctuator(OptionalChainingPunctuator))), ""));
+        assert_ok_eq!(get_next_token("<=", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::LessOrEqual(LessOrEqual)))), ""));
+        assert_ok_eq!(get_next_token(">=", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::MoreOrEqual(MoreOrEqual)))), ""));
+        assert_ok_eq!(get_next_token("==", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::LooseEquality(LooseEquality)))), ""));
+        assert_ok_eq!(get_next_token("!=", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::LooseInequality(LooseInequality)))), ""));
+        assert_ok_eq!(get_next_token("**", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::Exponentiation(Exponentiation)))), ""));
+        assert_ok_eq!(get_next_token("++", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::Increment(Increment)))), ""));
+        assert_ok_eq!(get_next_token("--", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::Decrement(Decrement)))), ""));
+        assert_ok_eq!(get_next_token("<<", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::LeftShift(LeftShift)))), ""));
+        assert_ok_eq!(get_next_token(">>", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::RightShift(RightShift)))), ""));
+        assert_ok_eq!(get_next_token("&&", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::And(And)))), ""));
+        assert_ok_eq!(get_next_token("||", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::Or(Or)))), ""));
         assert_ok_eq!(
             get_next_token("??", mode),
-            (Token::NullishCoalescence, "")
+            (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::NullishCoalescence(NullishCoalescence)))), "")
         );
         assert_ok_eq!(
             get_next_token("+=", mode),
-            (Token::AdditionAssignment, "")
+            (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::AdditionAssignment(AdditionAssignment)))), "")
         );
         assert_ok_eq!(
             get_next_token("-=", mode),
-            (Token::SubtractionAssignment, "")
+            (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::SubtractionAssignment(SubtractionAssignment)))), "")
         );
         assert_ok_eq!(
             get_next_token("*=", mode),
-            (Token::MultiplicationAssignment, "")
+            (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::MultiplicationAssignment(MultiplicationAssignment)))), "")
         );
-        assert_ok_eq!(get_next_token("%=", mode), (Token::ModuloAssignment, ""));
-        assert_ok_eq!(get_next_token("&=", mode), (Token::BitAndAssignment, ""));
-        assert_ok_eq!(get_next_token("|=", mode), (Token::BitOrAssignment, ""));
-        assert_ok_eq!(get_next_token("^=", mode), (Token::BitXorAssignment, ""));
-        assert_ok_eq!(get_next_token("=>", mode), (Token::FunctionArrow, ""));
+        assert_ok_eq!(get_next_token("%=", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::ModuloAssignment(ModuloAssignment)))), ""));
+        assert_ok_eq!(get_next_token("&=", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::BitAndAssignment(BitAndAssignment)))), ""));
+        assert_ok_eq!(get_next_token("|=", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::BitOrAssignment(BitOrAssignment)))), ""));
+        assert_ok_eq!(get_next_token("^=", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::BitXorAssignment(BitXorAssignment)))), ""));
+        assert_ok_eq!(get_next_token("=>", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::FunctionArrow(FunctionArrow)))), ""));
     }
 
     #[test]
@@ -269,33 +332,33 @@ mod tests {
         )]
         mode: GoalSymbols,
     ) {
-        assert_ok_eq!(get_next_token("...", mode), (Token::Ellipsis, ""));
-        assert_ok_eq!(get_next_token("===", mode), (Token::StrictEquality, ""));
+        assert_ok_eq!(get_next_token("...", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::Ellipsis(Ellipsis)))), ""));
+        assert_ok_eq!(get_next_token("===", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::StrictEquality(StrictEquality)))), ""));
         assert_ok_eq!(
             get_next_token("!==", mode),
-            (Token::StrictInequality, "")
+            (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::StrictInequality(StrictInequality)))), "")
         );
         assert_ok_eq!(
             get_next_token(">>>", mode),
-            (Token::UnsignedRightShift, "")
+            (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::UnsignedRightShift(UnsignedRightShift)))), "")
         );
         assert_ok_eq!(
             get_next_token("**=", mode),
-            (Token::ExponentiationAssignment, "")
+            (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::ExponentiationAssignment(ExponentiationAssignment)))), "")
         );
         assert_ok_eq!(
             get_next_token("<<=", mode),
-            (Token::LeftShiftAssignment, "")
+            (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::LeftShiftAssignment(LeftShiftAssignment)))), "")
         );
         assert_ok_eq!(
             get_next_token(">>=", mode),
-            (Token::RightShiftAssignment, "")
+            (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::RightShiftAssignment(RightShiftAssignment)))), "")
         );
-        assert_ok_eq!(get_next_token("&&=", mode), (Token::AndAssignment, ""));
-        assert_ok_eq!(get_next_token("||=", mode), (Token::OrAssignment, ""));
+        assert_ok_eq!(get_next_token("&&=", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::AndAssignment(AndAssignment)))), ""));
+        assert_ok_eq!(get_next_token("||=", mode), (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::OrAssignment(OrAssignment)))), ""));
         assert_ok_eq!(
             get_next_token("??=", mode),
-            (Token::NullishCoalescenceAssignment, "")
+            (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::NullishCoalescenceAssignment(NullishCoalescenceAssignment)))), "")
         );
     }
 
@@ -312,7 +375,7 @@ mod tests {
     ) {
         assert_ok_eq!(
             get_next_token(">>>=", mode),
-            (Token::UnsignedRightShiftAssignment, "")
+            (Token::CommonToken(CommonToken::Punctuator(Punctuator::OtherPunctuator(OtherPunctuator::UnsignedRightShiftAssignment(UnsignedRightShiftAssignment)))), "")
         );
     }
 

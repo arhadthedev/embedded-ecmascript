@@ -123,223 +123,223 @@ impl IdentifierName {
     }
 }
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::OptionalChainingPunctuator))]
 pub struct OptionalChainingPunctuator;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Addition))]
 pub struct Addition;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::AdditionAssignment))]
 pub struct AdditionAssignment;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::And))]
 pub struct And;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::AndAssignment))]
 pub struct AndAssignment;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Assignment))]
 pub struct Assignment;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::BitAnd))]
 pub struct BitAnd;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::BitAndAssignment))]
 pub struct BitAndAssignment;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::BitNot))]
 pub struct BitNot;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::BitOr))]
 pub struct BitOr;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::BitOrAssignment))]
 pub struct BitOrAssignment;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::BitXor))]
 pub struct BitXor;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::BitXorAssignment))]
 pub struct BitXorAssignment;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::ClosingBracket))]
 pub struct ClosingBracket;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::ClosingParenthesis))]
 pub struct ClosingParenthesis;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Colon))]
 pub struct Colon;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Comma))]
 pub struct Comma;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Decrement))]
 pub struct Decrement;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Dot))]
 pub struct Dot;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Ellipsis))]
 pub struct Ellipsis;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Exponentiation))]
 pub struct Exponentiation;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::ExponentiationAssignment))]
 pub struct ExponentiationAssignment;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::FunctionArrow))]
 pub struct FunctionArrow;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Increment))]
 pub struct Increment;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::LeftShift))]
 pub struct LeftShift;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::LeftShiftAssignment))]
 pub struct LeftShiftAssignment;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Less))]
 pub struct Less;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::LessOrEqual))]
 pub struct LessOrEqual;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::LooseEquality))]
 pub struct LooseEquality;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::LooseInequality))]
 pub struct LooseInequality;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Modulo))]
 pub struct Modulo;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::ModuloAssignment))]
 pub struct ModuloAssignment;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::More))]
 pub struct More;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::MoreOrEqual))]
 pub struct MoreOrEqual;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Multiplication))]
 pub struct Multiplication;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::MultiplicationAssignment))]
 pub struct MultiplicationAssignment;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Not))]
 pub struct Not;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::NullishCoalescence))]
 pub struct NullishCoalescence;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::NullishCoalescenceAssignment))]
 pub struct NullishCoalescenceAssignment;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::OpeningBrace))]
 pub struct OpeningBrace;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::OpeningBracket))]
 pub struct OpeningBracket;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::OpeningParenthesis))]
 pub struct OpeningParenthesis;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Or))]
 pub struct Or;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::OrAssignment))]
 pub struct OrAssignment;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::QuestionMark))]
 pub struct QuestionMark;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::RightShift))]
 pub struct RightShift;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::RightShiftAssignment))]
 pub struct RightShiftAssignment;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Semicolon))]
 pub struct Semicolon;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::StrictEquality))]
 pub struct StrictEquality;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::StrictInequality))]
 pub struct StrictInequality;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Subtraction))]
 pub struct Subtraction;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::SubtractionAssignment))]
 pub struct SubtractionAssignment;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::UnsignedRightShift))]
 pub struct UnsignedRightShift;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::UnsignedRightShiftAssignment))]
 pub struct UnsignedRightShiftAssignment;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::OtherPunctuator))]
 pub enum OtherPunctuator {
     Addition(Addition),
@@ -397,14 +397,14 @@ pub enum OtherPunctuator {
     UnsignedRightShiftAssignment(UnsignedRightShiftAssignment),
 }
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Punctuator))]
 pub enum Punctuator {
     OptionalChainingPunctuator(OptionalChainingPunctuator),
     OtherPunctuator(OtherPunctuator),
 }
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::CommonToken))]
 pub enum CommonToken {
     IdentifierName(IdentifierName),
@@ -607,19 +607,19 @@ pub enum ReservedWord {
     Yield(Yield),
 }
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::RightBracePunctuator))]
 pub struct RightBracePunctuator;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::DivisionAssignment))]
 pub struct DivisionAssignment;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Division))]
 pub struct Division;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::DivPunctuator))]
 pub enum DivPunctuator {
     DivisionAssignment(DivisionAssignment),

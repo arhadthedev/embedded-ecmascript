@@ -7,10 +7,10 @@
 //! Each grammar rule looks like `Production :: ProductionDefinition`. Each
 //! production has an algorithm for each static and dynamic semantics.
 
-mod lexical_grammar;
+pub mod lexical_grammar;
 
 use from_pest::FromPest;
-use lexical_grammar::{Comment, CommonToken, DivPunctuator, Ecma262Parser, HashbangComment, IdentifierName, InputElementDiv, InputElementHashbangOrRegExp, InputElementRegExp, InputElementRegExpOrTemplateTail, InputElementTemplateTail, LineTerminator, OtherPunctuator, PrivateIdentifier, Punctuator, ReservedWord, RightBracePunctuator, Rule, WhiteSpace};
+use lexical_grammar::{Comment, CommonToken, DivPunctuator, Ecma262Parser, HashbangComment, IdentifierName, InputElementDiv, InputElementHashbangOrRegExp, InputElementRegExp, InputElementRegExpOrTemplateTail, InputElementTemplateTail, LineTerminator, PrivateIdentifier, ReservedWord, RightBracePunctuator, Rule, WhiteSpace};
 use pest::{iterators::Pairs, Parser};
 
 /// An output of the tokenization step
@@ -21,63 +21,10 @@ pub enum Token<'src> {
     Comment(Comment),
     HashbangComment(HashbangComment<'src>),
 
-    Addition,
-    AdditionAssignment,
-    And,
-    AndAssignment,
-    Assignment,
-    BitAnd,
-    BitAndAssignment,
-    BitNot,
-    BitOr,
-    BitOrAssignment,
-    BitXor,
-    BitXorAssignment,
+    CommonToken(CommonToken),
     ClosingBrace,
-    ClosingBracket,
-    ClosingParenthesis,
-    Colon,
-    Comma,
-    Decrement,
     Division,
     DivisionAssignment,
-    Dot,
-    Ellipsis,
-    Exponentiation,
-    ExponentiationAssignment,
-    FunctionArrow,
-    Increment,
-    LeftShift,
-    LeftShiftAssignment,
-    Less,
-    LessOrEqual,
-    LooseEquality,
-    LooseInequality,
-    Modulo,
-    ModuloAssignment,
-    More,
-    MoreOrEqual,
-    Multiplication,
-    MultiplicationAssignment,
-    Not,
-    NullishCoalescence,
-    NullishCoalescenceAssignment,
-    OpeningBrace,
-    OpeningBracket,
-    OpeningParenthesis,
-    OptionalChaining,
-    Or,
-    OrAssignment,
-    QuestionMark,
-    RightShift,
-    RightShiftAssignment,
-    Semicolon,
-    StrictEquality,
-    StrictInequality,
-    Subtraction,
-    SubtractionAssignment,
-    UnsignedRightShift,
-    UnsignedRightShiftAssignment,
 
     IdentifierName(IdentifierName),
     PrivateIdentifier(PrivateIdentifier),
@@ -254,74 +201,7 @@ fn flatten_token(symbol_tree: UnpackedToken) -> Token {
         UnpackedToken::WhiteSpace(_) => Token::WhiteSpace,
         UnpackedToken::Comment(kind) => Token::Comment(kind),
         UnpackedToken::HashbangComment(line) => Token::HashbangComment(line),
-        UnpackedToken::CommonToken(token) => {
-            match token {
-                CommonToken::IdentifierName(name) => Token::IdentifierName(name),
-                CommonToken::PrivateIdentifier(name) => Token::PrivateIdentifier(name),
-                CommonToken::Punctuator(punctuator) => {
-                    match punctuator {
-                        Punctuator::OptionalChainingPunctuator(_) => Token::OptionalChaining,
-                        Punctuator::OtherPunctuator(symbol) => {
-                            match symbol  {
-                                OtherPunctuator::Addition(_) => Token::Addition,
-                                OtherPunctuator::AdditionAssignment(_) => Token::AdditionAssignment,
-                                OtherPunctuator::And(_) => Token::And,
-                                OtherPunctuator::AndAssignment(_) => Token::AndAssignment,
-                                OtherPunctuator::Assignment(_) => Token::Assignment,
-                                OtherPunctuator::BitAnd(_) => Token::BitAnd,
-                                OtherPunctuator::BitAndAssignment(_) => Token::BitAndAssignment,
-                                OtherPunctuator::BitNot(_) => Token::BitNot,
-                                OtherPunctuator::BitOr(_) => Token::BitOr,
-                                OtherPunctuator::BitOrAssignment(_) => Token::BitOrAssignment,
-                                OtherPunctuator::BitXor(_) => Token::BitXor,
-                                OtherPunctuator::BitXorAssignment(_) => Token::BitXorAssignment,
-                                OtherPunctuator::ClosingBracket(_) => Token::ClosingBracket,
-                                OtherPunctuator::ClosingParenthesis(_) => Token::ClosingParenthesis,
-                                OtherPunctuator::Colon(_) => Token::Colon,
-                                OtherPunctuator::Comma(_) => Token::Comma,
-                                OtherPunctuator::Decrement(_) => Token::Decrement,
-                                OtherPunctuator::Dot(_) => Token::Dot,
-                                OtherPunctuator::Ellipsis(_) => Token::Ellipsis,
-                                OtherPunctuator::Exponentiation(_) => Token::Exponentiation,
-                                OtherPunctuator::ExponentiationAssignment(_) => Token::ExponentiationAssignment,
-                                OtherPunctuator::FunctionArrow(_) => Token::FunctionArrow,
-                                OtherPunctuator::Increment(_) => Token::Increment,
-                                OtherPunctuator::LeftShift(_) => Token::LeftShift,
-                                OtherPunctuator::LeftShiftAssignment(_) => Token::LeftShiftAssignment,
-                                OtherPunctuator::Less(_) => Token::Less,
-                                OtherPunctuator::LessOrEqual(_) => Token::LessOrEqual,
-                                OtherPunctuator::LooseEquality(_) => Token::LooseEquality,
-                                OtherPunctuator::LooseInequality(_) => Token::LooseInequality,
-                                OtherPunctuator::Modulo(_) => Token::Modulo,
-                                OtherPunctuator::ModuloAssignment(_) => Token::ModuloAssignment,
-                                OtherPunctuator::More(_) => Token::More,
-                                OtherPunctuator::MoreOrEqual(_) => Token::MoreOrEqual,
-                                OtherPunctuator::Multiplication(_) => Token::Multiplication,
-                                OtherPunctuator::MultiplicationAssignment(_) => Token::MultiplicationAssignment,
-                                OtherPunctuator::Not(_) => Token::Not,
-                                OtherPunctuator::NullishCoalescence(_) => Token::NullishCoalescence,
-                                OtherPunctuator::NullishCoalescenceAssignment(_) => Token::NullishCoalescenceAssignment,
-                                OtherPunctuator::OpeningBrace(_) => Token::OpeningBrace,
-                                OtherPunctuator::OpeningBracket(_) => Token::OpeningBracket,
-                                OtherPunctuator::OpeningParenthesis(_) => Token::OpeningParenthesis,
-                                OtherPunctuator::Or(_) => Token::Or,
-                                OtherPunctuator::OrAssignment(_) => Token::OrAssignment,
-                                OtherPunctuator::QuestionMark(_) => Token::QuestionMark,
-                                OtherPunctuator::RightShift(_) => Token::RightShift,
-                                OtherPunctuator::RightShiftAssignment(_) => Token::RightShiftAssignment,
-                                OtherPunctuator::Semicolon(_) => Token::Semicolon,
-                                OtherPunctuator::StrictEquality(_) => Token::StrictEquality,
-                                OtherPunctuator::StrictInequality(_) => Token::StrictInequality,
-                                OtherPunctuator::Subtraction(_) => Token::Subtraction,
-                                OtherPunctuator::SubtractionAssignment(_) => Token::SubtractionAssignment,
-                                OtherPunctuator::UnsignedRightShift(_) => Token::UnsignedRightShift,
-                                OtherPunctuator::UnsignedRightShiftAssignment(_) => Token::UnsignedRightShiftAssignment,
-                            }
-                        }
-                    }
-                }
-            }
-        },
+        UnpackedToken::CommonToken(token) => Token::CommonToken(token),
         UnpackedToken::DivPunctuator(punctuator) => {
             match punctuator {
                 DivPunctuator::DivisionAssignment(_) => Token::DivisionAssignment,
