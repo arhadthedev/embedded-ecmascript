@@ -100,7 +100,7 @@ pub struct PrivateIdentifier {
     pub payload: IdentifierName
 }
 
-#[derive(Debug, FromPest, Eq, PartialEq)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::IdentifierName))]
 pub struct IdentifierName {
     // Escape sequence decoding do not allow to use `&str`
