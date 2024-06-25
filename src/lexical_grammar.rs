@@ -412,159 +412,159 @@ pub enum CommonToken {
     Punctuator(Punctuator),
 }
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Await))]
 pub struct Await;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Break))]
 pub struct Break;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Case))]
 pub struct Case;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Catch))]
 pub struct Catch;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Class))]
 pub struct Class;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Const))]
 pub struct Const;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Continue))]
 pub struct Continue;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Debugger))]
 pub struct Debugger;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Default))]
 pub struct Default;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Delete))]
 pub struct Delete;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Do))]
 pub struct Do;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Else))]
 pub struct Else;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Enum))]
 pub struct Enum;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Export))]
 pub struct Export;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Extends))]
 pub struct Extends;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::False))]
 pub struct False;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Finally))]
 pub struct Finally;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::For))]
 pub struct For;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Function))]
 pub struct Function;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::If))]
 pub struct If;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Import))]
 pub struct Import;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::In))]
 pub struct In;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Instanceof))]
 pub struct Instanceof;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::New))]
 pub struct New;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Null))]
 pub struct Null;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Return))]
 pub struct Return;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Super))]
 pub struct Super;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Switch))]
 pub struct Switch;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::This))]
 pub struct This;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Throw))]
 pub struct Throw;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::True))]
 pub struct True;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Try))]
 pub struct Try;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Typeof))]
 pub struct Typeof;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Var))]
 pub struct Var;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Void))]
 pub struct Void;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::While))]
 pub struct While;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::With))]
 pub struct With;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::Yield))]
 pub struct Yield;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::ReservedWord))]
 pub enum ReservedWord {
     Await(Await),
