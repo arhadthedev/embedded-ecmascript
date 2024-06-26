@@ -818,27 +818,27 @@ pub fn get_next_token(input: &str, mode: GoalSymbols) -> Result<(Token, &str), S
         GoalSymbols::InputElementDiv => Rule::InputElementDiv
     };
     Ecma262Parser::parse(goal, input)
-        .map(|mut tokens| -> (Token, &str) {
-            let tail = get_unprocessed_tail(&tokens, input);
+        .map(|mut tree| -> (Token, &str) {
+            let tail = get_unprocessed_tail(&tree, input);
             let typed_packed: PackedToken = match mode {
                 GoalSymbols::InputElementHashbangOrRegExp => {
-                    let typed = InputElementHashbangOrRegExp::from_pest(&mut tokens);
+                    let typed = InputElementHashbangOrRegExp::from_pest(&mut tree);
                     PackedToken::HashbangOrRegExp(typed.unwrap())
                 },
                 GoalSymbols::InputElementRegExpOrTemplateTail => {
-                    let typed = InputElementRegExpOrTemplateTail::from_pest(&mut tokens);
+                    let typed = InputElementRegExpOrTemplateTail::from_pest(&mut tree);
                     PackedToken::RegExpOrTemplateTail(typed.unwrap())
                 },
                 GoalSymbols::InputElementRegExp => {
-                    let typed = InputElementRegExp::from_pest(&mut tokens);
+                    let typed = InputElementRegExp::from_pest(&mut tree);
                     PackedToken::RegExp(typed.unwrap())
                 },
                 GoalSymbols::InputElementTemplateTail => {
-                    let typed = InputElementTemplateTail::from_pest(&mut tokens);
+                    let typed = InputElementTemplateTail::from_pest(&mut tree);
                     PackedToken::TemplateTail(typed.unwrap())
                 },
                 GoalSymbols::InputElementDiv => {
-                    let typed = InputElementDiv::from_pest(&mut tokens);
+                    let typed = InputElementDiv::from_pest(&mut tree);
                     PackedToken::Div(typed.unwrap())
                 },
             };
