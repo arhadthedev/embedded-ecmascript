@@ -785,10 +785,11 @@ enum PackedToken<'src> {
 }
 
 fn get_unprocessed_tail<'src>(
-    mut recognized_source_start: Pairs<Rule>,
+    recognized_source_start: &Pairs<Rule>,
     whole_source: &'src str
 ) -> &'src str {
-    let processed_substring = recognized_source_start.next().unwrap().as_span();
+    let mut tokens = recognized_source_start.clone();
+    let processed_substring = tokens.next().unwrap().as_span();
     &whole_source[processed_substring.end()..]
 }
 
@@ -818,7 +819,7 @@ pub fn get_next_token(input: &str, mode: GoalSymbols) -> Result<(Token, &str), S
     };
     Ecma262Parser::parse(goal, input)
         .map(|mut tokens| -> (Token, &str) {
-            let tail = get_unprocessed_tail(tokens.clone(), input);
+            let tail = get_unprocessed_tail(&tokens, input);
             let typed_packed: PackedToken = match mode {
                 GoalSymbols::InputElementHashbangOrRegExp => {
                     let typed = InputElementHashbangOrRegExp::from_pest(&mut tokens);
