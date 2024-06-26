@@ -56,6 +56,7 @@ mod tests {
             OrAssignment,
             OtherPunctuator,
             Punctuator,
+            RightBracePunctuator,
             RightShift,
             RightShiftAssignment,
             StrictEquality,
@@ -253,13 +254,13 @@ mod tests {
 
         assert_ok_eq!(
             get_next_token("}", GoalSymbols::InputElementDiv),
-            (Token::ClosingBrace, "")
+            (Token::RightBracePunctuator(RightBracePunctuator), "")
         );
         assert_err!(get_next_token("}", GoalSymbols::InputElementHashbangOrRegExp));
         assert_err!(get_next_token("}", GoalSymbols::InputElementRegExpOrTemplateTail));
         assert_ok_eq!(
             get_next_token("}", GoalSymbols::InputElementRegExp),
-            (Token::ClosingBrace, "")
+            (Token::RightBracePunctuator(RightBracePunctuator), "")
         );
         assert_err!(get_next_token("}", GoalSymbols::InputElementTemplateTail));
 
