@@ -13,6 +13,8 @@ use from_pest::FromPest;
 use lexical_grammar::{Comment, CommonToken, DivPunctuator, Ecma262Parser, HashbangComment, InputElementDiv, InputElementHashbangOrRegExp, InputElementRegExp, InputElementRegExpOrTemplateTail, InputElementTemplateTail, LineTerminator, ReservedWord, RightBracePunctuator, Rule, WhiteSpace};
 use pest::{iterators::Pairs, Parser};
 
+pub type Token<'src> = UnpackedToken<'src>;
+
 /// Kind of a grammar used for tokenization.
 ///
 /// From <https://262.ecma-international.org/14.0/#sec-ecmascript-language-lexical-grammar>:
