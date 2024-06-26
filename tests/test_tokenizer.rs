@@ -36,6 +36,7 @@ mod tests {
             LeftShiftAssignment,
             Less,
             LessOrEqual,
+            LineTerminator,
             LooseEquality,
             LooseInequality,
             Modulo,
@@ -55,6 +56,7 @@ mod tests {
             OrAssignment,
             OtherPunctuator,
             Punctuator,
+            RightBracePunctuator,
             RightShift,
             RightShiftAssignment,
             StrictEquality,
@@ -65,6 +67,7 @@ mod tests {
             Subtraction,
             UnsignedRightShift,
             UnsignedRightShiftAssignment,
+            WhiteSpace,
         },
         Token,
     };
@@ -103,7 +106,7 @@ mod tests {
         )]
         mode: GoalSymbols,
     ) {
-        assert_ok_eq!(get_next_token(tested, mode), (Token::WhiteSpace, ""));
+        assert_ok_eq!(get_next_token(tested, mode), (Token::WhiteSpace(WhiteSpace), ""));
     }
 
     #[rstest]
@@ -119,7 +122,7 @@ mod tests {
         )]
         mode: GoalSymbols,
     ) {
-        assert_ok_eq!(get_next_token(tested, mode), (Token::LineTerminator, ""));
+        assert_ok_eq!(get_next_token(tested, mode), (Token::LineTerminator(LineTerminator), ""));
     }
 
     #[rstest]
@@ -136,7 +139,7 @@ mod tests {
         // The parser consumes `\r\n` as string literal line continuation only.
         // See how `LineTerminator` and `LineTerminatorSequence` grammar rules
         // are defined and used in ECMA-262.
-        assert_ok_eq!(get_next_token("\r\n", mode), (Token::LineTerminator, "\n"));
+        assert_ok_eq!(get_next_token("\r\n", mode), (Token::LineTerminator(LineTerminator), "\n"));
     }
 
     #[rstest]
@@ -251,13 +254,13 @@ mod tests {
 
         assert_ok_eq!(
             get_next_token("}", GoalSymbols::InputElementDiv),
-            (Token::ClosingBrace, "")
+            (Token::RightBracePunctuator(RightBracePunctuator), "")
         );
         assert_err!(get_next_token("}", GoalSymbols::InputElementHashbangOrRegExp));
         assert_err!(get_next_token("}", GoalSymbols::InputElementRegExpOrTemplateTail));
         assert_ok_eq!(
             get_next_token("}", GoalSymbols::InputElementRegExp),
-            (Token::ClosingBrace, "")
+            (Token::RightBracePunctuator(RightBracePunctuator), "")
         );
         assert_err!(get_next_token("}", GoalSymbols::InputElementTemplateTail));
 
