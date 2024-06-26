@@ -13,19 +13,6 @@ use from_pest::FromPest;
 use lexical_grammar::{Comment, CommonToken, DivPunctuator, Ecma262Parser, HashbangComment, IdentifierName, InputElementDiv, InputElementHashbangOrRegExp, InputElementRegExp, InputElementRegExpOrTemplateTail, InputElementTemplateTail, PrivateIdentifier, ReservedWord, Rule};
 use pest::{iterators::Pairs, Parser};
 
-/// An output of the tokenization step
-#[derive(Debug, Eq, PartialEq)]
-pub enum UnpackedToken<'src> {
-    Comment(Comment),
-    CommonToken(CommonToken),
-    DivPunctuator(DivPunctuator),
-    HashbangComment(HashbangComment<'src>),
-    LineTerminator(LineTerminator),
-    ReservedWord(ReservedWord),
-    RightBracePunctuator(RightBracePunctuator),
-    WhiteSpace(WhiteSpace),
-}
-
 /// Kind of a grammar used for tokenization.
 ///
 /// From <https://262.ecma-international.org/14.0/#sec-ecmascript-language-lexical-grammar>:
@@ -66,6 +53,19 @@ enum PackedToken<'src> {
     RegExp(InputElementRegExp),
     RegExpOrTemplateTail(InputElementRegExpOrTemplateTail),
     TemplateTail(InputElementTemplateTail),
+}
+
+/// An output of the tokenization step
+#[derive(Debug, Eq, PartialEq)]
+pub enum UnpackedToken<'src> {
+    Comment(Comment),
+    CommonToken(CommonToken),
+    DivPunctuator(DivPunctuator),
+    HashbangComment(HashbangComment<'src>),
+    LineTerminator(LineTerminator),
+    ReservedWord(ReservedWord),
+    RightBracePunctuator(RightBracePunctuator),
+    WhiteSpace(WhiteSpace),
 }
 
 /// Extract a first token from a `.js`/`.mjs` text.
