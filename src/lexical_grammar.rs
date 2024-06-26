@@ -86,11 +86,11 @@ fn span_into_str(span: Span) -> &str {
 #[grammar = "lexical_grammar.pest"]
 pub struct Ecma262Parser;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::WhiteSpace))]
 pub struct WhiteSpace;
 
-#[derive(Debug, FromPest)]
+#[derive(Debug, Eq, FromPest, PartialEq)]
 #[pest_ast(rule(Rule::LineTerminator))]
 pub struct LineTerminator;
 
