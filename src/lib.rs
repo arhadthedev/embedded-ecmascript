@@ -13,7 +13,18 @@ use from_pest::FromPest;
 use lexical_grammar::{Comment, CommonToken, DivPunctuator, Ecma262Parser, HashbangComment, InputElementDiv, InputElementHashbangOrRegExp, InputElementRegExp, InputElementRegExpOrTemplateTail, InputElementTemplateTail, LineTerminator, ReservedWord, RightBracePunctuator, Rule, WhiteSpace};
 use pest::{iterators::Pairs, Parser};
 
-pub type Token<'src> = UnpackedToken<'src>;
+/// An output of the tokenization step
+#[derive(Debug, Eq, PartialEq)]
+pub enum Token<'src> {
+    Comment(Comment),
+    CommonToken(CommonToken),
+    DivPunctuator(DivPunctuator),
+    HashbangComment(HashbangComment<'src>),
+    LineTerminator(LineTerminator),
+    ReservedWord(ReservedWord),
+    RightBracePunctuator(RightBracePunctuator),
+    WhiteSpace(WhiteSpace),
+}
 
 /// Kind of a grammar used for tokenization.
 ///
@@ -57,19 +68,6 @@ enum PackedToken<'src> {
     TemplateTail(InputElementTemplateTail),
 }
 
-/// An output of the tokenization step
-#[derive(Debug, Eq, PartialEq)]
-pub enum UnpackedToken<'src> {
-    Comment(Comment),
-    CommonToken(CommonToken),
-    DivPunctuator(DivPunctuator),
-    HashbangComment(HashbangComment<'src>),
-    LineTerminator(LineTerminator),
-    ReservedWord(ReservedWord),
-    RightBracePunctuator(RightBracePunctuator),
-    WhiteSpace(WhiteSpace),
-}
-
 /// Extract a first token from a `.js`/`.mjs` text.
 ///
 /// Returns a tuple of the token and an unprocessed input tail.
@@ -86,7 +84,7 @@ pub enum UnpackedToken<'src> {
 ///
 /// Will panic if the root grammar errorneously defines an empty goal symbol.
 /// This means a broken grammar file used by developers to build the parser.
-pub fn get_next_token(input: &str, mode: GoalSymbols) -> Result<(UnpackedToken, &str), String> {
+pub fn get_next_token(input: &str, mode: GoalSymbols) -> Result<(Token, &str), String> {
     let goal = match mode {
         GoalSymbols::InputElementHashbangOrRegExp => Rule::InputElementHashbangOrRegExp,
         GoalSymbols::InputElementRegExpOrTemplateTail => Rule::InputElementRegExpOrTemplateTail,
@@ -126,57 +124,57 @@ pub fn get_next_token(input: &str, mode: GoalSymbols) -> Result<(UnpackedToken, 
     }
 }
 
-fn unpack_token(input: PackedToken<'_>) -> UnpackedToken<'_> {
+fn unpack_token(input: PackedToken<'_>) -> Token<'_> {
     match input {
         PackedToken::Div(root) => {
             match root {
-                InputElementDiv::WhiteSpace(item) => UnpackedToken::WhiteSpace(item),
-                InputElementDiv::LineTerminator(item) => UnpackedToken::LineTerminator(item),
-                InputElementDiv::Comment(item) => UnpackedToken::Comment(item),
-                InputElementDiv::CommonToken(item) => UnpackedToken::CommonToken(item),
-                InputElementDiv::DivPunctuator(item) => UnpackedToken::DivPunctuator(item),
-                InputElementDiv::ReservedWord(item) => UnpackedToken::ReservedWord(item),
-                InputElementDiv::RightBracePunctuator(item) => UnpackedToken::RightBracePunctuator(item),
+                InputElementDiv::WhiteSpace(item) => Token::WhiteSpace(item),
+                InputElementDiv::LineTerminator(item) => Token::LineTerminator(item),
+                InputElementDiv::Comment(item) => Token::Comment(item),
+                InputElementDiv::CommonToken(item) => Token::CommonToken(item),
+                InputElementDiv::DivPunctuator(item) => Token::DivPunctuator(item),
+                InputElementDiv::ReservedWord(item) => Token::ReservedWord(item),
+                InputElementDiv::RightBracePunctuator(item) => Token::RightBracePunctuator(item),
             }
         },
         PackedToken::HashbangOrRegExp(root) => {
             match root {
-                InputElementHashbangOrRegExp::WhiteSpace(item) => UnpackedToken::WhiteSpace(item),
-                InputElementHashbangOrRegExp::LineTerminator(item) => UnpackedToken::LineTerminator(item),
-                InputElementHashbangOrRegExp::Comment(item) => UnpackedToken::Comment(item),
-                InputElementHashbangOrRegExp::CommonToken(item) => UnpackedToken::CommonToken(item),
-                InputElementHashbangOrRegExp::HashbangComment(item) => UnpackedToken::HashbangComment(item),
-                InputElementHashbangOrRegExp::ReservedWord(item) => UnpackedToken::ReservedWord(item),
+                InputElementHashbangOrRegExp::WhiteSpace(item) => Token::WhiteSpace(item),
+                InputElementHashbangOrRegExp::LineTerminator(item) => Token::LineTerminator(item),
+                InputElementHashbangOrRegExp::Comment(item) => Token::Comment(item),
+                InputElementHashbangOrRegExp::CommonToken(item) => Token::CommonToken(item),
+                InputElementHashbangOrRegExp::HashbangComment(item) => Token::HashbangComment(item),
+                InputElementHashbangOrRegExp::ReservedWord(item) => Token::ReservedWord(item),
             }
         },
         PackedToken::RegExp(root) => {
             match root {
-                InputElementRegExp::WhiteSpace(item) => UnpackedToken::WhiteSpace(item),
-                InputElementRegExp::LineTerminator(item) => UnpackedToken::LineTerminator(item),
-                InputElementRegExp::Comment(item) => UnpackedToken::Comment(item),
-                InputElementRegExp::CommonToken(item) => UnpackedToken::CommonToken(item),
-                InputElementRegExp::ReservedWord(item) => UnpackedToken::ReservedWord(item),
-                InputElementRegExp::RightBracePunctuator(item) => UnpackedToken::RightBracePunctuator(item),
+                InputElementRegExp::WhiteSpace(item) => Token::WhiteSpace(item),
+                InputElementRegExp::LineTerminator(item) => Token::LineTerminator(item),
+                InputElementRegExp::Comment(item) => Token::Comment(item),
+                InputElementRegExp::CommonToken(item) => Token::CommonToken(item),
+                InputElementRegExp::ReservedWord(item) => Token::ReservedWord(item),
+                InputElementRegExp::RightBracePunctuator(item) => Token::RightBracePunctuator(item),
             }
         },
         PackedToken::RegExpOrTemplateTail(root) => {
             match root {
-                InputElementRegExpOrTemplateTail::WhiteSpace(item) => UnpackedToken::WhiteSpace(item),
-                InputElementRegExpOrTemplateTail::LineTerminator(item) => UnpackedToken::LineTerminator(item),
-                InputElementRegExpOrTemplateTail::Comment(item) => UnpackedToken::Comment(item),
-                InputElementRegExpOrTemplateTail::CommonToken(item) => UnpackedToken::CommonToken(item),
-                InputElementRegExpOrTemplateTail::DivPunctuator(item) => UnpackedToken::DivPunctuator(item),
-                InputElementRegExpOrTemplateTail::ReservedWord(item) => UnpackedToken::ReservedWord(item),
+                InputElementRegExpOrTemplateTail::WhiteSpace(item) => Token::WhiteSpace(item),
+                InputElementRegExpOrTemplateTail::LineTerminator(item) => Token::LineTerminator(item),
+                InputElementRegExpOrTemplateTail::Comment(item) => Token::Comment(item),
+                InputElementRegExpOrTemplateTail::CommonToken(item) => Token::CommonToken(item),
+                InputElementRegExpOrTemplateTail::DivPunctuator(item) => Token::DivPunctuator(item),
+                InputElementRegExpOrTemplateTail::ReservedWord(item) => Token::ReservedWord(item),
             }
         },
         PackedToken::TemplateTail(root) => {
             match root {
-                InputElementTemplateTail::WhiteSpace(item) => UnpackedToken::WhiteSpace(item),
-                InputElementTemplateTail::LineTerminator(item) => UnpackedToken::LineTerminator(item),
-                InputElementTemplateTail::Comment(item) => UnpackedToken::Comment(item),
-                InputElementTemplateTail::CommonToken(item) => UnpackedToken::CommonToken(item),
-                InputElementTemplateTail::DivPunctuator(item) => UnpackedToken::DivPunctuator(item),
-                InputElementTemplateTail::ReservedWord(item) => UnpackedToken::ReservedWord(item),
+                InputElementTemplateTail::WhiteSpace(item) => Token::WhiteSpace(item),
+                InputElementTemplateTail::LineTerminator(item) => Token::LineTerminator(item),
+                InputElementTemplateTail::Comment(item) => Token::Comment(item),
+                InputElementTemplateTail::CommonToken(item) => Token::CommonToken(item),
+                InputElementTemplateTail::DivPunctuator(item) => Token::DivPunctuator(item),
+                InputElementTemplateTail::ReservedWord(item) => Token::ReservedWord(item),
             }
         },
     }
