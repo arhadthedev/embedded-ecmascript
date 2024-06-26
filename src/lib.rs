@@ -16,18 +16,14 @@ use pest::{iterators::Pairs, Parser};
 /// An output of the tokenization step
 #[derive(Debug, Eq, PartialEq)]
 pub enum UnpackedToken<'src> {
-    WhiteSpace,
-    LineTerminator,
     Comment(Comment),
-    HashbangComment(HashbangComment<'src>),
-
     CommonToken(CommonToken),
-    ClosingBrace,
     DivPunctuator(DivPunctuator),
-
-    IdentifierName(IdentifierName),
-    PrivateIdentifier(PrivateIdentifier),
+    HashbangComment(HashbangComment<'src>),
+    LineTerminator(LineTerminator),
     ReservedWord(ReservedWord),
+    RightBracePunctuator(RightBracePunctuator),
+    WhiteSpace(WhiteSpace),
 }
 
 /// Kind of a grammar used for tokenization.
