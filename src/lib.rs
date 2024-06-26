@@ -10,7 +10,7 @@
 pub mod lexical_grammar;
 
 use from_pest::FromPest;
-use lexical_grammar::{Comment, CommonToken, DivPunctuator, Ecma262Parser, HashbangComment, IdentifierName, InputElementDiv, InputElementHashbangOrRegExp, InputElementRegExp, InputElementRegExpOrTemplateTail, InputElementTemplateTail, LineTerminator, PrivateIdentifier, ReservedWord, RightBracePunctuator, Rule, WhiteSpace};
+use lexical_grammar::{Comment, CommonToken, DivPunctuator, Ecma262Parser, HashbangComment, InputElementDiv, InputElementHashbangOrRegExp, InputElementRegExp, InputElementRegExpOrTemplateTail,, LineTerminator, PrivateIdentifier, ReservedWord, RightBracePunctuator, Rule, WhiteSpace};
 use pest::{iterators::Pairs, Parser};
 
 /// Kind of a grammar used for tokenization.
