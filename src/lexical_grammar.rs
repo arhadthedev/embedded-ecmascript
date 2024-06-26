@@ -818,7 +818,7 @@ pub fn get_next_token(input: &str, mode: GoalSymbols) -> Result<(Token, &str), S
     };
     Ecma262Parser::parse(goal, input)
         .map(|mut tokens| -> (Token, &str) {
-            let tail = get_unprocessed_tail(tree.clone(), input);
+            let tail = get_unprocessed_tail(tokens.clone(), input);
             let typed_packed: PackedToken = match mode {
                 GoalSymbols::InputElementHashbangOrRegExp => {
                     let typed = InputElementHashbangOrRegExp::from_pest(&mut tokens);
