@@ -816,9 +816,8 @@ pub fn get_next_token(input: &str, mode: GoalSymbols) -> Result<(Token, &str), S
         GoalSymbols::InputElementTemplateTail => Rule::InputElementTemplateTail,
         GoalSymbols::InputElementDiv => Rule::InputElementDiv
     };
-    let result = Ecma262Parser::parse(goal, input);
-    match result {
-        Ok(mut tokens) => {
+    Ecma262Parser::parse(goal, input)
+        .map(|mut tokens| -> (Token, &str) {
             let tail = get_unprocessed_tail(tokens.clone(), input);
             let typed_packed: PackedToken = match mode {
                 GoalSymbols::InputElementHashbangOrRegExp => {
@@ -842,10 +841,9 @@ pub fn get_next_token(input: &str, mode: GoalSymbols) -> Result<(Token, &str), S
                     PackedToken::Div(typed.unwrap())
                 },
             };
-            Ok((unpack_token(typed_packed), tail))
-        },
-        Err(error) => Err(error.to_string())
-    }
+            (unpack_token(typed_packed), tail)
+        })
+        .map_err(|error| error.to_string())
 }
 
 fn unpack_token(input: PackedToken<'_>) -> Token<'_> {
