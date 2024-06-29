@@ -72,8 +72,6 @@ struct Ecma262Parser;
 pub fn parse(source: &str, is_module: bool) -> Result<(), String> {
     let goal_symbol = if is_module { Rule::Module } else { Rule::Script };
     Ecma262Parser::parse(goal_symbol, source)
-        .map(|mut tree| {
-
-        })
+        .map(|_| ())
         .map_err(|error| error.to_string())
 }
