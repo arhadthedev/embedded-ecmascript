@@ -1,0 +1,145 @@
+//! Parser of `.js` and `.mjs files.
+//!
+//! Third party conditions
+//! ======================
+//!
+//! This file cites and implements ECMA-262 14th edition also known as
+//! ECMAScript 2023 (<https://262.ecma-international.org/14.0/>).
+//!
+//! Terminology and citations are provided under the following conditions listed
+//! in section I Copyright & Software License:
+//!
+//! > Copyright Notice
+//! >
+//! > © 2023 Ecma International
+//! >
+//! > By obtaining and/or copying this work, you (the licensee) agree that you
+//! > have read, understood, and will comply with the following terms
+//! > and conditions.
+//! >
+//! > Permission under Ecma’s copyright to copy, modify, prepare derivative
+//! > works of, and distribute this work, with or without modification, for any
+//! > purpose and without fee or royalty is hereby granted, provided that you
+//! > include the following on ALL copies of the work or portions thereof,
+//! > including modifications:
+//! >
+//! > (i) The full text of this COPYRIGHT NOTICE AND COPYRIGHT LICENSE
+//! > in a location viewable to users of the redistributed or derivative work.
+//! >
+//! > (ii) Any pre-existing intellectual property disclaimers, notices, or
+//! > terms and conditions. If none exist, the Ecma alternative copyright notice
+//! > should be included.
+//! >
+//! > (iii) Notice of any changes or modifications, through a copyright
+//! > statement on the document such as “This document includes material copied
+//! > from or derived from [title and URI of the Ecma document]. Copyright
+//! > © Ecma International.”
+//! >
+//! > Disclaimers
+//! >
+//! > THIS WORK IS PROVIDED “AS IS,” AND COPYRIGHT HOLDERS MAKE NO
+//! > REPRESENTATIONS OR WARRANTIES, EXPRESS OR IMPLIED, INCLUDING
+//! > BUT NOT LIMITED TO, WARRANTIES OF MERCHANTABILITY OR FITNESS FOR ANY
+//! > PARTICULAR PURPOSE OR THAT THE USE OF THE DOCUMENT WILL NOT INFRINGE ANY
+//! > THIRD PARTY PATENTS, COPYRIGHTS, TRADEMARKS OR OTHER RIGHTS.
+//! >
+//! > COPYRIGHT HOLDERS WILL NOT BE LIABLE FOR ANY DIRECT, INDIRECT, SPECIAL
+//! > OR CONSEQUENTIAL DAMAGES ARISING OUT OF ANY USE OF THE DOCUMENT.
+//! >
+//! > The name and trademarks of copyright holders may NOT be used in
+//! > advertising or publicity pertaining to the work without specific, written
+//! > prior permission. Title to copyright in this work will at all times remain
+//! > with copyright holders.
+
+/************************************************
+ *
+ * 14 ECMAScript Language: Statements and Declarations
+ *
+ ************************************************/
+
+/// A match for <https://262.ecma-international.org/14.0/#prod-StatementList>.
+///
+/// ```plain
+/// Statement[Yield, Await, Return] :
+///     BlockStatement[?Yield, ?Await, ?Return]
+///     VariableStatement[?Yield, ?Await]
+///     EmptyStatement
+///     ExpressionStatement[?Yield, ?Await]
+///     IfStatement[?Yield, ?Await, ?Return]
+///     BreakableStatement[?Yield, ?Await, ?Return]
+///     ContinueStatement[?Yield, ?Await]
+///     BreakStatement[?Yield, ?Await]
+///     [+Return] ReturnStatement[?Yield, ?Await]
+///     WithStatement[?Yield, ?Await, ?Return]
+///     LabelledStatement[?Yield, ?Await, ?Return]
+///     ThrowStatement[?Yield, ?Await]
+///     TryStatement[?Yield, ?Await, ?Return]
+///     DebuggerStatement
+/// ```
+Statement_Yield_Await_Return = {
+    EmptyStatement
+}
+
+/************************************************
+ *
+ * 14.2 Block
+ *
+ ************************************************/
+
+/// A match for <https://262.ecma-international.org/14.0/#prod-StatementList>.
+///
+/// ```plain
+/// StatementList[Yield, Await, Return] :
+///     StatementListItem[?Yield, ?Await, ?Return]
+///     StatementList[?Yield, ?Await, ?Return] StatementListItem[?Yield, ?Await, ?Return]
+/// ```
+StatementList_Yield_Await_Return = {
+    StatementListItem_Yield_Await_Return |
+    // The rule below is inverted - collect on descent, not ascent as usual
+    ( StatementListItem_Yield_Await_Return ~ StatementList_Yield_Await_Return )
+}
+
+/// A match for <https://262.ecma-international.org/14.0/#prod-StatementListItem>.
+///
+/// ```plain
+/// StatementListItem[Yield, Await, Return] :
+///     Statement[?Yield, ?Await, ?Return]
+///     Declaration[?Yield, ?Await]
+StatementListItem_Yield_Await_Return = {
+    Statement_Yield_Await_Return
+}
+
+/************************************************
+ *
+ * 14.4 Empty Statement
+ *
+ ************************************************/
+
+/// A match for <https://262.ecma-international.org/14.0/#prod-EmptyStatement>.
+///
+/// ```plain
+/// EmptyStatement :
+///     `;`
+EmptyStatement = { ";" }
+
+/************************************************
+ *
+ * 16 ECMAScript Language: Scripts and Modules
+ *
+ ************************************************/
+
+/// A match for <https://262.ecma-international.org/14.0/#prod-Script>.
+///
+/// ```plain
+/// Script :
+///     ScriptBody_opt
+/// ```
+Script = { ScriptBody? }
+
+/// A match for <https://262.ecma-international.org/14.0/#prod-ScriptBody>.
+///
+/// ```plain
+/// ScriptBody :
+///     StatementList[~Yield, ~Await, ~Return]
+/// ```
+ScriptBody = { StatementList_Yield_Await_Return }
