@@ -60,6 +60,15 @@ use pest_derive::Parser;
 #[grammar = "grammar.pest"]
 struct Ecma262Parser;
 
+/// Parses a `.js`/`.mjs` text and performs early error checks.
+///
+/// Parsing is done as described in <https://262.ecma-international.org/14.0/>,
+/// sections 11-16 (named *ECMAScript Language: [aspect name]*).
+///
+/// # Errors
+///
+/// Will return `Err` with rustc-style formatted error message string, if the
+/// source parameter does not form a correct ECMAScript 2023 script or module.
 pub fn parse(source: &str) -> Result<(), String> {
     Ecma262Parser::parse(Rule::Script, source)
         .map(|_| ())
