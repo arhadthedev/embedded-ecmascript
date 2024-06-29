@@ -8,3 +8,6 @@
 //! production has an algorithm for each static and dynamic semantics.
 
 pub mod lexical_grammar;
+
+mod parser;
+pub use parser::parse;
