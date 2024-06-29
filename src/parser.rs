@@ -62,5 +62,6 @@ struct Ecma262Parser;
 
 pub fn parse(source: &str) -> Result<(), String> {
     Ecma262Parser::parse(Rule::Script, source)
+        .map(|_| ())
         .map_err(|error| error.to_string())
 }
