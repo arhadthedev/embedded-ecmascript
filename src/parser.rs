@@ -69,8 +69,9 @@ struct Ecma262Parser;
 ///
 /// Will return `Err` with rustc-style formatted error message string, if the
 /// source parameter does not form a correct ECMAScript 2023 script or module.
-pub fn parse(source: &str) -> Result<(), String> {
-    Ecma262Parser::parse(Rule::Script, source)
+pub fn parse(source: &str, is_module: bool) -> Result<(), String> {
+    let goal_symbol = if is_module { Rule::Module } else { Rule::Script };
+    Ecma262Parser::parse(goal_symbol, source)
         .map(|_| ())
         .map_err(|error| error.to_string())
 }

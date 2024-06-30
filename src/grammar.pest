@@ -124,7 +124,7 @@ EmptyStatement = { ";" }
 
 /************************************************
  *
- * 16 ECMAScript Language: Scripts and Modules
+ * 16.1 Scripts
  *
  ************************************************/
 
@@ -143,3 +143,50 @@ Script = { ScriptBody? }
 ///     StatementList[~Yield, ~Await, ~Return]
 /// ```
 ScriptBody = { StatementList_Yield_Await_Return }
+
+/************************************************
+ *
+ * 16.2 Modules
+ *
+ ************************************************/
+
+/// A match for <https://262.ecma-international.org/14.0/#prod-Module>.
+///
+/// ```plain
+/// Module :
+///     ModuleBody_opt
+/// ```
+Module = { ModuleBody? }
+
+/// A match for <https://262.ecma-international.org/14.0/#prod-ModuleBody>.
+///
+/// ```plain
+/// ModuleBody :
+///     ModuleItemList
+/// ```
+ModuleBody = { ModuleItemList }
+
+/// A match for <https://262.ecma-international.org/14.0/#prod-ModuleItemList>.
+///
+/// ```plain
+/// ModuleItemList :
+///     ModuleItem
+///     ModuleItemList ModuleItem
+/// ```
+ModuleItemList = {
+    ModuleItem |
+    // The rule below is inverted - collect on descent, not ascent as usual
+    ( ModuleItem ~ ModuleItemList )
+}
+
+/// A match for <https://262.ecma-international.org/14.0/#prod-ModuleItem>.
+///
+/// ```plain
+/// ModuleItem :
+///     ImportDeclaration
+///     ExportDeclaration
+///     StatementListItem[~Yield, +Await, ~Return]
+/// ```
+ModuleItem = {
+    StatementListItem_Yield_Await_Return
+}
