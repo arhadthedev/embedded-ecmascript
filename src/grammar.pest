@@ -77,7 +77,8 @@
 ///     DebuggerStatement
 /// ```
 Statement_Yield_Await_Return = {
-    EmptyStatement
+    EmptyStatement |
+    DebuggerStatement
 }
 
 /************************************************
@@ -121,6 +122,19 @@ StatementListItem_Yield_Await_Return = {
 /// EmptyStatement :
 ///     `;`
 EmptyStatement = { ";" }
+
+/************************************************
+ *
+ * 14.16 The debugger Statement
+ *
+ ************************************************/
+
+/// A match for <https://262.ecma-international.org/14.0/#prod-DebuggerStatement>.
+///
+/// ```plain
+/// DebuggerStatement :
+///     `debugger` `;`
+DebuggerStatement = { "debugger" ~ ";" }
 
 /************************************************
  *

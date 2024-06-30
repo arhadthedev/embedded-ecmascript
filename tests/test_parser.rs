@@ -4,7 +4,9 @@ mod tests {
     use rstest::rstest;
 
     #[rstest]
-    fn test_token_recognition(#[values(false, true)] is_module: bool) {
+    fn test_simple_statements(#[values(false, true)] is_module: bool) {
         assert_eq!(parse(";", is_module), Ok(()));
+
+        assert_eq!(parse("debug;", is_module), Ok(()));
     }
 }
