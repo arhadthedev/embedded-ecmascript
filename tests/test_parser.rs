@@ -8,5 +8,7 @@ mod tests {
         assert_eq!(parse(";", is_module), Ok(()));
 
         assert_eq!(parse("debug;", is_module), Ok(()));
+        assert_eq!(parse("debug ;", is_module), Ok(()));
+        assert_eq!(parse("debug; ", is_module), Ok(()));
     }
 }
