@@ -7,8 +7,8 @@ mod tests {
     fn test_simple_statements(#[values(false, true)] is_module: bool) {
         assert_eq!(parse(";", is_module), Ok(()));
 
-        assert_eq!(parse("debug;", is_module), Ok(()));
-        assert_eq!(parse("debug ;", is_module), Ok(()));
-        assert_eq!(parse("debug; ", is_module), Ok(()));
+        assert_eq!(parse("debugger;", is_module), Ok(()));
+        assert_eq!(parse("debugger ;", is_module), Ok(()));
+        assert_eq!(parse("debugger; ", is_module), Ok(()));
     }
 }
