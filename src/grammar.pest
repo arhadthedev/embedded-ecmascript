@@ -168,7 +168,12 @@ WHITESPACE = @{ WhiteSpace }
 ///     TryStatement[?Yield, ?Await, ?Return]
 ///     DebuggerStatement
 /// ```
-Statement_Yield_Await_Return = {
+Statement = {
+    EmptyStatement |
+    DebuggerStatement
+}
+
+Statement_Await = {
     EmptyStatement |
     DebuggerStatement
 }
@@ -186,10 +191,10 @@ Statement_Yield_Await_Return = {
 ///     StatementListItem[?Yield, ?Await, ?Return]
 ///     StatementList[?Yield, ?Await, ?Return] StatementListItem[?Yield, ?Await, ?Return]
 /// ```
-StatementList_Yield_Await_Return = {
-    StatementListItem_Yield_Await_Return |
+StatementList = {
+    StatementListItem |
     // The rule below is inverted - collect on descent, not ascent as usual
-    ( StatementListItem_Yield_Await_Return ~ StatementList_Yield_Await_Return )
+    ( StatementListItem ~ StatementList )
 }
 
 /// A match for <https://262.ecma-international.org/14.0/#prod-StatementListItem>.
@@ -198,8 +203,12 @@ StatementList_Yield_Await_Return = {
 /// StatementListItem[Yield, Await, Return] :
 ///     Statement[?Yield, ?Await, ?Return]
 ///     Declaration[?Yield, ?Await]
-StatementListItem_Yield_Await_Return = {
-    Statement_Yield_Await_Return
+StatementListItem = {
+    Statement
+}
+
+StatementListItem_Await = {
+    Statement_Await
 }
 
 /************************************************
@@ -248,7 +257,7 @@ Script = { ScriptBody? }
 /// ScriptBody :
 ///     StatementList[~Yield, ~Await, ~Return]
 /// ```
-ScriptBody = { StatementList_Yield_Await_Return }
+ScriptBody = { StatementList }
 
 /************************************************
  *
@@ -294,5 +303,5 @@ ModuleItemList = {
 ///     StatementListItem[~Yield, +Await, ~Return]
 /// ```
 ModuleItem = {
-    StatementListItem_Yield_Await_Return
+    StatementListItem_Await
 }
