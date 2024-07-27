@@ -7,7 +7,5 @@
 //! Each grammar rule looks like `Production :: ProductionDefinition`. Each
 //! production has an algorithm for each static and dynamic semantics.
 
+pub mod grammar;
 pub mod lexical_grammar;
-
-mod parser;
-pub use parser::parse;
