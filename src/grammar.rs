@@ -243,12 +243,12 @@ fn reduce_once(tokens: &Vec<Symbol>, _as_module: bool) -> Option<TokenStackDiff>
     }
 }
 
-fn reduce(mut eager_parse_stack: Vec<Symbol>, codepoint: char, as_module: bool) -> Vec<Symbol> {
+fn reduce(mut eager_parse_stack: Vec<Symbol>, as_module: bool) -> Vec<Symbol> {
     match reduce_once(&eager_parse_stack, as_module) {
         Some(stack_diff) => {
             eager_parse_stack.truncate(eager_parse_stack.len() - stack_diff.pop);
             eager_parse_stack.push(stack_diff.push);
-            reduce(eager_parse_stack, codepoint, as_module)
+            reduce(eager_parse_stack, as_module)
         },
         None => eager_parse_stack
     }
@@ -268,7 +268,7 @@ pub fn parse(source: &str, as_module: bool) -> Result<(), Vec<Symbol>> {
         Vec::with_capacity(512),
         |mut accumulator, codepoint| {
             accumulator.push(Symbol::SourceCharacter(codepoint));
-            reduce(accumulator, codepoint, as_module)
+            reduce(accumulator, as_module)
         }
     );
     match final_parse_stack.len() {
