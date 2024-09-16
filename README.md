@@ -9,6 +9,9 @@ It conforms to:
 - The JSON data interchange syntax (ECMA-404, 2nd edition) ECMA-404 <sup>todo</sup>
 - Unicode 15.1 <sup>in progress</sup>
 
+Implemented as an abstract syntax tree interpreter mulling through
+in-specification abstract operations.
+
 [ECMAScript 2024]: https://262.ecma-international.org/15.0/index.html
 
 ## Copyright and License Information
